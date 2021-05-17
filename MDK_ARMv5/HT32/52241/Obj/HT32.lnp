@@ -1,0 +1,9 @@
+--cpu Cortex-M0+
+".\ht32\52241\obj\main.o"
+".\ht32\52241\obj\led.o"
+".\ht32\52241\obj\startup_ht32f52231_41.o"
+".\ht32\52241\obj\system_ht32f5xxxx_02.o"
+--library_type=microlib --ro-base 0x00000000 --entry 0x00000000 --rw-base 0x20000000 --entry Reset_Handler --first __Vectors --strict
+--entry Reset_Handler --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\HT32\52241\List\HT32.map" -o .\HT32\52241\Obj\HT32.axf

@@ -1,0 +1,9 @@
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: RTE\Device\HT32F52241\system_ht32f5xxxx_02.c
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32f5xxxx_01.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32_config.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\core_cm0plus.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_version.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_compiler.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_armcc.h
+.\ht32\52241\obj\system_ht32f5xxxx_02.o: C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\system_ht32f5xxxx_01.h

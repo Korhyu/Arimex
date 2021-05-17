@@ -1,0 +1,36 @@
+Dependencies for Project 'Project', Target 'HT32': (DO NOT MODIFY !)
+CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
+F (..\main.c)(0x60A2A714)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections-I.\RTE\_HT32-IC:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx-D__UVISION_VERSION="534" -D_RTE_ -DUSE_HT32F52231_41 -D_RTE_-o .\ht32\52241\obj\main.o --omf_browse .\ht32\52241\obj\main.crf --depend .\ht32\52241\obj\main.d)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32f5xxxx_01.h)(0x60259350)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32_config.h)(0x5FA2F1A8)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\core_cm0plus.h)(0x5E8F6BD2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8ED772)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_version.h)(0x5E8F6BD2)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5E83A172)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5E8F6BD2)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\system_ht32f5xxxx_01.h)(0x5B68F516)
+I (..\ht32_board_config.h)(0x60A2AC67)
+I (..\LED.h)(0x5FA2F1A8)
+F (..\LED.c)(0x5FA2F1A8)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections-I.\RTE\_HT32-IC:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx-D__UVISION_VERSION="534" -D_RTE_ -DUSE_HT32F52231_41 -D_RTE_-o .\ht32\52241\obj\led.o --omf_browse .\ht32\52241\obj\led.crf --depend .\ht32\52241\obj\led.d)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32f5xxxx_01.h)(0x60259350)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32_config.h)(0x5FA2F1A8)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\core_cm0plus.h)(0x5E8F6BD2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8ED772)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_version.h)(0x5E8F6BD2)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5E83A172)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5E8F6BD2)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\system_ht32f5xxxx_01.h)(0x5B68F516)
+I (..\LED.h)(0x5FA2F1A8)
+I (..\ht32_board_config.h)(0x60A2AC67)
+F (..\ht32_board_config.h)(0x60A2AC67)()
+F (..\LED.h)(0x5FA2F1A8)()
+F (RTE\Device\HT32F52241\startup_ht32f52231_41.s)(0x5DAB3454)(--cpu Cortex-M0+ --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_HT32-IC:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx--pd "__UVISION_VERSION SETA 534" --pd "_RTE_ SETA 1" --pd "USE_HT32F52231_41 SETA 1" --pd "_RTE_ SETA 1"--list .\ht32\52241\list\startup_ht32f52231_41.lst --xref -o .\ht32\52241\obj\startup_ht32f52231_41.o --depend .\ht32\52241\obj\startup_ht32f52231_41.d)
+F (RTE\Device\HT32F52241\system_ht32f5xxxx_02.c)(0x5F2AF636)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O2 --apcs=interwork --split_sections-I.\RTE\_HT32-IC:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx-D__UVISION_VERSION="534" -D_RTE_ -DUSE_HT32F52231_41 -D_RTE_-o .\ht32\52241\obj\system_ht32f5xxxx_02.o --omf_browse .\ht32\52241\obj\system_ht32f5xxxx_02.crf --depend .\ht32\52241\obj\system_ht32f5xxxx_02.d)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32f5xxxx_01.h)(0x60259350)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\ht32_config.h)(0x5FA2F1A8)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\core_cm0plus.h)(0x5E8F6BD2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8ED772)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_version.h)(0x5E8F6BD2)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5E83A172)
+I (C:\Users\joset\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5E8F6BD2)
+I (C:\Users\joset\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx\system_ht32f5xxxx_01.h)(0x5B68F516)
