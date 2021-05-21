@@ -1,88 +1,86 @@
-/*********************************************************************************************************//**
- * @file    main.c
- * @version $Rev:: 1040         $
- * @date    $Date:: 2019-06-10 #$
- * @brief   The LED Blinky example code.
- *************************************************************************************************************
- * @attention
- *
- * Firmware Disclaimer Information
- *
- * 1. The customer hereby acknowledges and agrees that the program technical documentation, including the
- *    code, which is supplied by Holtek Semiconductor Inc., (hereinafter referred to as "HOLTEK") is the
- *    proprietary and confidential intellectual property of HOLTEK, and is protected by copyright law and
- *    other intellectual property laws.
- *
- * 2. The customer hereby acknowledges and agrees that the program technical documentation, including the
- *    code, is confidential information belonging to HOLTEK, and must not be disclosed to any third parties
- *    other than HOLTEK and the customer.
- *
- * 3. The program technical documentation, including the code, is provided "as is" and for customer reference
- *    only. After delivery by HOLTEK, the customer shall use the program technical documentation, including
- *    the code, at their own risk. HOLTEK disclaims any expressed, implied or statutory warranties, including
- *    the warranties of merchantability, satisfactory quality and fitness for a particular purpose.
- *
- * <h2><center>Copyright (C) Holtek Semiconductor Inc. All rights reserved</center></h2>
- ************************************************************************************************************/
-
 /* Includes ------------------------------------------------------------------------------------------------*/
-#include "ht32f5xxxx_01.h"
-#include "ht32_board_config.h"
-#include "LED.h"
+#include "AL01_board_iq_aed_rev20191011.h"
+#include "AL01_flash_management.h"
+#include "AL02_inverter_3phase.h"
+#include "AL02_switches_leds_mux_driver.h"
 
+/* Global functions ----------------------------------------------------------------------------------------*/
+/* Settings ------------------------------------------------------------------------------------------------*/
+/* Private types -------------------------------------------------------------------------------------------*/
+/* Private constants ---------------------------------------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------------------------------------*/
+
+/* Private macro -------------------------------------------------------------------------------------------*/
 /* Global variables ----------------------------------------------------------------------------------------*/
-u32 uTime = 9;
-u32 uLEDTime = 0;
-u32 cont = 0;
+/* Private variables ---------------------------------------------------------------------------------------*/
+/* Global functions ----------------------------------------------------------------------------------------*/
 
-/* Private functions ---------------------------------------------------------------------------------------*/
+
+/*********************************************************************************************************//**
+  * @brief  Main program.
+  * @retval None
+  ***********************************************************************************************************/
+#define TIM 250
+#define LED1_PORT GPIOC
+#define LED1_PIN	GPIO_PIN_3
+#define LED1_NUMB	GPIO3
+
+
 int main(void)
 {
-  LED_Init();
+	uint8_t var=1;
+	uint32_t timer=0;
+	
+  board_hardware_configuration();
+	//ui_mux_init();
+	//inverter_3phase_init_config();
 
-  LED_On(LED1);
-  LED_Off(LED2);
-  LED_On(LED3);
+	
+	board_hardware_gpio_config_output_pp_pins_load_config		(LED1_PORT,GPIO_PIN_3);
+	__hardware_gpio_output_reset(LED1_PORT,GPIO3);
+	
+	timer= board_scheduler_load_timer(TIM);
+	
+	
+	
+	/*
+	if(flash_user_store_erase() == FLASH_COMPLETE)
+		printf("Borro bien la flash\n");
+	else
+		printf("Hubo un error al borrar la flash\n");
+	
+	if(flash_user_is_the_flash_empty())
+		printf("flash vacia\n");
+	else
+		printf("flash no vacia\n");
+	
+	flash_user_write_1byte_at_offset(0,0);
+	
+	if(flash_user_is_the_flash_empty())
+		printf("flash vacia\n");
+	else
+		printf("flash no vacia\n");
+	*/
+	
 
-  SysTick_Config(SystemCoreClock / 100);     /* Generate interrupt each 10 ms                               */
-
-  while (1)
-  {
-    if (uLEDTime == 1)
-    {
-      uLEDTime = 0;
-      LED_Toggle(LED1);
-      LED_Toggle(LED2);
-      LED_Toggle(LED3);
+	while(1)
+	{
+		if(board_scheduler_is_time_expired(timer))
+		{			
+			timer= board_scheduler_load_timer(TIM);
+			__hardware_gpio_output_toggle(LED1_PORT,GPIO3);
 			
-			cont++;
+			/*
+			printf("switches:%d\n\r",ui_mux_get_switches_state());
+			if(var>=0x40)
+				var=1;
+			else
+				var<<=1;
 			
-			if(cont >= 9)
-			{
-				uTime = uTime+5;
-				cont = 0;
-				
-				if (uTime >= 59)
-				{
-					uTime = 9;
-				}
-			}
+			ui_mux_set_leds_state(var);
+			*/
 			
-    }
-  }
-}
 
-/*********************************************************************************************************//**
- * @brief   This function handles SysTick Handler.
- * @retval  None
- ************************************************************************************************************/
-void SysTick_Handler(void)
-{
-  static u32 uTicks = 0;
-  uTicks++;
-  if (uTicks >= uTime)
-  {
-    uTicks = 0;
-    uLEDTime = 1;
-  }
+		}
+	}
 }

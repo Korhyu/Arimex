@@ -1,29 +1,26 @@
 /**
- @page LED_Blinky
+ @page GPIO_InputOutput
 
  @verbatim
- * @file    LED_Blinky/readme.txt
+ * @file    GPIO/InputOutput/readme.txt
  * @version V1.00
- * @date    2019-04-27
- * @brief   Description of ADC analog watchdog example.
+ * @date    2014-06-30
+ * @brief   Description of GPIO input/output example.
  @endverbatim
 
 @par Example Description:
 
-This example project shows how to use the Keil MDk-ARM to develop code for the
-HT32 Series Starter Kit. It shows basic use of the I/O ad Systick. It toggles
-the LEDs on the board.
+This example describes how to use GPIO to read the data from GPIO pin and output to another GPIO pin.
 
 @par Directory Contents:
 
-- LED_Blinky/main.c                     Main program
-- LED_Blinky/LED.c                      LED function
-- LED_Blinky/LED.h                      Header file of LED function
-- LED_Blinky/ht32_board_config.h        Configuration file
+- GPIO/InputOutput/main.c               Main program
+- GPIO/InputOutput/ht32fxxxx_it.c       Interrupt handlers
 
 @par Hardware and Software Environment:
 
-- This example can be run on HT32 Series Starter Kit.
+- This example can be run on HT32 Series development board.
+- Refer "ht32_board_config.h" for pin assignment.
 
 @par Firmware Disclaimer Information
 

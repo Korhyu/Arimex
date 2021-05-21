@@ -1,7 +1,7 @@
 /*********************************************************************************************************//**
- * @file    ht32_board_config.h
- * @version $Rev:: 1040         $
- * @date    $Date:: 2019-06-10 #$
+ * @file    GPIO/InputOutput/ht32_board_config.h
+ * @version $Rev:: 3148         $
+ * @date    $Date:: 2018-10-18#$
  * @brief   The header file of board configuration.
  *************************************************************************************************************
  * @attention
@@ -33,21 +33,378 @@
 #endif
 
 /* Settings ------------------------------------------------------------------------------------------------*/
-#define LED1_PORT_NUM                 (2)         // GPIOA = 0, GPIOB = 1, GPIOC = 2, GPIOD = 3, GPIOE = 4
-#define LED1_PORT                     (HT_GPIOC)
-#define LED1_PIN                      (2)
+#if defined(USE_HT32F52230_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PB)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PB)
 
-#define LED2_PORT_NUM                 (2)         // GPIOA = 0, GPIOB = 1, GPIOC = 2, GPIOD = 3, GPIOE = 4
-#define LED2_PORT                     (HT_GPIOC)
-#define LED2_PIN                      (3)
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PB)
 
-#define LED3_PORT_NUM                 (1)         // GPIOA = 0, GPIOB = 1, GPIOC = 2, GPIOD = 3, GPIOE = 4
-#define LED3_PORT                     (HT_GPIOB)
-#define LED3_PIN                      (6)
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOB)
+  #define HTCFG_LED2                                            (HT_GPIOB)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOB)
+  #define HTCFG_KEY2                                            (HT_GPIOB)
 
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_3)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_4)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_4)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_2)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_3)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_4)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_4)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_2)
+#endif
+
+#if defined(USE_HT32F52253_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PC)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PC)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PD)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PD)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PD)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PD)
+
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOC)
+  #define HTCFG_LED2                                            (HT_GPIOC)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOD)
+  #define HTCFG_KEY2                                            (HT_GPIOD)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_8)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_4)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_5)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_1)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_2)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_8)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_4)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_5)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_1)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_2)
+#endif
+
+#if defined(USE_HT32F52241_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PC)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PC)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PB)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PB)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PB)
+
+  #define HTCFG_LED0                                            (HT_GPIOC)
+  #define HTCFG_LED1                                            (HT_GPIOC)
+  #define HTCFG_LED2                                            (HT_GPIOB)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOB)
+  #define HTCFG_KEY2                                            (HT_GPIOB)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_2)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_3)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_6)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_7)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_8)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_2)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_3)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_6)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_7)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_8)
+
+#endif
+
+#if defined(USE_HT32F52341_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PA)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PA)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PC)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PA)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PA)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PC)
+
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOA)
+  #define HTCFG_LED2                                            (HT_GPIOA)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOB)
+  #define HTCFG_KEY2                                            (HT_GPIOC)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_4)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_14)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_15)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_0)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_2)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_4)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_14)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_15)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_0)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_2)
+#endif
+
+#if defined(USE_HT32F52352_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PC)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PC)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PC)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PD)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PD)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PC)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PD)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PD)
+
+  #define HTCFG_LED0                                            (HT_GPIOC)
+  #define HTCFG_LED1                                            (HT_GPIOC)
+  #define HTCFG_LED2                                            (HT_GPIOC)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOD)
+  #define HTCFG_KEY2                                            (HT_GPIOD)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_14)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_15)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_1)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_1)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_2)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_14)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_15)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_1)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_1)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_2)
+#endif
+
+#if defined(USE_HT32F0008_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PA)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PA)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PF)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PC)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PC)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PA)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PA)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PF)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PC)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PC)
+
+  #define HTCFG_LED0                                            (HT_GPIOA)
+  #define HTCFG_LED1                                            (HT_GPIOA)
+  #define HTCFG_LED2                                            (HT_GPIOF)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOC)
+  #define HTCFG_KEY2                                            (HT_GPIOC)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_14)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_15)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_1)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_3)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_14)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_15)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_1)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_3)
+#endif
+
+#if defined(USE_HT32F50230_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PB)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PC)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PC)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PC)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PC)
+
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOB)
+  #define HTCFG_LED2                                            (HT_GPIOB)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOC)
+  #define HTCFG_KEY2                                            (HT_GPIOC)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_6)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_7)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_8)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_3)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_6)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_7)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_8)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_3)
+#endif
+
+#if defined(USE_HT32F50241_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PB)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PC)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PC)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PC)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PC)
+
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOB)
+  #define HTCFG_LED2                                            (HT_GPIOB)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOC)
+  #define HTCFG_KEY2                                            (HT_GPIOC)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_6)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_7)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_8)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_3)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_6)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_7)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_8)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_2)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_3)
+#endif
+
+#if defined(USE_HT32F52354_SK)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PB)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PB)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PC)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PC)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PB)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PC)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PC)
+
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOB)
+  #define HTCFG_LED2                                            (HT_GPIOB)
+  #define HTCFG_WAKE                                            (HT_GPIOB)
+  #define HTCFG_KEY1                                            (HT_GPIOC)
+  #define HTCFG_KEY2                                            (HT_GPIOC)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_6)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_7)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_8)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_14)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_15)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_6)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_7)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_8)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_12)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_14)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_15)
+#endif
+
+#if defined(USE_HT32F0006_DVB)
+  #define HTCFG_OUTPUT_LED0_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED1_ID                                  (GPIO_PB)
+  #define HTCFG_OUTPUT_LED2_ID                                  (GPIO_PB)
+  #define HTCFG_INPUT_WAKE_ID                                   (GPIO_PA)
+  #define HTCFG_INPUT_KEY1_ID                                   (GPIO_PA)
+  #define HTCFG_INPUT_KEY2_ID                                   (GPIO_PA)
+
+  #define HTCFG_OUTPUT_LED0_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED1_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_OUTPUT_LED2_CLK(CK)                             (CK.Bit.PB)
+  #define HTCFG_INPUT_WAKE_CLK(CK)                              (CK.Bit.PA)
+  #define HTCFG_INPUT_KEY1_CLK(CK)                              (CK.Bit.PA)
+  #define HTCFG_INPUT_KEY2_CLK(CK)                              (CK.Bit.PA)
+
+  #define HTCFG_LED0                                            (HT_GPIOB)
+  #define HTCFG_LED1                                            (HT_GPIOB)
+  #define HTCFG_LED2                                            (HT_GPIOB)
+  #define HTCFG_WAKE                                            (HT_GPIOA)
+  #define HTCFG_KEY1                                            (HT_GPIOA)
+  #define HTCFG_KEY2                                            (HT_GPIOA)
+
+  #define HTCFG_OUTPUT_LED0_AFIO_PIN                            (AFIO_PIN_12)
+  #define HTCFG_OUTPUT_LED1_AFIO_PIN                            (AFIO_PIN_12)
+  #define HTCFG_OUTPUT_LED2_AFIO_PIN                            (AFIO_PIN_12)
+  #define HTCFG_INPUT_WAKE_AFIO_PIN                             (AFIO_PIN_0)
+  #define HTCFG_INPUT_KEY1_AFIO_PIN                             (AFIO_PIN_1)
+  #define HTCFG_INPUT_KEY2_AFIO_PIN                             (AFIO_PIN_2)
+
+  #define HTCFG_OUTPUT_LED0_GPIO_PIN                            (GPIO_PIN_12)
+  #define HTCFG_OUTPUT_LED1_GPIO_PIN                            (GPIO_PIN_12)
+  #define HTCFG_OUTPUT_LED2_GPIO_PIN                            (GPIO_PIN_12)
+  #define HTCFG_INPUT_WAKE_GPIO_PIN                             (GPIO_PIN_0)
+  #define HTCFG_INPUT_KEY1_GPIO_PIN                             (GPIO_PIN_1)
+  #define HTCFG_INPUT_KEY2_GPIO_PIN                             (GPIO_PIN_2)
+#endif
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif
