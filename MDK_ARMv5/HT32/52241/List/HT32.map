@@ -2515,34 +2515,31 @@ Image Symbol Table
     [Anonymous Symbol]                       0x00000c98   Section        0  al01_board_iq_aed_rev20191011.o(.text.board_scheduler_load_timer)
     [Anonymous Symbol]                       0x00000ca4   Section        0  al00_micro_ht32f52241.o(.text.empty_func_to_avoid_hard_fault)
     [Anonymous Symbol]                       0x00000ca8   Section        0  al00_micro_ht32f52241.o(.text.hardware_gpio_config_output_pp_pins_load_config)
-    __arm_cp.3_0                             0x00000cc8   Number         4  al00_micro_ht32f52241.o(.text.hardware_gpio_config_output_pp_pins_load_config)
-    __arm_cp.3_1                             0x00000ccc   Number         4  al00_micro_ht32f52241.o(.text.hardware_gpio_config_output_pp_pins_load_config)
-    [Anonymous Symbol]                       0x00000cd0   Section        0  al00_micro_ht32f52241.o(.text.hardware_pwm_start_with_ton)
-    __arm_cp.17_0                            0x00000ce8   Number         4  al00_micro_ht32f52241.o(.text.hardware_pwm_start_with_ton)
-    [Anonymous Symbol]                       0x00000cec   Section        0  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    __arm_cp.2_0                             0x00000fb4   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    __arm_cp.2_1                             0x00000fb8   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    __arm_cp.2_2                             0x00000fbc   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    __arm_cp.2_3                             0x00000fc0   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    __arm_cp.2_4                             0x00000fc4   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    [Anonymous Symbol]                       0x00000fc8   Section        0  main.o(.text.main)
-    __arm_cp.0_0                             0x00001028   Number         4  main.o(.text.main)
-    [Anonymous Symbol]                       0x0000102c   Section        0  al00_micro_ht32f52241.o(.text.micro_config)
-    micro_gpios_outputs_pp_config            0x00001049   Thumb Code   120  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
-    [Anonymous Symbol]                       0x00001048   Section        0  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
-    __arm_cp.28_0                            0x000010c0   Number         4  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
-    __arm_cp.28_1                            0x000010c4   Number         4  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
-    micro_pwm_config                         0x000010c9   Thumb Code   216  al00_micro_ht32f52241.o(.text.micro_pwm_config)
-    [Anonymous Symbol]                       0x000010c8   Section        0  al00_micro_ht32f52241.o(.text.micro_pwm_config)
-    __arm_cp.29_0                            0x000011a0   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
-    __arm_cp.29_1                            0x000011a4   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
-    __arm_cp.29_2                            0x000011a8   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
-    __arm_cp.29_3                            0x000011ac   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
-    i.__scatterload_copy                     0x000011b0   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x000011be   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x000011c0   Section       14  handlers.o(i.__scatterload_zeroinit)
-    GPIO_PORTs                               0x000011d0   Data          12  al00_micro_ht32f52241.o(.rodata.GPIO_PORTs)
-    [Anonymous Symbol]                       0x000011d0   Section        0  al00_micro_ht32f52241.o(.rodata.GPIO_PORTs)
+    [Anonymous Symbol]                       0x00000cc8   Section        0  al00_micro_ht32f52241.o(.text.hardware_pwm_start_with_ton)
+    [Anonymous Symbol]                       0x00000ce0   Section        0  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    __arm_cp.2_0                             0x00000f88   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    __arm_cp.2_1                             0x00000f8c   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    __arm_cp.2_2                             0x00000f90   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    __arm_cp.2_3                             0x00000f94   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    __arm_cp.2_4                             0x00000f98   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    [Anonymous Symbol]                       0x00000f9c   Section        0  main.o(.text.main)
+    __arm_cp.0_0                             0x00000ffc   Number         4  main.o(.text.main)
+    [Anonymous Symbol]                       0x00001000   Section        0  al00_micro_ht32f52241.o(.text.micro_config)
+    micro_gpios_outputs_pp_config            0x0000101d   Thumb Code   120  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
+    [Anonymous Symbol]                       0x0000101c   Section        0  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
+    __arm_cp.28_0                            0x00001094   Number         4  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
+    __arm_cp.28_1                            0x00001098   Number         4  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
+    micro_pwm_config                         0x0000109d   Thumb Code   216  al00_micro_ht32f52241.o(.text.micro_pwm_config)
+    [Anonymous Symbol]                       0x0000109c   Section        0  al00_micro_ht32f52241.o(.text.micro_pwm_config)
+    __arm_cp.29_0                            0x00001174   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
+    __arm_cp.29_1                            0x00001178   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
+    __arm_cp.29_2                            0x0000117c   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
+    __arm_cp.29_3                            0x00001180   Number         4  al00_micro_ht32f52241.o(.text.micro_pwm_config)
+    i.__scatterload_copy                     0x00001184   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x00001192   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x00001194   Section       14  handlers.o(i.__scatterload_zeroinit)
+    GPIO_PORTs                               0x000011a4   Data          12  al00_micro_ht32f52241.o(.rodata.GPIO_PORTs)
+    [Anonymous Symbol]                       0x000011a4   Section        0  al00_micro_ht32f52241.o(.rodata.GPIO_PORTs)
     inverter_actual_comm_seq                 0x2000009c   Data           4  al02_inverter_3phase.o(.data.inverter_actual_comm_seq)
     [Anonymous Symbol]                       0x2000009c   Section        0  al02_inverter_3phase.o(.data.inverter_actual_comm_seq)
     HardFault_Handler.gIsContinue            0x200000a0   Data           4  ht32f5xxxx_01_it.o(.bss.HardFault_Handler.gIsContinue)
@@ -2705,15 +2702,15 @@ Image Symbol Table
     board_scheduler_load_timer               0x00000c99   Thumb Code    12  al01_board_iq_aed_rev20191011.o(.text.board_scheduler_load_timer)
     empty_func_to_avoid_hard_fault           0x00000ca5   Thumb Code     2  al00_micro_ht32f52241.o(.text.empty_func_to_avoid_hard_fault)
     hardware_gpio_config_output_pp_pins_load_config 0x00000ca9   Thumb Code    32  al00_micro_ht32f52241.o(.text.hardware_gpio_config_output_pp_pins_load_config)
-    hardware_pwm_start_with_ton              0x00000cd1   Thumb Code    24  al00_micro_ht32f52241.o(.text.hardware_pwm_start_with_ton)
-    inverter_3phase_comm_set_seq             0x00000ced   Thumb Code   712  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    main                                     0x00000fc9   Thumb Code    96  main.o(.text.main)
-    micro_config                             0x0000102d   Thumb Code    28  al00_micro_ht32f52241.o(.text.micro_config)
-    __scatterload_copy                       0x000011b1   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x000011bf   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x000011c1   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    Region$$Table$$Base                      0x000011dc   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x000011fc   Number         0  anon$$obj.o(Region$$Table)
+    hardware_pwm_start_with_ton              0x00000cc9   Thumb Code    24  al00_micro_ht32f52241.o(.text.hardware_pwm_start_with_ton)
+    inverter_3phase_comm_set_seq             0x00000ce1   Thumb Code   680  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
+    main                                     0x00000f9d   Thumb Code    96  main.o(.text.main)
+    micro_config                             0x00001001   Thumb Code    28  al00_micro_ht32f52241.o(.text.micro_config)
+    __scatterload_copy                       0x00001185   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x00001193   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x00001195   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    Region$$Table$$Base                      0x000011b0   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000011d0   Number         0  anon$$obj.o(Region$$Table)
     SystemCoreClock                          0x20000000   Data           4  system_ht32f5xxxx_02.o(.data.SystemCoreClock)
     func_ptr_callback_bftm0                  0x20000004   Data           4  al00_micro_ht32f52241.o(.data.func_ptr_callback_bftm0)
     func_ptr_callback_bftm1                  0x20000008   Data           4  al00_micro_ht32f52241.o(.data.func_ptr_callback_bftm1)
@@ -2734,9 +2731,9 @@ Memory Map of the image
 
   Image Entry point : 0x000000ad
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x0000129c, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00001270, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x000011fc, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x000011d0, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2815,45 +2812,45 @@ Memory Map of the image
     0x00000c98   0x00000c98   0x0000000c   Code   RO          149    .text.board_scheduler_load_timer  al01_board_iq_aed_rev20191011.o
     0x00000ca4   0x00000ca4   0x00000002   Code   RO           28    .text.empty_func_to_avoid_hard_fault  al00_micro_ht32f52241.o
     0x00000ca6   0x00000ca6   0x00000002   PAD
-    0x00000ca8   0x00000ca8   0x00000028   Code   RO           34    .text.hardware_gpio_config_output_pp_pins_load_config  al00_micro_ht32f52241.o
-    0x00000cd0   0x00000cd0   0x0000001c   Code   RO           62    .text.hardware_pwm_start_with_ton  al00_micro_ht32f52241.o
-    0x00000cec   0x00000cec   0x000002dc   Code   RO          196    .text.inverter_3phase_comm_set_seq  al02_inverter_3phase.o
-    0x00000fc8   0x00000fc8   0x00000064   Code   RO            2    .text.main          main.o
-    0x0000102c   0x0000102c   0x0000001c   Code   RO           74    .text.micro_config  al00_micro_ht32f52241.o
-    0x00001048   0x00001048   0x00000080   Code   RO           84    .text.micro_gpios_outputs_pp_config  al00_micro_ht32f52241.o
-    0x000010c8   0x000010c8   0x000000e8   Code   RO           86    .text.micro_pwm_config  al00_micro_ht32f52241.o
-    0x000011b0   0x000011b0   0x0000000e   Code   RO         1622    i.__scatterload_copy  mc_p.l(handlers.o)
-    0x000011be   0x000011be   0x00000002   Code   RO         1623    i.__scatterload_null  mc_p.l(handlers.o)
-    0x000011c0   0x000011c0   0x0000000e   Code   RO         1624    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x000011ce   0x000011ce   0x00000002   PAD
-    0x000011d0   0x000011d0   0x0000000c   Data   RO          119    .rodata.GPIO_PORTs  al00_micro_ht32f52241.o
-    0x000011dc   0x000011dc   0x00000020   Data   RO         1621    Region$$Table       anon$$obj.o
+    0x00000ca8   0x00000ca8   0x00000020   Code   RO           34    .text.hardware_gpio_config_output_pp_pins_load_config  al00_micro_ht32f52241.o
+    0x00000cc8   0x00000cc8   0x00000018   Code   RO           62    .text.hardware_pwm_start_with_ton  al00_micro_ht32f52241.o
+    0x00000ce0   0x00000ce0   0x000002bc   Code   RO          196    .text.inverter_3phase_comm_set_seq  al02_inverter_3phase.o
+    0x00000f9c   0x00000f9c   0x00000064   Code   RO            2    .text.main          main.o
+    0x00001000   0x00001000   0x0000001c   Code   RO           74    .text.micro_config  al00_micro_ht32f52241.o
+    0x0000101c   0x0000101c   0x00000080   Code   RO           84    .text.micro_gpios_outputs_pp_config  al00_micro_ht32f52241.o
+    0x0000109c   0x0000109c   0x000000e8   Code   RO           86    .text.micro_pwm_config  al00_micro_ht32f52241.o
+    0x00001184   0x00001184   0x0000000e   Code   RO         1622    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x00001192   0x00001192   0x00000002   Code   RO         1623    i.__scatterload_null  mc_p.l(handlers.o)
+    0x00001194   0x00001194   0x0000000e   Code   RO         1624    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x000011a2   0x000011a2   0x00000002   PAD
+    0x000011a4   0x000011a4   0x0000000c   Data   RO          119    .rodata.GPIO_PORTs  al00_micro_ht32f52241.o
+    0x000011b0   0x000011b0   0x00000020   Data   RO         1621    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x000011fc, Size: 0x000000a0, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x000011d0, Size: 0x000000a0, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x000011fc   0x00000004   Data   RW          329    .data.SystemCoreClock  system_ht32f5xxxx_02.o
-    0x20000004   0x00001200   0x00000004   Data   RW          112    .data.func_ptr_callback_bftm0  al00_micro_ht32f52241.o
-    0x20000008   0x00001204   0x00000004   Data   RW          113    .data.func_ptr_callback_bftm1  al00_micro_ht32f52241.o
-    0x2000000c   0x00001208   0x00000040   Data   RW          111    .data.func_ptr_callback_falling_exti  al00_micro_ht32f52241.o
-    0x2000004c   0x00001248   0x00000004   Data   RW          117    .data.func_ptr_callback_pwm_break  al00_micro_ht32f52241.o
-    0x20000050   0x0000124c   0x00000004   Data   RW          116    .data.func_ptr_callback_pwm_end_toff  al00_micro_ht32f52241.o
-    0x20000054   0x00001250   0x00000040   Data   RW          110    .data.func_ptr_callback_rising_exti  al00_micro_ht32f52241.o
-    0x20000094   0x00001290   0x00000004   Data   RW          114    .data.func_ptr_callback_sctm0  al00_micro_ht32f52241.o
-    0x20000098   0x00001294   0x00000004   Data   RW          115    .data.func_ptr_callback_sctm1  al00_micro_ht32f52241.o
-    0x2000009c   0x00001298   0x00000004   Data   RW          218    .data.inverter_actual_comm_seq  al02_inverter_3phase.o
+    0x20000000   0x000011d0   0x00000004   Data   RW          329    .data.SystemCoreClock  system_ht32f5xxxx_02.o
+    0x20000004   0x000011d4   0x00000004   Data   RW          112    .data.func_ptr_callback_bftm0  al00_micro_ht32f52241.o
+    0x20000008   0x000011d8   0x00000004   Data   RW          113    .data.func_ptr_callback_bftm1  al00_micro_ht32f52241.o
+    0x2000000c   0x000011dc   0x00000040   Data   RW          111    .data.func_ptr_callback_falling_exti  al00_micro_ht32f52241.o
+    0x2000004c   0x0000121c   0x00000004   Data   RW          117    .data.func_ptr_callback_pwm_break  al00_micro_ht32f52241.o
+    0x20000050   0x00001220   0x00000004   Data   RW          116    .data.func_ptr_callback_pwm_end_toff  al00_micro_ht32f52241.o
+    0x20000054   0x00001224   0x00000040   Data   RW          110    .data.func_ptr_callback_rising_exti  al00_micro_ht32f52241.o
+    0x20000094   0x00001264   0x00000004   Data   RW          114    .data.func_ptr_callback_sctm0  al00_micro_ht32f52241.o
+    0x20000098   0x00001268   0x00000004   Data   RW          115    .data.func_ptr_callback_sctm1  al00_micro_ht32f52241.o
+    0x2000009c   0x0000126c   0x00000004   Data   RW          218    .data.inverter_actual_comm_seq  al02_inverter_3phase.o
 
 
-    Execution Region ER_ZI (Exec base: 0x200000a0, Load base: 0x0000129c, Size: 0x00000218, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_ZI (Exec base: 0x200000a0, Load base: 0x00001270, Size: 0x00000218, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x200000a0        -       0x00000004   Zero   RW           20    .bss.HardFault_Handler.gIsContinue  ht32f5xxxx_01_it.o
     0x200000a4        -       0x00000004   Zero   RW          118    .bss.TickCount      al00_micro_ht32f52241.o
     0x200000a8        -       0x0000000c   Zero   RW          120    .bss.gpio_config_output_pp_pins  al00_micro_ht32f52241.o
-    0x200000b4   0x0000129c   0x00000004   PAD
+    0x200000b4   0x00001270   0x00000004   PAD
     0x200000b8        -       0x00000200   Zero   RW          337    STACK               startup_ht32f5xxxx_01.o
 
 
@@ -2864,9 +2861,9 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      1626        100         12        152         16      15385   al00_micro_ht32f52241.o
+      1614         88         12        152         16      15385   al00_micro_ht32f52241.o
         40          0          0          0          0       2116   al01_board_iq_aed_rev20191011.o
-       732        148          0          4          0       4872   al02_inverter_3phase.o
+       700        148          0          4          0       4873   al02_inverter_3phase.o
         84          4          0          0          0      11946   ht32_board.o
        120         16          0          0          0       3726   ht32_cm0plus_misc.o
         30          0          0          0          0       2165   ht32_retarget.o
@@ -2884,7 +2881,7 @@ Image component sizes
        228         20          0          4          0       2639   system_ht32f5xxxx_02.o
 
     ----------------------------------------------------------------------
-      4408        594         44        160        536     114360   Object Totals
+      4364        582         44        160        536     114361   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         12          0          0          0          4          0   (incl. Padding)
 
@@ -2924,15 +2921,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      4560        610         44        160        536     114396   Grand Totals
-      4560        610         44        160        536     114396   ELF Image Totals
-      4560        610         44        160          0          0   ROM Totals
+      4516        598         44        160        536     114397   Grand Totals
+      4516        598         44        160        536     114397   ELF Image Totals
+      4516        598         44        160          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 4604 (   4.50kB)
+    Total RO  Size (Code + RO Data)                 4560 (   4.45kB)
     Total RW  Size (RW Data + ZI Data)               696 (   0.68kB)
-    Total ROM Size (Code + RO Data + RW Data)       4764 (   4.65kB)
+    Total ROM Size (Code + RO Data + RW Data)       4720 (   4.61kB)
 
 ==============================================================================
 

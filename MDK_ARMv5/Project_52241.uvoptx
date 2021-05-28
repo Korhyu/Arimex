@@ -152,22 +152,6 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>916</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>2696</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Src\AL00_micro_ht32f52241.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\HT32\../Src/AL00_micro_ht32f52241.c\916</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>99</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
@@ -180,6 +164,22 @@
           <Filename>..\Src\AL02_inverter_3phase.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>916</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>2696</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Src\AL00_micro_ht32f52241.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\HT32\../Src/AL00_micro_ht32f52241.c\916</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

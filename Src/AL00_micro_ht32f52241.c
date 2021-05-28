@@ -454,16 +454,16 @@ static void micro_pwm_config(void)
 	
 	
 	/* Configure the GPIO as TM channel output AFIO function                                       */
-  //AFIO_GPxConfig(GPIO_PA, AFIO_PIN_11, AFIO_FUN_MCTM_GPTM);	//CH1 PA11
+  //AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);	//CH1 PA10
 	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_9 , AFIO_FUN_MCTM_GPTM);	//CH3 PB9
 	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_15, AFIO_FUN_MCTM_GPTM);	//CH0 PB15
 	
 	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_4 , AFIO_FUN_MCTM_GPTM);	//PB4: BREAK PIN
 	
-	//AFIO_GPxConfig(GPIO_PC, AFIO_PIN_2, AFIO_FUN_MCTM_GPTM);		//CH0 PC2  - Directo
+	//AFIO_GPxConfig(GPIO_PC, AFIO_PIN_2, AFIO_FUN_MCTM_GPTM);		//CH0 PC2 - LED Built in  - Directo
 	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_15, AFIO_FUN_MCTM_GPTM);		//CH0 PB15 - Negado
-	AFIO_GPxConfig(GPIO_PA, AFIO_PIN_11, AFIO_FUN_MCTM_GPTM);		//CH1 PA11 - Directo
-	//AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);		//CH1 PA10 - Negado
+	AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);		//CH1 PA10 - Negado
+	//AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);		//CH1 PA11 - Directo
 	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_9 , AFIO_FUN_MCTM_GPTM);		//CH3 PB9  - Negado
 	
 	
