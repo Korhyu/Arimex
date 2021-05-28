@@ -438,6 +438,11 @@
               <FileType>1</FileType>
               <FilePath>.\debug.c</FilePath>
             </File>
+            <File>
+              <FileName>Jose.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Jose.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

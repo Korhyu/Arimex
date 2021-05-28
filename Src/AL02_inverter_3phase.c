@@ -90,13 +90,13 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 		case INVERTER_COMM_SEQ1:
 								inverter_actual_comm_seq = INVERTER_COMM_SEQ1;
 
-								board_pwm_hin3_disable();		//OUT3: HIZ
+								board_pwm_hin3_disable();		//OUT3: HIZ       -- CH1 OSC
 								board_pwm_lin3_disable();
 
-								board_pwm_lin1_disable();		//OUT1: PWM(VBUS)
+								board_pwm_lin1_disable();		//OUT1: PWM(VBUS) -- CH2 OSC
 								board_pwm_hin1_enable();
 
-								board_pwm_hin2_disable();		//OUT2: GND
+								board_pwm_hin2_disable();		//OUT2: GND				-- CH3 OSC
 								board_pwm_lin2_enable();
 
 								break;

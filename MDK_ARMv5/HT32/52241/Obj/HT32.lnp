@@ -10,6 +10,7 @@
 ".\ht32\52241\obj\al03_motor_3phase_driver.o"
 ".\ht32\52241\obj\al02_hairdryer_global_registers.o"
 ".\ht32\52241\obj\debug.o"
+".\ht32\52241\obj\jose.o"
 ".\ht32\52241\obj\ht32_op.o"
 ".\ht32\52241\obj\system_ht32f5xxxx_02.o"
 ".\ht32\52241\obj\startup_ht32f5xxxx_01.o"

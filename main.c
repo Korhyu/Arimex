@@ -3,6 +3,8 @@
 #include "AL01_flash_management.h"
 #include "AL02_inverter_3phase.h"
 #include "AL02_switches_leds_mux_driver.h"
+#include "AL03_motor_3phase_driver.h"
+#include "Jose.h"
 
 /* Global functions ----------------------------------------------------------------------------------------*/
 /* Settings ------------------------------------------------------------------------------------------------*/
@@ -21,66 +23,50 @@
   * @retval None
   ***********************************************************************************************************/
 #define TIM 250
-#define LED1_PORT GPIOC
-#define LED1_PIN	GPIO_PIN_3
-#define LED1_NUMB	GPIO3
+#define TPASO 100							//Tiempo entre pasos de arranque
+#define PASOS_ARRANQUE 400
+#define ERROR -1
 
 
 int main(void)
 {
-	uint8_t var=1;
-	uint32_t timer=0;
+	uint8_t cont = 0;
+	uint16_t seq = INVERTER_COMM_SEQ1;
+	uint32_t timer = 0;
+	uint32_t tPaso = 0;
+	uint32_t conteo = 0;
 	
-  board_hardware_configuration();
-	//ui_mux_init();
-	//inverter_3phase_init_config();
-
-	
-	board_hardware_gpio_config_output_pp_pins_load_config		(LED1_PORT,GPIO_PIN_3);
-	__hardware_gpio_output_reset(LED1_PORT,GPIO3);
-	
-	timer= board_scheduler_load_timer(TIM);
+	GPIO_Config();
+	//MCTM_Configuration();
+	board_hardware_configuration();
 	
 	
+	timer = board_scheduler_load_timer(TIM);
+	tPaso = board_scheduler_load_timer(TPASO);
 	
-	/*
-	if(flash_user_store_erase() == FLASH_COMPLETE)
-		printf("Borro bien la flash\n");
-	else
-		printf("Hubo un error al borrar la flash\n");
+	//motor_3phase_start_motor();
+	//motor_3phase_set_motor_direction(MOTOR_DIRECTION_FOWARD);
 	
-	if(flash_user_is_the_flash_empty())
-		printf("flash vacia\n");
-	else
-		printf("flash no vacia\n");
 	
-	flash_user_write_1byte_at_offset(0,0);
 	
-	if(flash_user_is_the_flash_empty())
-		printf("flash vacia\n");
-	else
-		printf("flash no vacia\n");
-	*/
-	
-
 	while(1)
 	{
 		if(board_scheduler_is_time_expired(timer))
 		{			
-			timer= board_scheduler_load_timer(TIM);
-			__hardware_gpio_output_toggle(LED1_PORT,GPIO3);
-			
-			/*
-			printf("switches:%d\n\r",ui_mux_get_switches_state());
-			if(var>=0x40)
-				var=1;
-			else
-				var<<=1;
-			
-			ui_mux_set_leds_state(var);
-			*/
-			
-
+			timer = board_scheduler_load_timer(TIM);
+			__hardware_gpio_output_toggle(GPIOC,GPIO3);
+			//motor_3phase_starting_state_machine();
 		}
+		
+		
+		if(board_scheduler_is_time_expired(tPaso))
+		{
+			tPaso = board_scheduler_load_timer(TPASO-cont);
+			inverter_3phase_comm_set_seq(seq,INVERTER_STATE_OVERWRITE);
+			seq = SiguienteSeq(seq);
+			//cont++;
+			//cont %= TPASO;
+		}
+		
 	}
 }

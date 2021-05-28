@@ -1,4 +1,5 @@
 #include "AL00_micro_ht32f52241.h"
+#include "Jose.h"
 
 
 //-------------------------------------------
@@ -431,7 +432,7 @@ void hardware_pwm_break_function_link_callback(void (*func_pointer)(void))
 
 static void micro_pwm_config(void)
 {
-		/*	HT32F52231/41
+	/*	HT32F52231/41
 			 
 			PB15    PA14    PC1  	      |		CH0
 			PA10		PB0     PB7    	    | 	CH1
@@ -445,14 +446,26 @@ static void micro_pwm_config(void)
   TM_OutputInitTypeDef 		 TM_OutputInitStructure;
 	
 	MCTM_CHBRKCTRInitTypeDef CHBRKCTRInitStructure;
-
+	
+  CKCU_PeripClockConfig_TypeDef CKCUClock = {{ 0 }};
+  CKCUClock.Bit.AFIO       = 1;
+  CKCUClock.Bit.MCTM0      = 1;
+  CKCU_PeripClockConfig(CKCUClock, ENABLE);
+	
 	
 	/* Configure the GPIO as TM channel output AFIO function                                       */
   //AFIO_GPxConfig(GPIO_PA, AFIO_PIN_11, AFIO_FUN_MCTM_GPTM);	//CH1 PA11
 	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_9 , AFIO_FUN_MCTM_GPTM);	//CH3 PB9
 	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_15, AFIO_FUN_MCTM_GPTM);	//CH0 PB15
 	
-	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_4 , AFIO_FUN_MCTM_GPTM);	//PB4: BREAK PIN
+	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_4 , AFIO_FUN_MCTM_GPTM);	//PB4: BREAK PIN
+	
+	//AFIO_GPxConfig(GPIO_PC, AFIO_PIN_2, AFIO_FUN_MCTM_GPTM);		//CH0 PC2  - Directo
+	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_15, AFIO_FUN_MCTM_GPTM);		//CH0 PB15 - Negado
+	AFIO_GPxConfig(GPIO_PA, AFIO_PIN_11, AFIO_FUN_MCTM_GPTM);		//CH1 PA11 - Directo
+	//AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);		//CH1 PA10 - Negado
+	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_9 , AFIO_FUN_MCTM_GPTM);		//CH3 PB9  - Negado
+	
 	
 	TM_TimeBaseInitStructure.CounterReload = 100;
   TM_TimeBaseInitStructure.Prescaler = 40;
@@ -463,37 +476,29 @@ static void micro_pwm_config(void)
 	
   
   TM_OutputInitStructure.OutputMode = TM_OM_PWM2;
-  TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;	 //TM_CHCTL_DISABLE
-  TM_OutputInitStructure.ControlN = TM_CHCTL_ENABLE;//TM_CHCTL_ENABLE;
+  TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;		//TM_CHCTL_DISABLE
+  TM_OutputInitStructure.ControlN = TM_CHCTL_ENABLE;	//TM_CHCTL_ENABLE
   TM_OutputInitStructure.Polarity = TM_CHP_NONINVERTED;
   TM_OutputInitStructure.PolarityN = TM_CHP_NONINVERTED;
   TM_OutputInitStructure.IdleState = MCTM_OIS_LOW;
-  TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;//MCTM_OIS_LOW
+  TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;	//MCTM_OIS_LOW
 	
-	
-	/*	INICIO CODIGO JOSE	*/
-	AFIO_GPxConfig(GPIO_PC, AFIO_PIN_2, AFIO_FUN_MCTM_GPTM);	//CH0 PC2
-	
-	//LED CH0 (PC2)
+	//HIN3 CH0 (PB15) - Negado
 	TM_OutputInitStructure.Channel = TM_CH_0;
-	TM_OutputInitStructure.Compare = 50;
+	TM_OutputInitStructure.Polarity = TM_CHP_INVERTED;			//Jose - Agrego esto para que los canales tengan la misma polaridad
+	TM_OutputInitStructure.Compare = 30;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
-	/*	FIN CODIGO JOSE	*/
-	
-	/*
-	//HIN1 CH1 (PA11) 
+	//HIN1 CH1 (PA11) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_1;
-  TM_OutputInitStructure.Compare = 80;
+  TM_OutputInitStructure.Compare = 30;
+	TM_OutputInitStructure.PolarityN = TM_CHP_NONINVERTED;	//Jose - Agrego esto para que los canales tengan la misma polaridad
   TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
-	//HIN2 CH3 (PB9)
+	//HIN2 CH3 (PB9) - Negado
 	TM_OutputInitStructure.Channel = TM_CH_3;
-	TM_OutputInitStructure.Compare = 80;
+	TM_OutputInitStructure.Compare = 30;
+	TM_OutputInitStructure.PolarityN = TM_CHP_INVERTED;			//Jose - Agrego esto para que los canales tengan la misma polaridad
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
-	//HIN3 CH0 (PB15)
-	TM_OutputInitStructure.Channel = TM_CH_0;
-	TM_OutputInitStructure.Compare = 80;
-	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
-	*/
+	
 	
 	TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);	//IRQ de time_before_ton
 	NVIC_EnableIRQ(MCTM0_IRQn);
@@ -503,12 +508,12 @@ static void micro_pwm_config(void)
 	MCTM_CHMOECmd(HT_MCTM0, ENABLE);
 	
 	TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE);
-	//TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);
-	//TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);
-	//TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);
 	
 	//TM_IntConfig(HT_MCTM0,TM_FLAG_CH2CC,ENABLE);
-		
+	
 	CHBRKCTRInitStructure.AutomaticOutput = MCTM_CHAOE_DISABLE;
 	CHBRKCTRInitStructure.Break0 = MCTM_BREAK_DISABLE;
 	CHBRKCTRInitStructure.Break0Polarity = MCTM_BREAK_POLARITY_HIGH; 
@@ -519,15 +524,13 @@ static void micro_pwm_config(void)
 	CHBRKCTRInitStructure.OSSRState = MCTM_OSSR_STATE_ENABLE;
 	//TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,ENABLE);
 
-	MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
-	
+	//MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
 }
 
 
 void MCTM0_IRQHandler (void)
 {
 	
-	/*
 	if(TM_GetFlagStatus(HT_MCTM0,TM_EVENT_CH2CC))
 	{
 		  (*func_ptr_callback_pwm_end_toff)();
@@ -538,7 +541,7 @@ void MCTM0_IRQHandler (void)
 		(*func_ptr_callback_pwm_break)();	
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);
 	}
-	*/
+	
 }
 
 
@@ -771,6 +774,8 @@ void micro_config (void)
 {
 	//RECORDAR DE MODIFICAR EL ARCHIVO "system_ht32f5xxxxx_02.c" PARA CONFIGURAR EL CLOCK CON EL OSC INTERNO (HSI)
 	
+	
+	
   NVIC_Configuration();               /* NVIC configuration                                                 */
   CKCU_Configuration();               /* System Related configuration                                       */
   GPIO_Configuration();               /* GPIO Related configuration                                         */
@@ -778,15 +783,16 @@ void micro_config (void)
 	SYSTICK_Configuration();
 	
 	micro_gpios_outputs_pp_config();	
-	micro_gpios_inputs_pullup_config();
-	micro_gpios_hiz_config();
-	micro_gpios_edge_events_config();
-		
+	//micro_gpios_inputs_pullup_config();
+	//micro_gpios_hiz_config();
+	//micro_gpios_edge_events_config();
+	
+	
 	micro_pwm_config();
 	
-	micro_timers_config();
+	//micro_timers_config();
 
-	micro_adc_config();	
+	//micro_adc_config();	
 }
 	
 
@@ -890,7 +896,46 @@ int32_t hardware_gpio_event_falling_event_link_callback(void (*func_pointer)(voi
 	return 0;
 }
 
+
+
+/*********************************************************************************************************//**
+ * Funcion Creada por Jose
+ * @brief Enable or Disable the TMx channel N or not N.
+ * @param TMx: where TMx is the selected TM from the TM peripheral.
+ * @param Channel: Specify the TM channel.
+ *        This parameter can be one of the following values:
+ *        @arg TM_CH_0 : TM channel 0
+ *        @arg TM_CH_1 : TM channel 1
+ *        @arg TM_CH_2 : TM channel 2
+ *        @arg TM_CH_3 : TM channel 3
+ * @param Control: This parameter can be TM_CHCTL_ENABLE or TM_CHCTL_DISABLE.
+ * @param Type: Type of Channel, can be NORMAL or NOTNORMAL
+ * @retval None
+ ************************************************************************************************************/
+void TM_ChannelED(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, TM_CHCTL_Enum Control, int Type)
+{
+  /* Check the parameters                                                                                   */
+  Assert_Param(IS_TM(TMx));
+  Assert_Param(IS_TM_CH(Channel));
+  Assert_Param(IS_TM_CHCTL(Control));
 	
+	/*
+	if(Channel & 0x03)					// TM_CH_3
+	{
+		Type = 0;
+		Channel = 0x04;
+	}
+	*/
+	
+	// Reset the CHxE Bit
+	TMx->CHCTR &= ~(u32)((0x01 << (Channel*2)) << Type);
+
+	// Set the CHxE Bit if aplies
+	TMx->CHCTR |= (u32)((Control << (Channel*2)) << Type);
+}
+
+
+
 
 
 /*********************************************************************************************************//**

@@ -98,7 +98,7 @@ uint8_t ui_mux_get_leds_state(void)
  */
 void 		ui_mux_init (void)
 {
-	//ui_mux_outputs_state_init();
+	ui_mux_outputs_state_init();
 	board_timer_link_callback(ui_mux_driver_routine,BOARD_TIM_UI_SEL_CALLBACK);
 	ui_mux_driver_routine();
 }

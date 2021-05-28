@@ -1,5 +1,5 @@
-./ht32/52241/obj/main.o: ..\main.c ..\Inc\AL01_board_iq_aed_rev20191011.h \
-  ..\Inc\AL00_micro_ht32f52241.h ..\library\HT32F5xxxx_Driver\inc\ht32.h \
+./ht32/52241/obj/jose.o: Jose.c ..\Inc\AL00_micro_ht32f52241.h \
+  ..\library\HT32F5xxxx_Driver\inc\ht32.h \
   ..\library\Device\Holtek\HT32F5xxxx\Include\ht32f5xxxx_01.h \
   ..\library\HT32F5xxxx_Driver\inc\ht32_config.h \
   ..\library\CMSIS\Include\core_cm0plus.h \
@@ -38,8 +38,9 @@
   ..\utilities\ht32_board.h ..\utilities\HT32_board\ht32f52241_sk.h \
   ..\utilities\common\i2c_eeprom.h ..\utilities\common\spi_flash.h \
   ..\utilities\common\ebi_lcd.h ..\ht32_board_config.h \
-  ..\Inc\AL00_common_functions.h ..\Inc\AL01_flash_management.h \
-  ..\Inc\AL01_board_iq_aed_rev20191011.h ..\Inc\AL02_inverter_3phase.h \
+  ..\Inc\AL00_common_functions.h ..\Inc\AL01_board_iq_aed_rev20191011.h \
+  ..\Inc\AL00_micro_ht32f52241.h ..\Inc\AL01_flash_management.h \
+  ..\Inc\AL01_board_iq_aed_rev20191011.h \
   ..\Inc\AL02_switches_leds_mux_driver.h \
   ..\Inc\AL03_motor_3phase_driver.h ..\Inc\AL02_inverter_3phase.h \
   ..\Inc\Jose.h

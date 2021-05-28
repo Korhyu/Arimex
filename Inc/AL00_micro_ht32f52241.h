@@ -180,12 +180,23 @@ int32_t hardware_pwm_get_ton_elapsed								(void);
 void		hardware_pwm_end_toff_link_callback 				(void (*func_pointer)(void));
 void 		hardware_pwm_break_function_link_callback		(void (*func_pointer)(void));
 
-#define __hardware_pwm_hin1_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE)
-#define __hardware_pwm_hin1_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_DISABLE)
-#define __hardware_pwm_hin2_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE)
-#define __hardware_pwm_hin2_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_DISABLE)
-#define __hardware_pwm_hin3_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE)
-#define __hardware_pwm_hin3_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE)
+// Funciones agregadas por Jose porque TM_ChannelConfig no funciona con los canales N
+void TM_ChannelED (HT_TM_TypeDef*, TM_CH_Enum, TM_CHCTL_Enum, int);
+#define __hardware_pwm_hin1_enable()								TM_ChannelED(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE, NOTNORMAL)
+#define __hardware_pwm_hin1_disable()								TM_ChannelED(HT_MCTM0, TM_CH_1, TM_CHCTL_DISABLE, NOTNORMAL)
+#define __hardware_pwm_hin2_enable()								TM_ChannelED(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE, NORMAL)
+#define __hardware_pwm_hin2_disable()								TM_ChannelED(HT_MCTM0, TM_CH_3, TM_CHCTL_DISABLE, NORMAL)
+#define __hardware_pwm_hin3_enable()								TM_ChannelED(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE, NORMAL)
+#define __hardware_pwm_hin3_disable()								TM_ChannelED(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE, NORMAL)
+#define NORMAL		0
+#define NOTNORMAL 1
+
+//#define __hardware_pwm_hin1_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE)
+//#define __hardware_pwm_hin1_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_DISABLE)
+//#define __hardware_pwm_hin2_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE)
+//#define __hardware_pwm_hin2_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_DISABLE)
+//#define __hardware_pwm_hin3_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE)
+//#define __hardware_pwm_hin3_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE)
 
 #define __hardware_pwm_end_toff_disable_irq()				{TM_IntConfig(HT_MCTM0,TM_FLAG_CH2CC,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);}
 #define __hardware_pwm_end_toff_enable_irq()				{TM_IntConfig(TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC); HT_MCTM0,TM_FLAG_CH2CC,ENABLE);}

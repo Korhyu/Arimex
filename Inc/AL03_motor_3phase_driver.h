@@ -43,6 +43,8 @@ int32_t motor_3phase_get_pwm_ton_us_set_point(void);
 int32_t bemf_get_fail_sync_rate_ppm (void);
 
 
+void motor_3phase_starting_state_machine(void);
+
 struct motor_3phase_drive{
 	int32_t motor_state;
 

@@ -38,4 +38,5 @@
   ..\utilities\ht32_board.h ..\utilities\HT32_board\ht32f52241_sk.h \
   ..\utilities\common\i2c_eeprom.h ..\utilities\common\spi_flash.h \
   ..\utilities\common\ebi_lcd.h ..\ht32_board_config.h \
-  ..\Inc\AL00_common_functions.h
+  ..\Inc\AL00_common_functions.h ..\Inc\Jose.h \
+  ..\Inc\AL00_micro_ht32f52241.h
