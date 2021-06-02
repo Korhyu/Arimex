@@ -22,10 +22,10 @@
   * @brief  Main program.
   * @retval None
   ***********************************************************************************************************/
-#define TIM 250
-#define TPASO 170							//Tiempo entre pasos
-#define REV_START 70					//Vueltas de arranque
-#define ERROR -1
+#define TIM 				250
+#define TPASO 			170					//Tiempo entre pasos
+#define REV_START 	70					//Vueltas de arranque
+#define ERROR 			-1
 
 
 
@@ -38,30 +38,17 @@ int main(void)
 	uint32_t conteo = 0;
 	
 	GPIO_Config();
-	//MCTM_Configuration();
 	board_hardware_configuration();
-	
 	
 	timer = board_scheduler_load_timer(TIM);
 	tPaso = board_scheduler_load_timer(TPASO);
 	
-	//motor_3phase_start_motor();
-	//motor_3phase_set_motor_direction(MOTOR_DIRECTION_FOWARD);
-	
-	
-	
+	//Arranque Jose
+	// En vez de esto deberia usar:
+	//motor_3phase_init();
+	//motor_3phase_starting_state_machine();
 	while(1)
 	{
-		/*
-		if(board_scheduler_is_time_expired(timer))
-		{			
-			timer = board_scheduler_load_timer(TIM);
-			__hardware_gpio_output_toggle(GPIOC,GPIO3);
-			//motor_3phase_starting_state_machine();
-		}
-		*/
-		
-		
 		if(board_scheduler_is_time_expired(tPaso))
 		{
 			tPaso = board_scheduler_load_timer(TPASO-revCount);
@@ -71,16 +58,7 @@ int main(void)
 			{
 				//Di una vuelta y paso a cambiar la frecuencia de giro
 				revCount++;
-				__hardware_gpio_output_toggle(GPIOC,GPIO3);
 			}
-			
-			/*
-			if (revCount == REV_START)
-			{
-				inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
-			}
-			*/
 		}
-		
 	}
 }

@@ -7,9 +7,9 @@ Section Cross References
     main.o(.text.main) refers to jose.o(.text.GPIO_Config) for GPIO_Config
     main.o(.text.main) refers to al01_board_iq_aed_rev20191011.o(.text.board_hardware_configuration) for board_hardware_configuration
     main.o(.text.main) refers to al01_board_iq_aed_rev20191011.o(.text.board_scheduler_load_timer) for board_scheduler_load_timer
+    main.o(.text.main) refers to jose.o(.text.SiguienteSeq) for SiguienteSeq
     main.o(.text.main) refers to al01_board_iq_aed_rev20191011.o(.text.board_scheduler_is_time_expired) for board_scheduler_is_time_expired
     main.o(.text.main) refers to al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq) for inverter_3phase_comm_set_seq
-    main.o(.text.main) refers to jose.o(.text.SiguienteSeq) for SiguienteSeq
     main.o(.ARM.exidx.text.main) refers to main.o(.text.main) for [Anonymous Symbol]
     ht32f5xxxx_01_it.o(.ARM.exidx.text.NMI_Handler) refers to ht32f5xxxx_01_it.o(.text.NMI_Handler) for [Anonymous Symbol]
     ht32f5xxxx_01_it.o(.text.HardFault_Handler) refers to ht32f5xxxx_01_it.o(.bss.HardFault_Handler.gIsContinue) for [Anonymous Symbol]
@@ -2521,8 +2521,7 @@ Image Symbol Table
     __arm_cp.2_3                             0x00000f8c   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
     __arm_cp.2_4                             0x00000f90   Number         4  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
     [Anonymous Symbol]                       0x00000f94   Section        0  main.o(.text.main)
-    __arm_cp.0_0                             0x00000ff0   Number         4  main.o(.text.main)
-    [Anonymous Symbol]                       0x00000ff4   Section        0  al00_micro_ht32f52241.o(.text.micro_config)
+    [Anonymous Symbol]                       0x00000ff2   Section        0  al00_micro_ht32f52241.o(.text.micro_config)
     micro_gpios_outputs_pp_config            0x00001011   Thumb Code   120  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
     [Anonymous Symbol]                       0x00001010   Section        0  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
     __arm_cp.28_0                            0x00001088   Number         4  al00_micro_ht32f52241.o(.text.micro_gpios_outputs_pp_config)
@@ -2702,8 +2701,8 @@ Image Symbol Table
     hardware_gpio_config_output_pp_pins_load_config 0x00000ca1   Thumb Code    32  al00_micro_ht32f52241.o(.text.hardware_gpio_config_output_pp_pins_load_config)
     hardware_pwm_start_with_ton              0x00000cc1   Thumb Code    24  al00_micro_ht32f52241.o(.text.hardware_pwm_start_with_ton)
     inverter_3phase_comm_set_seq             0x00000cd9   Thumb Code   680  al02_inverter_3phase.o(.text.inverter_3phase_comm_set_seq)
-    main                                     0x00000f95   Thumb Code    92  main.o(.text.main)
-    micro_config                             0x00000ff5   Thumb Code    28  al00_micro_ht32f52241.o(.text.micro_config)
+    main                                     0x00000f95   Thumb Code    94  main.o(.text.main)
+    micro_config                             0x00000ff3   Thumb Code    28  al00_micro_ht32f52241.o(.text.micro_config)
     __scatterload_copy                       0x00001195   Thumb Code    14  handlers.o(i.__scatterload_copy)
     __scatterload_null                       0x000011a3   Thumb Code     2  handlers.o(i.__scatterload_null)
     __scatterload_zeroinit                   0x000011a5   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
@@ -2810,8 +2809,9 @@ Memory Map of the image
     0x00000ca0   0x00000ca0   0x00000020   Code   RO           34    .text.hardware_gpio_config_output_pp_pins_load_config  al00_micro_ht32f52241.o
     0x00000cc0   0x00000cc0   0x00000018   Code   RO           62    .text.hardware_pwm_start_with_ton  al00_micro_ht32f52241.o
     0x00000cd8   0x00000cd8   0x000002bc   Code   RO          196    .text.inverter_3phase_comm_set_seq  al02_inverter_3phase.o
-    0x00000f94   0x00000f94   0x00000060   Code   RO            2    .text.main          main.o
-    0x00000ff4   0x00000ff4   0x0000001c   Code   RO           74    .text.micro_config  al00_micro_ht32f52241.o
+    0x00000f94   0x00000f94   0x0000005e   Code   RO            2    .text.main          main.o
+    0x00000ff2   0x00000ff2   0x0000001c   Code   RO           74    .text.micro_config  al00_micro_ht32f52241.o
+    0x0000100e   0x0000100e   0x00000002   PAD
     0x00001010   0x00001010   0x00000080   Code   RO           84    .text.micro_gpios_outputs_pp_config  al00_micro_ht32f52241.o
     0x00001090   0x00001090   0x00000104   Code   RO           86    .text.micro_pwm_config  al00_micro_ht32f52241.o
     0x00001194   0x00001194   0x0000000e   Code   RO         1622    i.__scatterload_copy  mc_p.l(handlers.o)
@@ -2869,14 +2869,14 @@ Image component sizes
        306          8          0          0          0      17483   ht32f5xxxx_tm.o
        128         24          0          0          0       8852   ht32f5xxxx_usart.o
         78         12          0          0          0       6237   jose.o
-        96          4          0          0          0       1189   main.o
+        94          0          0          0          0        840   main.o
        336        218          0          0        512        692   startup_ht32f5xxxx_01.o
        228         20          0          4          0       2639   system_ht32f5xxxx_02.o
 
     ----------------------------------------------------------------------
-      4380        578         44        152        536     114259   Object Totals
+      4380        574         44        152        536     113910   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        10          0          0          0          4          0   (incl. Padding)
+        12          0          0          0          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -2914,9 +2914,9 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      4532        594         44        152        536     114295   Grand Totals
-      4532        594         44        152        536     114295   ELF Image Totals
-      4532        594         44        152          0          0   ROM Totals
+      4532        590         44        152        536     113946   Grand Totals
+      4532        590         44        152        536     113946   ELF Image Totals
+      4532        590         44        152          0          0   ROM Totals
 
 ==============================================================================
 

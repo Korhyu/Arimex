@@ -1,2 +1,4 @@
 ##Filetypes
 *.o
+*.bin
+*.bak

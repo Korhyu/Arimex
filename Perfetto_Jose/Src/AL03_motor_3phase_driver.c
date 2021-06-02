@@ -13,38 +13,38 @@
 /*Tiempo de carga de bootstrap (ojo que tambien es frenado electrico del motor)*/
 #define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						200
 /*Tiempo de alineacion del rotor a posicion conocida*/
-#define MOTOR_ALIGNMENT_TIME_mS 							100
-#define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ2
+#define MOTOR_ALIGNMENT_TIME_mS 									100
+#define MOTOR_ALIGNMENT_SEQ												INVERTER_COMM_SEQ2
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
-#define PWM_IN_CYCLE_BY_CYCLE_PERIOD 				   	   6000
+#define PWM_IN_CYCLE_BY_CYCLE_PERIOD							6000
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT 				 30
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT			30
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
-#define PWM_STARTING_PERIOD_uS 								100
-#define PWM_STARTING_TON_uS 	  						 	 30
+#define PWM_STARTING_PERIOD_uS 										100
+#define PWM_STARTING_TON_uS 	  						 	 		30
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
-#define START_FIRST_STEP_DURATION_INIT_us				   7000
+#define START_FIRST_STEP_DURATION_INIT_us				  7000
 
 /*Este blanking se usa cada vez que se pretende medir ZCD en freewheel. Depende del motor*/
 #define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200
 
-#define MAX_TIMEOUT_WATCHDOG_us 						  30000
+#define MAX_TIMEOUT_WATCHDOG_us 						  		30000
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
-#define SET_POINT_PWM_TON_UPDATE_TIME_mS					  1 /*Intervalo en milisegundos en que se modifica el Ton del PWM*/
-#define SET_POINT_MAX_PWM_TON_uS							 88 /*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
-#define SET_POINT_MIN_PWM_TON_uS							 20
-#define SET_POINT_PWM_TON_INC_DEC_uS	 					  1 /*Valor de incremento/decremento de TON */
+#define SET_POINT_PWM_TON_UPDATE_TIME_mS		  1		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
+#define SET_POINT_MAX_PWM_TON_uS							88	/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
+#define SET_POINT_MIN_PWM_TON_uS							20
+#define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
 
-#define TIME_TO_GET_RUNNING_TIMEOUT_mS						200
+#define TIME_TO_GET_RUNNING_TIMEOUT_mS				200
 
 
-#define MASKED_SET_POINT_PWM_TON(set_point)					(set_point-(set_point&(SET_POINT_PWM_TON_INC_DEC_uS-1)))
+#define MASKED_SET_POINT_PWM_TON(set_point)		(set_point-(set_point&(SET_POINT_PWM_TON_INC_DEC_uS-1)))
 
 
 /*Blanking que se aplica cuando esta en close loop y correct timming*/
@@ -62,37 +62,37 @@
 //******************************************
 
 //Estados de las maquina de estados del arranque del motor
-#define STARTING_STATE_INIT			 					0
+#define STARTING_STATE_INIT			 										0
 #define STARTING_STATE_BREAK_AND_CHARGE_BOOTSTRAP		1
-#define STARTING_STATE_ALIGMENT							2
-#define STARTING_STATE_FIRST_STEPS_FROM_STAND			3
+#define STARTING_STATE_ALIGMENT											2
+#define STARTING_STATE_FIRST_STEPS_FROM_STAND				3
 #define STARTING_STATE_FREEWHEEL_PERIOD_MEASURE			4
-#define STARTING_STATE_FREEWHEEL_SYNC					5
-#define STARTING_STATE_STEPS_CORRECT_TIMMING			6
-#define STARTING_STATE_COUNT							8
+#define STARTING_STATE_FREEWHEEL_SYNC								5
+#define STARTING_STATE_STEPS_CORRECT_TIMMING				6
+#define STARTING_STATE_COUNT												8
 
 #define STARTING_SUB_STATE_UPDATING_PWM_SET_POINT		0
 #define STARTING_SUB_STATE_ANALYZING_FAIL_SYNC			1
 #define STARTING_SUB_STATE_CORRECTING_PARAMETERS		2
-#define STARTING_SUB_STATE_RUNNING						3
+#define STARTING_SUB_STATE_RUNNING									3
 
 //Estados de BEMF en closeloop "correct timming"
-#define BEMF_STATE_COMMUTATE		0
-#define BEMF_STATE_BLANKING_ZCD		1
-#define BEMF_STATE_WAITING_ZCD		2
-#define BEMF_STATE_ZCD_DETECTED		3
-#define BEMF_STATE_ZCD_LOST			4
+#define BEMF_STATE_COMMUTATE						0
+#define BEMF_STATE_BLANKING_ZCD					1
+#define BEMF_STATE_WAITING_ZCD					2
+#define BEMF_STATE_ZCD_DETECTED					3
+#define BEMF_STATE_ZCD_LOST							4
 
 //Tipos de sensado de ZCD
 #define BEMF_SENSE_TYPE_SAMPLE_END_TOFF			0
-#define BEMF_SENSE_TYPE_CONTINUOUS				1
+#define BEMF_SENSE_TYPE_CONTINUOUS					1
 
 
-#define STOP_RUNNING_FLAG_STOP_MOTOR			0
+#define STOP_RUNNING_FLAG_STOP_MOTOR				0
 #define STOP_RUNNING_FLAG_DONT_STOP_MOTOR		1
 
-#define FAIL_SYNC_RATE_SENSE_DISABLE			0
-#define FAIL_SYNC_RATE_SENSE_ENABLE				1
+#define FAIL_SYNC_RATE_SENSE_DISABLE				0
+#define FAIL_SYNC_RATE_SENSE_ENABLE					1
 
 void motor_3phase_starting_state_machine		(void);
 void bemf_zcd_disable_detection_within_time_us 	(int32_t time_us);
@@ -102,11 +102,11 @@ void bemf_sense_set_type						(int32_t bemf_sense_type_p);
 int32_t  motor_3phase_abort_motor				(int32_t motor_stop_method,int32_t motor_state_exit_value);
 
 
-void end_of_toff_pwm_callback		(void);
-void blanking_timer_expired_callback(void);
-void bemf_comp_callback				(void);
-void motor_watchdog_callback		(void);
-void commutation_callback			(void);
+void end_of_toff_pwm_callback					(void);
+void blanking_timer_expired_callback	(void);
+void bemf_comp_callback								(void);
+void motor_watchdog_callback					(void);
+void commutation_callback							(void);
 
 void link_zcd_expected_calculate_function (int32_t(*func_pointer)(int32_t));
 
@@ -297,6 +297,9 @@ void motor_3phase_task(void)
 									break;
 
 		case MOTOR_STATE_STARTING:
+			//Jose: Falta codigo aca(?)
+			//Falta la parte del motor funcionando normalmente (?)
+			//Quizas este es el punto donde Fran "tiro la toalla"
 		case MOTOR_STATE_RUNNING:
 									motor_3phase_starting_state_machine();
 									break;
