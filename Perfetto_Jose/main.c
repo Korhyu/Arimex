@@ -23,8 +23,8 @@
   * @retval None
   ***********************************************************************************************************/
 #define TIM 				250
-#define TPASO 			170					//Tiempo entre pasos
-#define REV_START 	70					//Vueltas de arranque
+#define TPASO 			15					//Tiempo entre pasos
+#define REV_START 	10					//Vueltas de arranque
 #define ERROR 			-1
 
 

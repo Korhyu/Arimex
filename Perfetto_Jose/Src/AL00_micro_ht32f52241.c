@@ -484,15 +484,15 @@ static void micro_pwm_config(void)
 	
 	//HIN3 CH0 (PB15) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_0;
-	TM_OutputInitStructure.Compare = 30;
+	TM_OutputInitStructure.Compare = 5;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN1 CH1 (PA10) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_1;
-  TM_OutputInitStructure.Compare = 30;
+  TM_OutputInitStructure.Compare = 5;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN2 CH3 (PB9) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_3;
-	TM_OutputInitStructure.Compare = 30;
+	TM_OutputInitStructure.Compare = 5;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	
 	
