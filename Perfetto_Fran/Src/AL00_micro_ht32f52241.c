@@ -643,6 +643,30 @@ void 		hardware_pwm_set_outputs_to_toff						(void)
 	TM_SetCounter(HT_MCTM0,0);
 }
 
+
+/* Inicio Codigo Jose --------------------------------------------------------- */
+//Alternativa 1: Cargo el contador con el valor de cuenta necesario para mantener
+// el toff haciendo CNTR = PERIODO - TOFF y el reinicio se hace automatico
+void 		hardware_pwm_set_counter_to_toff						(void)
+{
+	u32 toff, periodo;
+	toff = TM_GetCaptureCompare(HT_MCTM0,TM_CH_0);
+	periodo = hardware_pwm_get_period_us();
+	
+	TM_SetCounter(HT_MCTM0,periodo - toff);
+}
+
+//Alternativa 2: Fuerzo el bit de reset del contador usando el registro EVGR
+// Este bit fuerza el reset del CNTR y se vuelve a 0 por hardware. 
+// Ver paginas 180 y 224 del manual, ver tambien seccion reset
+void 		hardware_pwm_reset_counter						(void)
+{
+	TM_GenerateEvent(HT_MCTM0, TM_EVENT_BRKEV);		//Revisar el primer argumento de esta funcion, puede estar mal
+}
+
+
+/* Fin Codigo Jose ------------------------------------------------------------ */
+
 int32_t hardware_pwm_get_ton_elapsed								(void)
 {
 	int32_t value;
