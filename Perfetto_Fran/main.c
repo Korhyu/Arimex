@@ -35,11 +35,17 @@ int main(void)
 	board_hardware_configuration();
 	
 	//Arranque Fran
-	motor_3phase_start_motor();
 	motor_3phase_init();
+	motor_3phase_start_motor();
+	
+	
+	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
 	
 	while(1)
 	{
 		motor_3phase_task();
+		
+		
+		//__hardware_gpio_output_toggle(GPIOB, 11);
 	}
 }

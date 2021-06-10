@@ -13,11 +13,11 @@
 /*Tiempo de carga de bootstrap (ojo que tambien es frenado electrico del motor)*/
 #define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						200
 /*Tiempo de alineacion del rotor a posicion conocida*/
-#define MOTOR_ALIGNMENT_TIME_mS 									100
+#define MOTOR_ALIGNMENT_TIME_mS 									20
 #define MOTOR_ALIGNMENT_SEQ												INVERTER_COMM_SEQ2
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
-#define PWM_IN_CYCLE_BY_CYCLE_PERIOD							6000
+#define PWM_IN_CYCLE_BY_CYCLE_PERIOD							1000
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
@@ -447,6 +447,9 @@ void motor_3phase_starting_state_machine(void)
 										//Hay que setear siempre primero el periodo y despues Ton o Toff. Sino: puede fallar
 										inverter_3phase_pwm_set_period_us(PWM_IN_CYCLE_BY_CYCLE_PERIOD);
 										inverter_3phase_pwm_set_toff_us(PWM_IN_CYCLE_BY_CYCLE_TOFF);
+										
+										//inverter_3phase_pwm_set_ton_us(PWM_IN_CYCLE_BY_CYCLE_PERIOD-PWM_IN_CYCLE_BY_CYCLE_TOFF);
+										//inverter_3phase_pwm_set_toff_us(PWM_IN_CYCLE_BY_CYCLE_TOFF);
 
 										timer_alineacion = board_scheduler_load_timer(MOTOR_ALIGNMENT_TIME_mS);
 										inverter_3phase_comm_set_seq(MOTOR_ALIGNMENT_SEQ, INVERTER_STATE_OVERWRITE);
@@ -470,7 +473,9 @@ void motor_3phase_starting_state_machine(void)
 										bemf_watchdog_set_timeout_us(START_FIRST_STEP_DURATION_INIT_us<<2);
 
 										bemf_zcd_disable_detection_within_time_us(START_FIRST_STEP_DURATION_INIT_us>>1);
-
+										
+										/* Jose ----------------------------------------------- */
+										//board_comp_bemf_enable_rising_irqs_all_phases();
 									}
 									break;
 

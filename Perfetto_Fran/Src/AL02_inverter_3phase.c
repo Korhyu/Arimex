@@ -206,6 +206,7 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 								board_pwm_hin3_enable();
 
 								break;
+		
 
 		default:
 							return -1;
@@ -436,7 +437,11 @@ int32_t inverter_3phase_get_actual_bemf_out (void)
 ********************************************************************************/
 void current_sensor_i_peak_callback (void)
 {
+			__hardware_gpio_output_set(GPIOA, 3);
+	
 	board_pwm_set_outputs_to_toff();
+	
+			__hardware_gpio_output_reset(GPIOA, 3);
 }
 
 

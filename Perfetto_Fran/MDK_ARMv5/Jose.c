@@ -7,6 +7,11 @@
 #include "Jose.h"
 
 
+#define board_pin_set(port, pin)												__hardware_gpio_output_set(port, pin)
+#define board_pin_reset(port, pin)											__hardware_gpio_output_reset(port, pin)
+#define board_pin_toggle(port, pin)											__hardware_gpio_output_toggle(gpio_port,GPIOnum)
+
+
 void MCTM_Configuration(void)
 {
   TM_TimeBaseInitTypeDef MCTM_TimeBaseInitStructure;
@@ -69,14 +74,25 @@ void MCTM_Configuration(void)
 
 void GPIO_Config (void)
 {
-	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_2|GPIO_PIN_3);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_3);
+	// UI de Jose para usar los GPIO a gusto
 	
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOA,GPIO_PIN_0);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_6);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_2);
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOA,GPIO_PIN_15);		//UI LED 2
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_0);			//UI LED 2
+	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_10);		//UI LED 1
+	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_14);		//UI LED 1
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_6);			//LED 1
+	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_7);			//LED 2
+	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOA,GPIO_PIN_8);			//LED 3
 	
-	//board_hardware_configuration();
+	//Los reseteo
+	board_pin_reset(GPIOA, 15);
+	board_pin_reset(GPIOB, 0);
+	//board_pin_reset(GPIOC, 10);
+	//board_pin_reset(GPIOC, 14);
+	board_pin_reset(GPIOC, 6);
+	//board_pin_reset(GPIOC, 7);
+	//board_pin_reset(GPIOA, 8);
+	
 }
 
 

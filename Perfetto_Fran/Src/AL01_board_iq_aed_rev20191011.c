@@ -3,15 +3,9 @@
 
 void board_hardware_configuration (void)
 {
-	/*Jose: Agregue estos pines en las descripciones de cada uno, son los low del puente H
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOA,GPIO_PIN_0);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_6);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_2);
-	*/
-	
 	//Configuraciones de GPIO
 	//GPIOAx como Salida Push Pull
-	board_hardware_gpio_config_output_pp_pins_load_config  	(GPIOA,GPIO_PIN_0);
+	board_hardware_gpio_config_output_pp_pins_load_config  	(GPIOA,GPIO_PIN_0|GPIO_PIN_3);
 	//GPIOAx Como "Open Drain" / HiZ
 	board_hardware_gpio_config_hiz_pins_load_config		   		(GPIOA,GPIOA_PIN_15_HIZ|GPIOA_PIN_6_HIZ);
 	//GPIOAx Como deteccion(irq) en flancos
@@ -20,9 +14,10 @@ void board_hardware_configuration (void)
 	board_hardware_gpio_config_inputs_pins_load_config	   	(GPIOA,GPIOA_PIN_8_IN_PULLUP);
 	
 	//Idem para GPIOBx
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_2|GPIO_PIN_6);
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_2|GPIO_PIN_6|GPIO_PIN_11);
 	board_hardware_gpio_config_hiz_pins_load_config					(GPIOB,GPIOB_PIN_10_HIZ|GPIOB_PIN_14_HIZ|GPIOB_PIN_0_HIZ|GPIOB_PIN_13_HIZ);
 	board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,0);
+	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_5);
 	board_hardware_gpio_config_inputs_pins_load_config			(GPIOB,GPIOB_PIN_12_IN_PULLUP);
 
 	//Idem para GPIOCx

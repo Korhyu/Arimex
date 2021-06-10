@@ -474,25 +474,25 @@ static void micro_pwm_config(void)
   TM_TimeBaseInit(HT_MCTM0, &TM_TimeBaseInitStructure);
 	
   
-  TM_OutputInitStructure.OutputMode = TM_OM_PWM1;
+  TM_OutputInitStructure.OutputMode = TM_OM_PWM2;
   TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;		//TM_CHCTL_DISABLE
-  TM_OutputInitStructure.ControlN = TM_CHCTL_ENABLE;	//TM_CHCTL_ENABLE
-  TM_OutputInitStructure.Polarity = TM_CHP_NONINVERTED;
-  TM_OutputInitStructure.PolarityN = TM_CHP_INVERTED;
+  TM_OutputInitStructure.ControlN = TM_CHCTL_DISABLE;	//TM_CHCTL_ENABLE
+  TM_OutputInitStructure.Polarity = TM_CHP_NONINVERTED;		//TM_CHP_NONINVERTED
+  TM_OutputInitStructure.PolarityN = TM_CHP_INVERTED;			//TM_CHP_INVERTED
   TM_OutputInitStructure.IdleState = MCTM_OIS_LOW;
   TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;	//MCTM_OIS_LOW 
 	
 	//HIN3 CH0 (PB15) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_0;
-	TM_OutputInitStructure.Compare = 30;
+	TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN1 CH1 (PA10) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_1;
-  TM_OutputInitStructure.Compare = 30;
+  TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN2 CH3 (PB9) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_3;
-	TM_OutputInitStructure.Compare = 30;
+	TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	
 	
@@ -518,15 +518,16 @@ static void micro_pwm_config(void)
 	CHBRKCTRInitStructure.LockLevel = MCTM_LOCK_LEVEL_OFF;
 	CHBRKCTRInitStructure.OSSIState = MCTM_OSSI_STATE_ENABLE;
 	CHBRKCTRInitStructure.OSSRState = MCTM_OSSR_STATE_ENABLE;
-	//TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,ENABLE);
-
+	
 	MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
+	
+	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
+
 }
 
 
 void MCTM0_IRQHandler (void)
-{
-	/*
+{	
 	if(TM_GetFlagStatus(HT_MCTM0,TM_EVENT_CH2CC))
 	{
 		  (*func_ptr_callback_pwm_end_toff)();
@@ -537,7 +538,6 @@ void MCTM0_IRQHandler (void)
 		(*func_ptr_callback_pwm_break)();	
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);
 	}
-	*/
 }
 
 /* Funcion Jose -------------------------------------------------- */
@@ -783,7 +783,7 @@ void SCTM0_IRQHandler (void)
 void SCTM1_IRQHandler (void)
 {
 	TM_ClearFlag(HT_SCTM1,TM_INT_UEV);
-	(*func_ptr_callback_sctm1)();	
+	(*func_ptr_callback_sctm1)();
 }
 
 
@@ -1038,7 +1038,7 @@ void CKCU_Configuration(void)
   CKCUClock.Bit.UART0      = 1;
   CKCUClock.Bit.UART1      = 1;
   CKCUClock.Bit.AFIO       = 1;
-  CKCUClock.Bit.EXTI       = 0;
+  CKCUClock.Bit.EXTI       = 1;
   CKCUClock.Bit.SCI0       = 0;
   CKCUClock.Bit.SCI1       = 0;
   CKCUClock.Bit.I2S        = 0;

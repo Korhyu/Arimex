@@ -81,6 +81,10 @@ int32_t board_scheduler_is_time_expired		(int32_t timer);
 																																			 board_comp_bemf_disable_irq(BOARD_COMP_BEMF_V_PHASE_SELECT);\
 																																			 board_comp_bemf_disable_irq(BOARD_COMP_BEMF_W_PHASE_SELECT);}
 
+#define board_comp_bemf_enable_rising_irqs_all_phases()								{board_comp_bemf_rising_enable_irq(BOARD_COMP_BEMF_U_PHASE_SELECT);\
+																																			 board_comp_bemf_rising_enable_irq(BOARD_COMP_BEMF_V_PHASE_SELECT);\
+																																			 board_comp_bemf_rising_enable_irq(BOARD_COMP_BEMF_W_PHASE_SELECT);}
+
 #define board_comp_bemf_rising_link_callback(func_ptr,phase_select)		hardware_gpio_event_rising_event_link_callback(func_ptr,phase_select)
 #define board_comp_bemf_falling_link_callback(func_ptr,phase_select)	hardware_gpio_event_falling_event_link_callback(func_ptr,phase_select)
 
@@ -92,7 +96,9 @@ int32_t board_scheduler_is_time_expired		(int32_t timer);
 //			GPIO - OUTPUS PP MISC
 //-------------------------------------------
 //	Defines de pines de GPIO outputs! para las funciones de config
-
+#define board_pin_set(port, pin)												__hardware_gpio_output_set(port, pin)
+#define board_pin_reset(port, pin)											__hardware_gpio_output_reset(port, pin)
+#define board_pin_toggle(port, pin)											_hardware_gpio_output_toggle(gpio_port,GPIOnum)								
 
 
 //-------------------------------------------
