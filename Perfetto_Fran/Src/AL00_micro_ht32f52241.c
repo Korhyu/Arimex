@@ -976,8 +976,6 @@ void TM_ChannelED(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, TM_CHCTL_Enum Control,
 
 
 
-
-
 /*********************************************************************************************************//**
   * @brief  Configure the NVIC Systick
   * @retval None

@@ -17,8 +17,8 @@
 #define MOTOR_ALIGNMENT_SEQ												INVERTER_COMM_SEQ2
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
-#define PWM_IN_CYCLE_BY_CYCLE_PERIOD							1000
-#define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300
+#define PWM_IN_CYCLE_BY_CYCLE_PERIOD							6000
+#define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300 / 2					// El /2 es porque en algun momento carga el doble del valor indicado...
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
 #define STARTING_FIRST_STEPS_FROM_STAND_COUNT			30
@@ -447,9 +447,6 @@ void motor_3phase_starting_state_machine(void)
 										//Hay que setear siempre primero el periodo y despues Ton o Toff. Sino: puede fallar
 										inverter_3phase_pwm_set_period_us(PWM_IN_CYCLE_BY_CYCLE_PERIOD);
 										inverter_3phase_pwm_set_toff_us(PWM_IN_CYCLE_BY_CYCLE_TOFF);
-										
-										//inverter_3phase_pwm_set_ton_us(PWM_IN_CYCLE_BY_CYCLE_PERIOD-PWM_IN_CYCLE_BY_CYCLE_TOFF);
-										//inverter_3phase_pwm_set_toff_us(PWM_IN_CYCLE_BY_CYCLE_TOFF);
 
 										timer_alineacion = board_scheduler_load_timer(MOTOR_ALIGNMENT_TIME_mS);
 										inverter_3phase_comm_set_seq(MOTOR_ALIGNMENT_SEQ, INVERTER_STATE_OVERWRITE);
@@ -473,9 +470,6 @@ void motor_3phase_starting_state_machine(void)
 										bemf_watchdog_set_timeout_us(START_FIRST_STEP_DURATION_INIT_us<<2);
 
 										bemf_zcd_disable_detection_within_time_us(START_FIRST_STEP_DURATION_INIT_us>>1);
-										
-										/* Jose ----------------------------------------------- */
-										//board_comp_bemf_enable_rising_irqs_all_phases();
 									}
 									break;
 
@@ -563,6 +557,8 @@ void motor_3phase_starting_state_machine(void)
 #define AVG_FACTOR_ELECTRICAL_PERIOD	1
 void zcd_event_first_steps_state (void)
 {
+	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+	
 	gv.bemf_state = BEMF_STATE_ZCD_DETECTED;
 
 	//Mido el periodo entre dos detecciones de pendiente positiva. Esto es porque en algunos motores hay asimetria
@@ -607,6 +603,8 @@ void zcd_event_first_steps_state (void)
 
 		bemf_zcd_disable_detection_within_time_us(DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us);
 	}
+	
+	//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 }
 
 
@@ -919,6 +917,27 @@ void bemf_sense_set_type(int32_t bemf_sense_type_p)
 void end_of_toff_pwm_callback(void)
 {
 	int32_t aux;
+	
+	//INVERTER_BEMF_ON_OUTPUT_1
+	//inverter_actual_comm_seq
+	/* Auxiliar Jose ----------------------------- */
+	int32_t seq;
+	int32_t cont=0;
+	seq = inverter_3phase_get_actual_comm_seq();
+	if (seq == (1<<2))
+	{
+		//estoy todavia en "la primer" secuencia
+		cont++;	
+	}
+	if (seq == (1<<3))
+	{
+		//estoy en "la segunda" secuencia
+		cont++;
+		seq = inverter_3phase_get_actual_comm_seq() - 1;
+		cont--;
+	}
+	
+	
 	switch(inverter_3phase_get_actual_bemf_out())
 	{
 		case	INVERTER_BEMF_ON_OUTPUT_1:		aux = board_comp_bemf_get_output_u_phase();
@@ -940,6 +959,8 @@ void end_of_toff_pwm_callback(void)
 		if(aux == COMP_BEMF_OUT_SENSING_BEMF_IS_BELOW_VREF)
 			zcd_event();
 	}
+	
+	__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 }
 
 

@@ -16,8 +16,8 @@ void board_hardware_configuration (void)
 	//Idem para GPIOBx
 	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_2|GPIO_PIN_6|GPIO_PIN_11);
 	board_hardware_gpio_config_hiz_pins_load_config					(GPIOB,GPIOB_PIN_10_HIZ|GPIOB_PIN_14_HIZ|GPIOB_PIN_0_HIZ|GPIOB_PIN_13_HIZ);
-	board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,0);
-	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_5);
+	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,0);
+	board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_5);
 	board_hardware_gpio_config_inputs_pins_load_config			(GPIOB,GPIOB_PIN_12_IN_PULLUP);
 
 	//Idem para GPIOCx

@@ -124,6 +124,8 @@ int32_t board_scheduler_is_time_expired		(int32_t timer);
 #define board_pwm_get_ton_us()													hardware_pwm_get_ton_us()
 #define board_pwm_set_toff_us(toff_us)								 	hardware_pwm_set_toff_us(toff_us)
 #define	board_pwm_get_toff_us()													harwdare_pwm_get_toff_us()
+#define	board_pwm_set_counter_to_toff()									hardware_pwm_set_counter_to_toff()								//Jose
+#define	board_pwm_reset_counter()												hardware_pwm_reset_counter()											//Jose
 
 
 #define board_pwm_hin1_enable()												__hardware_pwm_hin1_enable()

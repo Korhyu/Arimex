@@ -176,6 +176,8 @@ int32_t hardware_pwm_set_sense_on_toff_before_ton_us(int32_t time_us);
 void    hardware_pwm_start_with_ton									(void);
 void 		hardware_pwm_set_outputs_to_toff						(void);
 int32_t hardware_pwm_get_ton_elapsed								(void);
+void 		hardware_pwm_set_counter_to_toff						(void);								//Jose - Alternativa 1
+void 		hardware_pwm_reset_counter									(void);								//Jose - Alternativa 2
 
 void		hardware_pwm_end_toff_link_callback 				(void (*func_pointer)(void));
 void 		hardware_pwm_break_function_link_callback		(void (*func_pointer)(void));
