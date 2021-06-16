@@ -1,0 +1,67 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.34.0.0
+Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: jose Tantera, Arimex, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.34.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.16
+Assembler:       Armasm.exe V6.16
+Linker/Locator:  ArmLink.exe V6.16
+Library Manager: ArmAr.exe V6.16
+Hex Converter:   FromElf.exe V6.16
+CPU DLL:         SARMCM3.DLL V5.34.0.0
+Dialog DLL:      DARMCM1.DLL V1.19.4.0
+Target DLL:      CMSIS_AGDI.dll V1.32.13.0
+Dialog DLL:      TARMCM1.DLL V1.14.3.0
+ 
+<h2>Project:</h2>
+D:\Jose\Firmware\Perfetto_Nuevo\MDK_ARMv5\Project_52241.uvprojx
+Project File Date:  06/03/2021
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
+Build target 'HT32'
+compiling AL01_flash_management.c...
+compiling main.c...
+compiling AL00_micro_ht32f52241.c...
+compiling AL01_board_iq_aed_rev20191011.c...
+compiling AL02_inverter_3phase.c...
+compiling AL02_switches_leds_mux_driver.c...
+compiling AL02_hairdryer_global_registers.c...
+compiling AL03_motor_3phase_driver.c...
+compiling debug.c...
+Jose.c(12): warning: 'board_pin_toggle' macro redefined [-Wmacro-redefined]
+#define board_pin_toggle(port, pin)                                                                                     __hardware_gpio_output_toggle(gpio_port,GPIOnum)
+        ^
+../Inc/AL01_board_iq_aed_rev20191011.h(101): note: previous definition is here
+#define board_pin_toggle(port, pin)                                                                                     _hardware_gpio_output_toggle(gpio_port,GPIOnum)                                                         
+        ^
+1 warning generated.
+compiling Jose.c...
+linking...
+Program Size: Code=9300 RO-data=44 RW-data=164 ZI-data=680  
+FromELF: creating hex file...
+After Build - User command #1: fromelf --bin -o ".\HT32\52241\Obj\HT32.axf.bin" ".\HT32\52241\Obj\HT32.axf"
+".\HT32\52241\Obj\HT32.axf" - 0 Error(s), 1 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Holtek
+                http://mcu.holtek.com.tw/pack/Holtek.HT32_DFP.1.0.28.pack
+                Holtek.HT32_DFP.1.0.28
+                Holtek HT32 Family Support
+
+<h2>Collection of Component include folders:</h2>
+  C:\Users\wks_admin\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx
+
+<h2>Collection of Component Files used:</h2>
+Build Time Elapsed:  00:00:08
+</pre>
+</body>
+</html>
