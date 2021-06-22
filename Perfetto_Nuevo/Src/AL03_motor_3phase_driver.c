@@ -595,6 +595,7 @@ void zcd_event_first_steps_state (void)
 
 	if(gv.starting_first_steps_counter==1)
 	{
+		//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 		//Aca va a entrar cuando starting_first_steps_counter llegue a 1. Notar que ademas va a ser en el ZCD de pendiente Positiva
 		// Con lo cual se hará lo siguiente.
 		// Se dejará girar libre al motor para medir el periodo.
@@ -928,7 +929,7 @@ void bemf_sense_set_type(int32_t bemf_sense_type_p)
 #define COMP_BEMF_OUT_SENSING_BEMF_IS_ABOVE_VREF BOARD_COMP_BEMF_IS_ABOVE_VREF
 #define COMP_BEMF_OUT_SENSING_BEMF_IS_BELOW_VREF BOARD_COMP_BEMF_IS_BELOW_VREF
 
-
+//Se llama esta funcion cuando se produce un TM_EVENT_CH2CC
 void end_of_toff_pwm_callback(void)
 {
 	int32_t aux;
@@ -944,6 +945,8 @@ void end_of_toff_pwm_callback(void)
 																				break;
 	}
 	
+	//Este es el sensado en toff
+	//Revisa el valor de la BEMF en toff (ver pagina 24 de "Sensorless BEMF control Theory")
 	if(inverter_3phase_get_actual_bemf_slope()==INVERTER_BEMF_SLOPE_POSITIVE)
 	{	//En pendiente positiva de BEMF
 		if(aux == COMP_BEMF_OUT_SENSING_BEMF_IS_ABOVE_VREF)
@@ -980,7 +983,8 @@ void bemf_zcd_disable_detection_within_time_us (int32_t time_us)
 {
 	bemf_sense_zcd_sampled_end_toff_disable();
 	bemf_sense_zcd_continuous_disable();
-	board_tim_sctm_init_timer_with_timeout_irq_us(BOARD_TIM_SCTM_BLANKING,time_us);
+	board_tim_sctm_init_timer_with_timeout_irq_us(BOARD_TIM_SCTM_BLANKING, time_us);
+	//Cuando vence este timer se llama a blanking_timer_expired_callback 
 }
 
 

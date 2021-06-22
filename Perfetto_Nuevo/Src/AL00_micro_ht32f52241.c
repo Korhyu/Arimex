@@ -506,12 +506,12 @@ static void micro_pwm_config(void)
 	
 	MCTM_CHMOECmd(HT_MCTM0, ENABLE);
 	
-	TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE);
-	TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);
-	TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);
-	TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE);		//hin3 - Fase W
+	TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);		//hin1 - Fase U
+	TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);		//hin2 - Fase V
 	
-	TM_IntConfig(HT_MCTM0,TM_EVENT_CH2CC,ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);		//Timer para befote_ton
+	TM_IntConfig(HT_MCTM0,TM_EVENT_CH2CC,ENABLE);						//Habilita la IRQ por CH2
 	
 	CHBRKCTRInitStructure.AutomaticOutput = MCTM_CHAOE_ENABLE;
 	CHBRKCTRInitStructure.Break0 = MCTM_BREAK_ENABLE;
@@ -588,26 +588,34 @@ int32_t hardware_pwm_get_period_us (void)
 	return HT_MCTM0->CRR+1;
 }	
 
+//Canales CH0, CH1 y CH3 son canales de salida del PWM
+//Canal CH2 es usado para manejar el "time_before"
+//Esta funcion solo sirve si trabajamos en PWM_MODE_2
 int32_t hardware_pwm_set_ton_us	(int32_t ton_us)
 {
 		int32_t return_value=0;
 	
 		if((ton_us+pwm_time_before_ton_start_us)>=(HT_MCTM0->CRR+1))
 		{
+			//Si el time_before+ton es mayor que el valor de comparacion del timer
+			//configura el el ton luego de time_before, dejando siempre un sensado minimo
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_0, pwm_time_before_ton_start_us +1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_1, pwm_time_before_ton_start_us +1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_3, pwm_time_before_ton_start_us +1);
 			
+			//Y el time_before en "0"
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_2,1);
 			
 			return_value=1;
 		}
 		else
 		{
+			//Si no, carga el valor de comparacion anterior menos el ton
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_0,HT_MCTM0->CRR-ton_us+1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_1,HT_MCTM0->CRR-ton_us+1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_3,HT_MCTM0->CRR-ton_us+1);
 			
+			//Y el CH2 con el valor de los otros canales MENOS el time_before
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_2, HT_MCTM0->CRR - ton_us - pwm_time_before_ton_start_us + 1);
 		}
 		return return_value;		
@@ -666,13 +674,13 @@ void 		hardware_pwm_set_counter_to_toff						(void)
 	*/
 	
 	
-	if ( (HT_MCTM0->CH1OCFR & 0x00000007) == TM_OM_PWM1)				//Si esta en modo 1
+	if ( (HT_MCTM0->CH1OCFR & 0x0007) == TM_OM_PWM1)				//Si esta en modo 1
 	{
 		//CCR contiene el periodo
 		//CH0CCR contiene el valor a comparar para cambiar de estado
 		HT_MCTM0->CNTR = (HT_MCTM0->CRR+1) - (HT_MCTM0->CH0CCR);
 	}
-	if ( (HT_MCTM0->CH1OCFR & 0x00000007) == TM_OM_PWM2)				//Si esta en modo 2
+	if ( (HT_MCTM0->CH1OCFR & 0x0007) == TM_OM_PWM2)				//Si esta en modo 2
 	{
 		HT_MCTM0->CNTR = 0;
 	}
