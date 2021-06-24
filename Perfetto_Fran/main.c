@@ -40,6 +40,8 @@ int main(void)
 	
 	
 	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
+	//TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE);
+	__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	
 	while(1)
 	{

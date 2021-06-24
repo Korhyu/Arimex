@@ -18,14 +18,14 @@
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
 #define PWM_IN_CYCLE_BY_CYCLE_PERIOD							6000
-#define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300 / 2					// El /2 es porque en algun momento carga el doble del valor indicado...
+#define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
 #define STARTING_FIRST_STEPS_FROM_STAND_COUNT			30
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 										100
-#define PWM_STARTING_TON_uS 	  						 	 		30
+#define PWM_STARTING_TON_uS 	  						 	 		70
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
 #define START_FIRST_STEP_DURATION_INIT_us				  7000
@@ -232,8 +232,21 @@ int32_t  motor_3phase_get_electrical_frequency_hz	(void)
 #define bemf_blanking_timer_expired_callback_link(func_ptr)		board_timer_link_callback(func_ptr,BOARD_TIM_BLANKING_SEL_CALLBACK)
 #define bemf_end_toff_sense_callback_link(func_ptr)						board_pwm_end_toff_link_callback(func_ptr)
 
+
+/* JOSE - TODO: Tengo dudas sobre estas 2 y escribo las mias
+ * Fran ativa o desactiva la IRQ del break en el sample del before_ton (end_of_toff) y el break no se usa en este momento
+ * Asumo que esto es un error y uso la irq del CH2 que es el que esta configurado con el before_ton
+ * 
+*/
+//TODO: Estas funciones son tentativas, despues hay que reemplazarlas por las de board_ bla bla bla y hacer las de hardware tmb
+#define bemf_sense_zcd_sampled_end_toff_enable()							TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,ENABLE);
+#define bemf_sense_zcd_sampled_end_toff_disable()							TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE);
+/* 
 #define bemf_sense_zcd_sampled_end_toff_enable()							board_pwm_break_enable_irq()
 #define bemf_sense_zcd_sampled_end_toff_disable()							board_pwm_break_disable_irq()
+/*
+
+*/
 #define bemf_sense_zcd_continous_enable()											board_comp_falling_edge_detection_only_enable(BOARD_COMP_BEMF)
 #define bemf_sense_zcd_continuous_disable()										board_comp_bemf_disable_irqs_all_phases()
 
@@ -458,6 +471,8 @@ void motor_3phase_starting_state_machine(void)
 										inverter_3phase_comm_next_seq();
 
 										gv.starting_first_steps_counter=STARTING_FIRST_STEPS_FROM_STAND_COUNT;
+										
+										TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,ENABLE);						//Jose - Habilito la IRQ por cambio de estado del CH2 del PWM, que sirve para sense_before_ton
 
 										//Hay que setear siempre primero el periodo y despues Ton o Toff. Sino: puede fallar
 										inverter_3phase_pwm_set_period_us(PWM_STARTING_PERIOD_uS);
@@ -890,8 +905,6 @@ void bemf_sense_set_type(int32_t bemf_sense_type_p)
 }
 
 
-
-
 /*******************************************************************************
  * Esta funcion se llama cuando esta seleccionado el sensado de ZCD
  *
@@ -913,30 +926,10 @@ void bemf_sense_set_type(int32_t bemf_sense_type_p)
 #define COMP_BEMF_OUT_SENSING_BEMF_IS_ABOVE_VREF BOARD_COMP_BEMF_IS_ABOVE_VREF
 #define COMP_BEMF_OUT_SENSING_BEMF_IS_BELOW_VREF BOARD_COMP_BEMF_IS_BELOW_VREF
 
-
 void end_of_toff_pwm_callback(void)
 {
 	int32_t aux;
-	
-	//INVERTER_BEMF_ON_OUTPUT_1
-	//inverter_actual_comm_seq
-	/* Auxiliar Jose ----------------------------- */
-	int32_t seq;
-	int32_t cont=0;
-	seq = inverter_3phase_get_actual_comm_seq();
-	if (seq == (1<<2))
-	{
-		//estoy todavia en "la primer" secuencia
-		cont++;	
-	}
-	if (seq == (1<<3))
-	{
-		//estoy en "la segunda" secuencia
-		cont++;
-		seq = inverter_3phase_get_actual_comm_seq() - 1;
-		cont--;
-	}
-	
+	__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
 	
 	switch(inverter_3phase_get_actual_bemf_out())
 	{
@@ -959,8 +952,6 @@ void end_of_toff_pwm_callback(void)
 		if(aux == COMP_BEMF_OUT_SENSING_BEMF_IS_BELOW_VREF)
 			zcd_event();
 	}
-	
-	__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 }
 
 
@@ -986,6 +977,7 @@ void bemf_zcd_disable_detection_within_time_us (int32_t time_us)
 	bemf_sense_zcd_sampled_end_toff_disable();
 	bemf_sense_zcd_continuous_disable();
 	board_tim_sctm_init_timer_with_timeout_irq_us(BOARD_TIM_SCTM_BLANKING,time_us);
+	//Cuando vence este timer se llama a blanking_timer_expired_callback 
 }
 
 

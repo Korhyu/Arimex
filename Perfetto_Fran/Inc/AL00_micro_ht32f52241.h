@@ -200,11 +200,12 @@ void TM_ChannelED (HT_TM_TypeDef*, TM_CH_Enum, TM_CHCTL_Enum, int);
 //#define __hardware_pwm_hin3_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE)
 //#define __hardware_pwm_hin3_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE)
 
-#define __hardware_pwm_end_toff_disable_irq()				{TM_IntConfig(HT_MCTM0,TM_FLAG_CH2CC,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);}
-#define __hardware_pwm_end_toff_enable_irq()				{TM_IntConfig(TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC); HT_MCTM0,TM_FLAG_CH2CC,ENABLE);}
+#define __hardware_pwm_end_toff_disable_irq()				{TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_INT_CH2CC);}
+#define __hardware_pwm_end_toff_enable_irq()				{TM_IntConfig(TM_ClearFlag(HT_MCTM0,TM_INT_CH2CC); HT_MCTM0,TM_INT_CH2CC,ENABLE);}
 
 #define __hardware_pwm_break_disable_irq()					{TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);}
 #define __hardware_pwm_break_enable_irq()						{TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0)							;	TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,ENABLE);}
+
 
 
 #endif /* AL00_MICRO_HT32F52241_H */
