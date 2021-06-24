@@ -244,8 +244,6 @@ int32_t  motor_3phase_get_electrical_frequency_hz	(void)
 /* 
 #define bemf_sense_zcd_sampled_end_toff_enable()							board_pwm_break_enable_irq()
 #define bemf_sense_zcd_sampled_end_toff_disable()							board_pwm_break_disable_irq()
-/*
-
 */
 #define bemf_sense_zcd_continous_enable()											board_comp_falling_edge_detection_only_enable(BOARD_COMP_BEMF)
 #define bemf_sense_zcd_continuous_disable()										board_comp_bemf_disable_irqs_all_phases()
@@ -292,7 +290,7 @@ int32_t motor_3phase_init(void)
 
 	link_zcd_expected_calculate_function(calculate_zcd_expected_default);
 
-	motor_3phase_set_pwm_ton_us_set_point(100);
+	motor_3phase_set_pwm_ton_us_set_point(65);
 
 	return 0;
 }
@@ -310,11 +308,10 @@ void motor_3phase_task(void)
 									break;
 
 		case MOTOR_STATE_STARTING:
-			//Jose: Falta codigo aca(?)
-			//Falta la parte del motor funcionando normalmente (?)
-			//Quizas este es el punto donde Fran "tiro la toalla"
-		case MOTOR_STATE_RUNNING:
 									motor_3phase_starting_state_machine();
+									break;
+		case MOTOR_STATE_RUNNING:
+									//motor_3phase_starting_state_machine();
 									break;
 
 		case MOTOR_STATE_FAIL:
@@ -501,6 +498,7 @@ void motor_3phase_starting_state_machine(void)
 									switch(gv.starting_sub_state)
 									{
 										case STARTING_SUB_STATE_UPDATING_PWM_SET_POINT:
+																		//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
 																		if(timer_ramp==0 || board_scheduler_is_time_expired(timer_ramp))
 																		{
 																			timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_TON_UPDATE_TIME_mS);
@@ -515,7 +513,9 @@ void motor_3phase_starting_state_machine(void)
 																			}
 																			else
 																			{
-																				gv.motor_state = MOTOR_STATE_RUNNING;
+																				//gv.motor_state = MOTOR_STATE_RUNNING;
+																				gv.starting_sub_state = STARTING_SUB_STATE_RUNNING;								//Jose
+																				//__hardware_gpio_output_reset(GPIOA, 3);														//GPIO aux para monitoreo en OSC 
 																			}
 																		}
 																		break;
@@ -606,7 +606,9 @@ void zcd_event_first_steps_state (void)
 
 		//Estas  instrucciones de abajo dejaran al motor girando libre y preparan deteccion de ZCD girando libre
 		//En una secuencia de pendiente POSITIVA.
-
+		
+		//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
+		
 		gv.starting_state = STARTING_STATE_FREEWHEEL_SYNC;
 
 		board_bemf_vref_select_neutral_point();
@@ -617,6 +619,8 @@ void zcd_event_first_steps_state (void)
 		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
 
 		bemf_zcd_disable_detection_within_time_us(DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us);
+		
+		//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
 	}
 	
 	//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
@@ -722,10 +726,12 @@ void zcd_event (void)
 		if(gv.starting_state == STARTING_STATE_FIRST_STEPS_FROM_STAND)
 		{
 			zcd_event_first_steps_state();
+			//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
 		}
 		else if(gv.starting_state==STARTING_STATE_FREEWHEEL_PERIOD_MEASURE || gv.starting_state==STARTING_STATE_FREEWHEEL_SYNC)
 		{
 			zcd_event_freewheel_period_measure();
+			//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
 		}
 		else if(gv.starting_state==STARTING_STATE_STEPS_CORRECT_TIMMING)
 		{
@@ -929,7 +935,7 @@ void bemf_sense_set_type(int32_t bemf_sense_type_p)
 void end_of_toff_pwm_callback(void)
 {
 	int32_t aux;
-	__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
+	//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC 
 	
 	switch(inverter_3phase_get_actual_bemf_out())
 	{
@@ -989,12 +995,14 @@ void bemf_zcd_disable_detection_within_time_us (int32_t time_us)
 ********************************************************************************/
 void blanking_timer_expired_callback (void)
 {
+	//__hardware_gpio_output_toggle(GPIOA, 3);
 	if(gv.bemf_sense_type == BEMF_SENSE_TYPE_SAMPLE_END_TOFF)
 	{
 		bemf_sense_zcd_sampled_end_toff_enable();
 	}
 	else
 	{ /*		bemf_sense_zcd_continous_enable(); */
+		__hardware_gpio_output_toggle(GPIOA, 3);
 		switch(inverter_3phase_get_actual_bemf_out())
 		{
 			case INVERTER_BEMF_ON_OUTPUT_1: board_comp_bemf_rising_enable_irq(BOARD_COMP_BEMF_U_PHASE_SELECT);

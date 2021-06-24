@@ -363,11 +363,11 @@ int32_t	inverter_3phase_get_actual_comm_seq (void)
  *
  * 		  ||<--------comm_period_us----------->||<--------comm_period_us----------->||
  *
- *       COMM					   			  COMM						  	       COMM
- * 	      ||               SEQ3        	 	   ||               SEQ4        	 	||
- * 		  ||   								   ||									||
- * 		  ||   TOFF    |      PWM      |  TOFF ||									||
- * 		  ||   		    ____   ____   _        ||		     ____   ____   _        ||
+ *     COMM					   			                COMM						            	       COMM
+ * 	    ||               SEQ3        	 	     ||               SEQ4        	 	    ||
+ * 		  ||   								   							 ||							 											||
+ * 		  ||   TOFF    |      PWM      |  TOFF ||									                  ||
+ * 		  ||   		      ____   ____   _        ||		         ____   ____   _        ||
  * 		  ||___________|    |_|    |_| |_______||___________|    |_|    |_| |_______||
  * 	 	   toff_begin_us             toff_final_us
  *
