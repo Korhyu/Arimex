@@ -678,13 +678,13 @@ void 		hardware_pwm_set_counter_to_toff						(void)
 	*/
 	
 	
-	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM2)				//Si esta en modo 1
+	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM2)				//Si esta en modo 2
 	{
 		//CCR contiene el periodo
 		//CH0CCR contiene el valor a comparar para cambiar de estado
 		HT_MCTM0->CNTR = (HT_MCTM0->CRR+1) - (HT_MCTM0->CH0CCR);
 	}
-	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM1)				//Si esta en modo 2
+	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM1)				//Si esta en modo 1
 	{
 		HT_MCTM0->CNTR = (HT_MCTM0->CH0CCR);
 	}

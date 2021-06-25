@@ -644,10 +644,11 @@ void zcd_event_freewheel_period_measure(void)
 	if(gv.starting_state == STARTING_STATE_FREEWHEEL_SYNC)
 	{
 
-		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us); //Inicio el timer para medir periodo
+		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us); //Inicio el timer para medir periodo - Jose mide periodo o manda a parar de emergencia??
 		inverter_3phase_comm_next_seq();
 		inverter_3phase_comm_next_seq();	 //Voy a medir el tiempo entre 2 ZCD de pendiente POSITIVA
 		bemf_zcd_disable_detection_within_time_us(gv.motor_comm_seq_period_us_avg>>2);
+		
 
 		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
 		gv.starting_state = STARTING_STATE_FREEWHEEL_PERIOD_MEASURE;
@@ -657,12 +658,12 @@ void zcd_event_freewheel_period_measure(void)
 
 		//Estas inicializaciones de abajo son el "reset de variables" para que funcione bien CONTROL LOOP CALCULATE
 		gv.motor_comm_seq_period_us_avg = bemf_watchdog_get_count_us(); //Es el tiempo entre dos ZCD de pendiente positiva
-																		//Osea es el tiempo de 2 secuencias de excitacion
+																			//Osea es el tiempo de 2 secuencias de excitacion
 		gv.time_from_zcd_to_zcd = gv.motor_comm_seq_period_us_avg;
 
 		gv.time_from_zcd_to_zcd_avg = gv.time_from_zcd_to_zcd;			//Esta variable se usa en el CONTROL LOOP CALCULATE
 
-		gv.motor_comm_seq_period_us_avg>>=1;							//Correccion de la medicion para que corresponda a 1 periodo de secuencia.
+		gv.motor_comm_seq_period_us_avg>>=1;												//Correccion de la medicion para que corresponda a1 periodo de secuencia.
 
 		gv.motor_comm_seq_period_us = gv.motor_comm_seq_period_us_avg;
 
@@ -674,9 +675,9 @@ void zcd_event_freewheel_period_measure(void)
 																				   //Periodo de secuencia de excitacion. Ya que esto se ejecuta
 																				   //Cuando se está en ZCD. y ZCD debe caer en el medio (aprox)
 																				   //De la secuencia de conmutacion
-
 																				   //El "-11" es para corregir la temporizacion dado el tiempo
 																				   //que demora en ejecutarse instrucciones por el uC
+																					 
 		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us);
 
 		gv.starting_state = STARTING_STATE_STEPS_CORRECT_TIMMING;
