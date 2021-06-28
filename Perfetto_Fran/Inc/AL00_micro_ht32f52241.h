@@ -191,7 +191,7 @@ void TM_ChannelED (HT_TM_TypeDef*, TM_CH_Enum, TM_CHCTL_Enum, int);
 #define __hardware_pwm_hin3_enable()								TM_ChannelED(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE, NORMAL)
 #define __hardware_pwm_hin3_disable()								TM_ChannelED(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE, NORMAL)
 #define NORMAL		0
-#define NOTNORMAL 1
+#define COMPLEMENTARY 1
 
 //#define __hardware_pwm_hin1_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE)
 //#define __hardware_pwm_hin1_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_DISABLE)

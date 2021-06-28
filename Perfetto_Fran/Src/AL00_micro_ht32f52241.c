@@ -983,7 +983,7 @@ int32_t hardware_gpio_event_falling_event_link_callback(void (*func_pointer)(voi
  *        @arg TM_CH_2 : TM channel 2
  *        @arg TM_CH_3 : TM channel 3
  * @param Control: This parameter can be TM_CHCTL_ENABLE or TM_CHCTL_DISABLE.
- * @param Type: Type of Channel, can be NORMAL or NOTNORMAL
+ * @param Type: Type of Channel, can be NORMAL or COMPLEMENTARY
  * @retval None
  ************************************************************************************************************/
 void TM_ChannelED(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, TM_CHCTL_Enum Control, int Type)
