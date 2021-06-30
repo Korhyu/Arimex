@@ -21,7 +21,7 @@
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						300
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT			30
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT			100
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 										100
@@ -590,7 +590,7 @@ void zcd_event_first_steps_state (void)
 	{
 		if(inverter_3phase_get_actual_bemf_slope() == INVERTER_BEMF_SLOPE_NEGATIVE)
 			gv.starting_first_steps_counter--;
-
+		
 		inverter_3phase_comm_next_seq();
 		//Hago un blanking de ZCD de 1/8 de lo que dura una secuencia de excitacion.
 		//En esta etapa el tiempo que se mide es el de dos secuencias de exctacion (de pendiente positiva a pendiente positiva)
@@ -612,9 +612,9 @@ void zcd_event_first_steps_state (void)
 		gv.starting_state = STARTING_STATE_FREEWHEEL_SYNC;
 
 		board_bemf_vref_select_neutral_point();
-		//board_bemf_attenuation_enable();
+		board_bemf_attenuation_enable();
 
-		//bemf_sense_set_type(BEMF_SENSE_TYPE_CONTINUOUS);				//Jose - Revisar... Creo que tiene que ir esta linea el problema es que no salta el zcd cuando la dejo
+		bemf_sense_set_type(BEMF_SENSE_TYPE_CONTINUOUS);				//Jose - Revisar... Creo que tiene que ir esta linea el problema es que no salta el zcd cuando la dejo
 
 		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
 
@@ -830,7 +830,7 @@ void commutation_callback(void)
 	{
 		inverter_3phase_comm_next_seq();
 		//bemf_sense_set_type(BEMF_SENSE_TYPE_CONTINUOUS);			//Jose - la puse para compensar la que saque de la linea 617
-		__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+		//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
 
 		//En el inicio de la nueva secuencia me fijo si la secuencia actual va a ser de pendiente
@@ -844,7 +844,7 @@ void commutation_callback(void)
 
 		if(inverter_3phase_get_actual_bemf_slope() == INVERTER_BEMF_SLOPE_POSITIVE)
 		{//BEMF POSITIVE SLOPE
-			
+
 			gv.bemf_state = BEMF_STATE_WAITING_ZCD;
 			bemf_commutation_set_within_us(gv.motor_comm_seq_period_us - 20);
 			bemf_zcd_disable_detection_within_time_us(bemf_close_loop_blanking_time_calc(gv.motor_comm_seq_period_us_avg));
@@ -934,6 +934,7 @@ void bemf_sense_set_type(int32_t bemf_sense_type_p)
 void end_of_toff_pwm_callback(void)
 {
 	int32_t aux;
+	//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	
 	switch(inverter_3phase_get_actual_bemf_out())
 	{
@@ -968,6 +969,7 @@ void end_of_toff_pwm_callback(void)
 ********************************************************************************/
 void bemf_comp_callback(void)
 {
+	__hardware_gpio_output_toggle(GPIOA, 3);
 	zcd_event();
 }
 
@@ -995,10 +997,12 @@ void blanking_timer_expired_callback (void)
 {
 	if(gv.bemf_sense_type == BEMF_SENSE_TYPE_SAMPLE_END_TOFF)
 	{
+		//Deteccion en BEMF_SENSE_TYPE_SAMPLE_END_TOFF
 		bemf_sense_zcd_sampled_end_toff_enable();
 	}
 	else
-	{ 
+	{
+		//Deteccion en BEMF_SENSE_TYPE_CONTINUOUS
 		/*bemf_sense_zcd_continous_enable();*/
 		switch(inverter_3phase_get_actual_bemf_out())
 		{

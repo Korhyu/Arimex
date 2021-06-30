@@ -436,14 +436,10 @@ int32_t inverter_3phase_get_actual_bemf_out (void)
  * Entra en esta funcion cada vez que la corriente por el shunt atraviese el umbral que tiene definido.
 ********************************************************************************/
 void current_sensor_i_peak_callback (void)
-{
-	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-	
+{	
 	//board_pwm_set_outputs_to_toff();							//Original de Fran
 	//board_pwm_reset_counter();										//Alternativa 2 Jose
 	board_pwm_set_counter_to_toff();								//Alternativa 1 Jose
-	
-	//__hardware_gpio_output_reset(GPIOA, 3);
 }
 
 
