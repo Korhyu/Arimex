@@ -70,11 +70,21 @@ void MCTM_Configuration(void)
 void GPIO_Config (void)
 {
 	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_2|GPIO_PIN_3);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_3);
+	//board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_3);		//LED PCB
 	
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOA,GPIO_PIN_0);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_6);
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_2);
+	//GPIO
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOA,GPIO_PIN_0|GPIO_PIN_3);		//lin1
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB,GPIO_PIN_6|GPIO_PIN_11);		//lin2
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC,GPIO_PIN_2);								//lin3
+	
+
+	
+	
+	//EXTI PINS
+	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIOB_PIN_1_EDGE|GPIOB_PIN_3_EDGE|GPIOB_PIN_5_EDGE);
+	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIOB_PIN_1_EDGE);
+	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIOB_PIN_3_EDGE);
+	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,GPIOB_PIN_5_EDGE);
 	
 	//board_hardware_configuration();
 }

@@ -484,15 +484,15 @@ static void micro_pwm_config(void)
 	
 	//HIN3 CH0 (PB15) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_0;
-	TM_OutputInitStructure.Compare = 5;
+	TM_OutputInitStructure.Compare = 30;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN1 CH1 (PA10) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_1;
-  TM_OutputInitStructure.Compare = 5;
+  TM_OutputInitStructure.Compare = 30;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN2 CH3 (PB9) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_3;
-	TM_OutputInitStructure.Compare = 5;
+	TM_OutputInitStructure.Compare = 30;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	
 	
@@ -520,13 +520,12 @@ static void micro_pwm_config(void)
 	CHBRKCTRInitStructure.OSSRState = MCTM_OSSR_STATE_ENABLE;
 	//TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,ENABLE);
 
-	MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
+	//MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
 }
 
 
 void MCTM0_IRQHandler (void)
 {
-	/*
 	if(TM_GetFlagStatus(HT_MCTM0,TM_EVENT_CH2CC))
 	{
 		  (*func_ptr_callback_pwm_end_toff)();
@@ -537,7 +536,6 @@ void MCTM0_IRQHandler (void)
 		(*func_ptr_callback_pwm_break)();	
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);
 	}
-	*/
 }
 
 /* Funcion Jose -------------------------------------------------- */
@@ -792,8 +790,6 @@ void micro_config (void)
 {
 	//RECORDAR DE MODIFICAR EL ARCHIVO "system_ht32f5xxxxx_02.c" PARA CONFIGURAR EL CLOCK CON EL OSC INTERNO (HSI)
 	
-	
-	
   NVIC_Configuration();               /* NVIC configuration                                                 */
   CKCU_Configuration();               /* System Related configuration                                       */
   GPIO_Configuration();               /* GPIO Related configuration                                         */
@@ -803,7 +799,7 @@ void micro_config (void)
 	micro_gpios_outputs_pp_config();	
 	//micro_gpios_inputs_pullup_config();
 	//micro_gpios_hiz_config();
-	//micro_gpios_edge_events_config();
+	micro_gpios_edge_events_config();
 	
 	
 	micro_pwm_config();

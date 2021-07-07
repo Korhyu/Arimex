@@ -222,11 +222,14 @@ int32_t board_adc_get_heater_temp_C (void);
 #define GPIOC_PIN_3_HIZ							(1<<GPIO3)
 #define GPIOC_PIN_0_HIZ							(1<<GPIO0)
 
-
 #define GPIOC_PIN_6_IN_PULLUP				(1<<GPIO6)
 #define GPIOC_PIN_7_IN_PULLUP				(1<<GPIO7)
 #define GPIOA_PIN_8_IN_PULLUP				(1<<GPIO8)
 #define GPIOB_PIN_12_IN_PULLUP			(1<<GPIO12)
+
+#define GPIOB_PIN_1_EDGE						(1<<GPIO1)
+#define GPIOB_PIN_3_EDGE						(1<<GPIO3)
+#define GPIOB_PIN_5_EDGE						(1<<GPIO5)
 
 #define board_hardware_gpio_config_output_pp_pins_load_config(gpio_port,gpio_pin)			hardware_gpio_config_output_pp_pins_load_config(gpio_port,gpio_pin)
 #define board_hardware_gpio_config_edge_events_pins_load_config(gpio_port,gpio_pin)		hardware_gpio_config_edge_events_pins_load_config(gpio_port,gpio_pin)

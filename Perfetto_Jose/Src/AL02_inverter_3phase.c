@@ -141,6 +141,7 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 								board_pwm_hin1_disable();
 								board_pwm_lin1_enable();
 
+
 								break;
 
 		case INVERTER_COMM_SEQ5:
@@ -154,6 +155,7 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 
 								board_pwm_hin1_disable();
 								board_pwm_lin1_enable();
+
 
 								break;
 
