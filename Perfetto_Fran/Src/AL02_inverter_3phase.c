@@ -404,14 +404,18 @@ int32_t inverter_3phase_get_actual_bemf_slope (void)
 	if(inverter_actual_comm_seq&(INVERTER_COMM_SEQ2|INVERTER_COMM_SEQ4|INVERTER_COMM_SEQ6))
 	{
 		if(inverter_comm_direction==INVERTER_COMM_DIRECTION_FOWARD)
+		{
 			return INVERTER_BEMF_SLOPE_POSITIVE;
+		}
 		else
 			return INVERTER_BEMF_SLOPE_NEGATIVE;
 	}
 	else
 	{
 		if(inverter_comm_direction==INVERTER_COMM_DIRECTION_FOWARD)
+		{
 			return INVERTER_BEMF_SLOPE_NEGATIVE;
+		}
 		else
 			return INVERTER_BEMF_SLOPE_POSITIVE;
 	}
