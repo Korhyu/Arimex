@@ -28,10 +28,10 @@
 #define PWM_STARTING_TON_uS 	  						 	 		90
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
-#define START_FIRST_STEP_DURATION_INIT_us				  7000
+#define START_FIRST_STEP_DURATION_INIT_us				  7000				//7000
 
 /*Este blanking se usa cada vez que se pretende medir ZCD en freewheel. Depende del motor*/
-#define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200
+#define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200			//200
 
 #define MAX_TIMEOUT_WATCHDOG_us 						  		30000
 
@@ -111,6 +111,11 @@ void commutation_callback							(void);
 void link_zcd_expected_calculate_function (int32_t(*func_pointer)(int32_t));
 
 int32_t calculate_zcd_expected_default (int32_t time_zcd_to_zcd_avg);
+
+
+void exti1_callback(void);
+void exti3_callback(void);
+void exti5_callback(void);
 
 
 //Variables globales privadas del archivo
@@ -277,9 +282,14 @@ int32_t motor_3phase_init(void)
 	bemf_end_toff_sense_callback_link(end_of_toff_pwm_callback);
 	
 	//board_comp_bemf_link_callback(bemf_comp_callback); - Hay que linkear las 3 irqs al mismo callback.
+	/*
 	board_comp_bemf_rising_link_callback(bemf_comp_callback,BOARD_COMP_BEMF_U_PHASE_SELECT);
 	board_comp_bemf_rising_link_callback(bemf_comp_callback,BOARD_COMP_BEMF_V_PHASE_SELECT);
 	board_comp_bemf_rising_link_callback(bemf_comp_callback,BOARD_COMP_BEMF_W_PHASE_SELECT);
+	*/
+	board_comp_bemf_rising_link_callback(exti1_callback,BOARD_COMP_BEMF_U_PHASE_SELECT);
+	board_comp_bemf_rising_link_callback(exti5_callback,BOARD_COMP_BEMF_V_PHASE_SELECT);
+	board_comp_bemf_rising_link_callback(exti3_callback,BOARD_COMP_BEMF_W_PHASE_SELECT);
 	
 
 	bemf_watchdog_timer_callback_link(motor_watchdog_callback);
@@ -493,6 +503,8 @@ void motor_3phase_starting_state_machine(void)
 
 		case STARTING_STATE_FREEWHEEL_SYNC:
 		case STARTING_STATE_FREEWHEEL_PERIOD_MEASURE:
+									break;
+
 		case STARTING_STATE_STEPS_CORRECT_TIMMING:
 									switch(gv.starting_sub_state)
 									{
@@ -589,8 +601,10 @@ void zcd_event_first_steps_state (void)
 	if(gv.starting_first_steps_counter>1)
 	{
 		if(inverter_3phase_get_actual_bemf_slope() == INVERTER_BEMF_SLOPE_NEGATIVE)
-			gv.starting_first_steps_counter--;
-		
+			{
+				gv.starting_first_steps_counter--;
+			}
+
 		inverter_3phase_comm_next_seq();
 		//Hago un blanking de ZCD de 1/8 de lo que dura una secuencia de excitacion.
 		//En esta etapa el tiempo que se mide es el de dos secuencias de exctacion (de pendiente positiva a pendiente positiva)
@@ -614,13 +628,11 @@ void zcd_event_first_steps_state (void)
 		board_bemf_vref_select_neutral_point();
 		//board_bemf_attenuation_enable();
 
-		//bemf_sense_set_type(BEMF_SENSE_TYPE_CONTINUOUS);				//Jose - Revisar... Creo que tiene que ir esta linea el problema es que no salta el zcd cuando la dejo
+		bemf_sense_set_type(BEMF_SENSE_TYPE_CONTINUOUS);				//Jose - Revisar... Creo que tiene que ir esta linea el problema es que no salta el zcd cuando la dejo
 
 		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
-		__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
 		bemf_zcd_disable_detection_within_time_us(DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us);
-
 	}
 }
 
@@ -639,20 +651,24 @@ void zcd_event_freewheel_period_measure(void)
 {
 	gv.bemf_state = BEMF_STATE_ZCD_DETECTED;
 	
+	
 
 	if(gv.starting_state == STARTING_STATE_FREEWHEEL_SYNC)
 	{
 		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us); //Inicio el timer para medir periodo
 		inverter_3phase_comm_next_seq();
 		inverter_3phase_comm_next_seq();	 //Voy a medir el tiempo entre 2 ZCD de pendiente POSITIVA
-		bemf_zcd_disable_detection_within_time_us(gv.motor_comm_seq_period_us_avg>>2);		//Tocar esta division para bajar el tiempo de freewheel
+		bemf_zcd_disable_detection_within_time_us(gv.motor_comm_seq_period_us_avg>>3);		//Tocar esta division para bajar el tiempo de freewheel
 
 		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
 		gv.starting_state = STARTING_STATE_FREEWHEEL_PERIOD_MEASURE;
+
+		board_bemf_attenuation_enable();
 	}
 	else if(gv.starting_state == STARTING_STATE_FREEWHEEL_PERIOD_MEASURE)
 	{
 		//Estas inicializaciones de abajo son el "reset de variables" para que funcione bien CONTROL LOOP CALCULATE
+		__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 		gv.motor_comm_seq_period_us_avg = bemf_watchdog_get_count_us(); 			//Es el tiempo entre dos ZCD de pendiente positiva
 																					//Osea es el tiempo de 2 secuencias de excitacion
 		gv.time_from_zcd_to_zcd = gv.motor_comm_seq_period_us_avg;
@@ -675,10 +691,9 @@ void zcd_event_freewheel_period_measure(void)
 																					//El "-11" es para corregir la temporizacion dado el tiempo
 																					//que demora en ejecutarse instrucciones por el uC
 		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us);
+		
 
 		gv.starting_state = STARTING_STATE_STEPS_CORRECT_TIMMING;
-
-		__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	}
 }
 
@@ -735,6 +750,7 @@ void zcd_event (void)
 			zcd_event_correct_timing_comm();
 		}
 	}
+	//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 }
 
 
@@ -808,9 +824,7 @@ void bemf_control_loop_calculate(void)
 
 	gv.motor_comm_seq_period_us = gv.time_from_zcd_to_zcd_avg>>1;
 
-	//bemf_commutation_set_within_us(gv.motor_comm_seq_period_us+gv.time_t_error);
-	bemf_commutation_set_within_us(1200);
-	__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+	bemf_commutation_set_within_us(gv.motor_comm_seq_period_us+gv.time_t_error);
 
 	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2)+(gv.motor_comm_seq_period_us<<1);
 
@@ -830,11 +844,10 @@ void bemf_control_loop_calculate(void)
  *******************************************************************************/
 void commutation_callback(void)
 {
-	__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-
 	//Codigo auxiliar borrador Jose
 	//board_bemf_attenuation_enable();
 	//bemf_sense_set_type(BEMF_SENSE_TYPE_CONTINUOUS);
+	__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
 	if(gv.stop_running_flag != STOP_RUNNING_FLAG_STOP_MOTOR)
 	{
@@ -899,7 +912,7 @@ void commutation_callback(void)
 				}
 			}
 		}//END BEMF_NEGATIVE SLOPE
-
+	
 	}
 }
 
@@ -983,6 +996,27 @@ void bemf_comp_callback(void)
 {
 	zcd_event();
 }
+
+
+void exti1_callback(void)
+{
+	zcd_event();
+	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+}
+
+void exti3_callback(void)
+{
+	zcd_event();
+	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+}
+
+void exti5_callback(void)
+{
+	zcd_event();
+	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+}
+
+
 
 /*******************************************************************************
  * Esta funcion se encarga del "blanking" de ZCD. Deshabilitando la deteccion

@@ -79,6 +79,7 @@ int32_t inverter_3phase_init_config(void)
 int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter_state_overwrite)
 {
 	int32_t aux;
+	
 
 	if(inverter_state_overwrite == INVERTER_STATE_NOT_OVERWRITE)
 	{
@@ -220,6 +221,8 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 	//PONER LOS CONTADORES DE PWM SEGUN LO QUE SE QUIERA HACER. EL PWM PRINCIPAL SETEARLO EN 0
 	//EL PWM SECUNDARIO PARA PONER TOFFS SE PONE SEGUN LO QUE SE CONFIGURE
 	board_pwm_start_with_ton();
+
+	//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	return 0;
 }
 

@@ -137,7 +137,11 @@ int32_t hardware_htim_link_callback (void (*func_pointer)(void), uint32_t __hard
 
 #define __harwdare_tim_bftm_abort(HT_TIM_BFTMx)		{BFTM_EnaCmd(HT_TIM_BFTMx, DISABLE);BFTM_IntConfig(HT_TIM_BFTMx,DISABLE);BFTM_SetCounter(HT_TIM_BFTMx,0);}
 																																																																														
-#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	(BFTM_GetCounter(HT_TIM_BFTMx))
+//Funcion de Fran, le falta dividir por 40
+//#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	(BFTM_GetCounter(HT_TIM_BFTMx))
+
+//Funcion Jose
+#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	((BFTM_GetCounter(HT_TIM_BFTMx)*3277)>>17)
 
 
 
