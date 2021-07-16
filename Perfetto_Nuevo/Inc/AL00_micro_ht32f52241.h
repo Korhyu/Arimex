@@ -137,7 +137,11 @@ int32_t hardware_htim_link_callback (void (*func_pointer)(void), uint32_t __hard
 
 #define __harwdare_tim_bftm_abort(HT_TIM_BFTMx)		{BFTM_EnaCmd(HT_TIM_BFTMx, DISABLE);BFTM_IntConfig(HT_TIM_BFTMx,DISABLE);BFTM_SetCounter(HT_TIM_BFTMx,0);}
 																																																																														
-#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	(BFTM_GetCounter(HT_TIM_BFTMx))
+//Funcion de Fran, le falta dividir por 40
+//#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	(BFTM_GetCounter(HT_TIM_BFTMx))
+
+//Funcion Jose
+#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	((BFTM_GetCounter(HT_TIM_BFTMx)*3277)>>17)
 
 
 
@@ -191,7 +195,7 @@ void TM_ChannelED (HT_TM_TypeDef*, TM_CH_Enum, TM_CHCTL_Enum, int);
 #define __hardware_pwm_hin3_enable()								TM_ChannelED(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE, NORMAL)
 #define __hardware_pwm_hin3_disable()								TM_ChannelED(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE, NORMAL)
 #define NORMAL		0
-#define NOTNORMAL 1
+#define COMPLEMENTARY 1
 
 //#define __hardware_pwm_hin1_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE)
 //#define __hardware_pwm_hin1_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_DISABLE)
@@ -200,11 +204,12 @@ void TM_ChannelED (HT_TM_TypeDef*, TM_CH_Enum, TM_CHCTL_Enum, int);
 //#define __hardware_pwm_hin3_enable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE)
 //#define __hardware_pwm_hin3_disable()								TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_DISABLE)
 
-#define __hardware_pwm_end_toff_disable_irq()				{TM_IntConfig(HT_MCTM0,TM_EVENT_CH2CC,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_EVENT_CH2CC);}
-#define __hardware_pwm_end_toff_enable_irq()				{TM_IntConfig(HT_MCTM0,TM_EVENT_CH2CC,ENABLE)			; TM_ClearFlag(HT_MCTM0,TM_EVENT_CH2CC);}
+#define __hardware_pwm_end_toff_disable_irq()				{TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_INT_CH2CC);}
+#define __hardware_pwm_end_toff_enable_irq()				{TM_IntConfig(TM_ClearFlag(HT_MCTM0,TM_INT_CH2CC); HT_MCTM0,TM_INT_CH2CC,ENABLE);}
 
 #define __hardware_pwm_break_disable_irq()					{TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,DISABLE)			; TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);}
 #define __hardware_pwm_break_enable_irq()						{TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0)							;	TM_IntConfig(HT_MCTM0,TM_FLAG_BRK0,ENABLE);}
+
 
 
 #endif /* AL00_MICRO_HT32F52241_H */

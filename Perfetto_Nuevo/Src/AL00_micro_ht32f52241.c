@@ -2,9 +2,6 @@
 #include "Jose.h"
 
 
-#define  MODE_MASK 0x00000007
-
-
 //-------------------------------------------
 //						SYSTICK
 //-------------------------------------------
@@ -427,6 +424,7 @@ void hardware_pwm_end_toff_link_callback (void (*func_pointer)(void))
 	func_ptr_callback_pwm_end_toff=func_pointer;
 }
 
+
 void hardware_pwm_break_function_link_callback(void (*func_pointer)(void))
 {
 	func_ptr_callback_pwm_break=func_pointer;
@@ -478,12 +476,12 @@ static void micro_pwm_config(void)
 	
   
   TM_OutputInitStructure.OutputMode = TM_OM_PWM2;
-  TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;		//TM_CHCTL_DISABLE
-  TM_OutputInitStructure.ControlN = TM_CHCTL_DISABLE;	//TM_CHCTL_ENABLE
+  TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;				//TM_CHCTL_DISABLE
+  TM_OutputInitStructure.ControlN = TM_CHCTL_DISABLE;			//TM_CHCTL_ENABLE
   TM_OutputInitStructure.Polarity = TM_CHP_NONINVERTED;		//TM_CHP_NONINVERTED
   TM_OutputInitStructure.PolarityN = TM_CHP_INVERTED;			//TM_CHP_INVERTED
   TM_OutputInitStructure.IdleState = MCTM_OIS_LOW;
-  TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;	//MCTM_OIS_LOW 
+  TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;			//MCTM_OIS_LOW 
 	
 	//HIN3 CH0 (PB15) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_0;
@@ -498,20 +496,25 @@ static void micro_pwm_config(void)
 	TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	
+	//HIN2 CH3 (PB9) - Directo
+	TM_OutputInitStructure.Channel = TM_CH_2;
+	TM_OutputInitStructure.Compare = 80;
+	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	
-	TM_ClearFlag(HT_MCTM0,TM_EVENT_CH2CC);	//IRQ de time_before_ton
+	
+	TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);				//IRQ de time_before_ton
 	NVIC_EnableIRQ(MCTM0_IRQn);
 	
 	TM_Cmd(HT_MCTM0, ENABLE);
 	
 	MCTM_CHMOECmd(HT_MCTM0, ENABLE);
 	
-	TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE);		//hin3 - Fase W
-	TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);		//hin1 - Fase U
-	TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);		//hin2 - Fase V
+	TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);
+	TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);
 	
-	TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);		//Timer para befote_ton
-	TM_IntConfig(HT_MCTM0,TM_EVENT_CH2CC,ENABLE);						//Habilita la IRQ por CH2
+	//TM_IntConfig(HT_MCTM0,TM_FLAG_CH2CC,ENABLE);
 	
 	CHBRKCTRInitStructure.AutomaticOutput = MCTM_CHAOE_ENABLE;
 	CHBRKCTRInitStructure.Break0 = MCTM_BREAK_ENABLE;
@@ -525,27 +528,33 @@ static void micro_pwm_config(void)
 	MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
 	
 	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
-	TM_IntConfig(HT_MCTM0,TM_EVENT_CH2CC,DISABLE);
+	//TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,ENABLE);
 
 }
 
 
 void MCTM0_IRQHandler (void)
 {	
+	/*
 	if(TM_GetFlagStatus(HT_MCTM0,TM_EVENT_CH2CC))
 	{
-		__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-		  (*func_ptr_callback_pwm_end_toff)();
+		(*func_ptr_callback_pwm_end_toff)();
 			TM_ClearFlag(HT_MCTM0,TM_EVENT_CH2CC);
-		__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	}
+	*/
 	if(TM_GetFlagStatus(HT_MCTM0,TM_FLAG_BRK0))
 	{
-		//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 		(*func_ptr_callback_pwm_break)();	
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);
-		//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	}
+	
+	//if(TM_GetFlagStatus(HT_MCTM0,TM_INT_CH2CC) && !TM_GetFlagStatus(HT_MCTM0,TM_FLAG_UEV))
+	if(TM_GetFlagStatus(HT_MCTM0,TM_INT_CH2CC))
+	{
+		(*func_ptr_callback_pwm_end_toff)();
+		TM_ClearFlag(HT_MCTM0,TM_INT_CH2CC);
+	}
+	
 }
 
 /* Funcion Jose -------------------------------------------------- */
@@ -588,34 +597,26 @@ int32_t hardware_pwm_get_period_us (void)
 	return HT_MCTM0->CRR+1;
 }	
 
-//Canales CH0, CH1 y CH3 son canales de salida del PWM
-//Canal CH2 es usado para manejar el "time_before"
-//Esta funcion solo sirve si trabajamos en PWM_MODE_2
 int32_t hardware_pwm_set_ton_us	(int32_t ton_us)
 {
 		int32_t return_value=0;
 	
 		if((ton_us+pwm_time_before_ton_start_us)>=(HT_MCTM0->CRR+1))
 		{
-			//Si el time_before+ton es mayor que el valor de comparacion del timer
-			//configura el el ton luego de time_before, dejando siempre un sensado minimo
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_0, pwm_time_before_ton_start_us +1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_1, pwm_time_before_ton_start_us +1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_3, pwm_time_before_ton_start_us +1);
 			
-			//Y el time_before en "0"
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_2,1);
 			
 			return_value=1;
 		}
 		else
 		{
-			//Si no, carga el valor de comparacion anterior menos el ton
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_0,HT_MCTM0->CRR-ton_us+1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_1,HT_MCTM0->CRR-ton_us+1);
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_3,HT_MCTM0->CRR-ton_us+1);
 			
-			//Y el CH2 con el valor de los otros canales MENOS el time_before
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_2, HT_MCTM0->CRR - ton_us - pwm_time_before_ton_start_us + 1);
 		}
 		return return_value;		
@@ -663,6 +664,9 @@ void 		hardware_pwm_set_outputs_to_toff						(void)
 /* Inicio Codigo Jose --------------------------------------------------------- */
 //Alternativa 1: Cargo el contador con el valor de cuenta necesario para mantener
 // el toff haciendo CNTR = PERIODO - TOFF y el reinicio se hace automatico
+
+// TODO: ESTO NO ANDA BIEN. Por alguna razon el metodo para el TM_OM_PWM2 no
+// funciona pero el metodo para el TM_OM_PWM1 funciona en el 2
 void 		hardware_pwm_set_counter_to_toff						(void)
 {
 	/*
@@ -674,17 +678,19 @@ void 		hardware_pwm_set_counter_to_toff						(void)
 	*/
 	
 	
-	if ( (HT_MCTM0->CH1OCFR & 0x0007) == TM_OM_PWM1)				//Si esta en modo 1
+	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM2)				//Si esta en modo 1
 	{
 		//CCR contiene el periodo
 		//CH0CCR contiene el valor a comparar para cambiar de estado
 		HT_MCTM0->CNTR = (HT_MCTM0->CRR+1) - (HT_MCTM0->CH0CCR);
 	}
-	if ( (HT_MCTM0->CH1OCFR & 0x0007) == TM_OM_PWM2)				//Si esta en modo 2
+	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM1)				//Si esta en modo 2
 	{
-		HT_MCTM0->CNTR = 0;
+		HT_MCTM0->CNTR = (HT_MCTM0->CH0CCR);
 	}
+	//TM_GenerateEvent(HT_MCTM0, TM_EVENT_BRKEV);
 }
+
 
 //Alternativa 2: Fuerzo el bit de reset del contador usando el registro EVGR
 // Este bit fuerza el reset del CNTR y se vuelve a 0 por hardware. 
@@ -742,8 +748,6 @@ static void micro_adc_config(void)
 
   /* Software trigger to start continuous mode                                                              */
   ADC_SoftwareStartConvCmd(HT_ADC, ENABLE);
-	
-	
 }
 
 
@@ -979,7 +983,7 @@ int32_t hardware_gpio_event_falling_event_link_callback(void (*func_pointer)(voi
  *        @arg TM_CH_2 : TM channel 2
  *        @arg TM_CH_3 : TM channel 3
  * @param Control: This parameter can be TM_CHCTL_ENABLE or TM_CHCTL_DISABLE.
- * @param Type: Type of Channel, can be NORMAL or NOTNORMAL
+ * @param Type: Type of Channel, can be NORMAL or COMPLEMENTARY
  * @retval None
  ************************************************************************************************************/
 void TM_ChannelED(HT_TM_TypeDef* TMx, TM_CH_Enum Channel, TM_CHCTL_Enum Control, int Type)

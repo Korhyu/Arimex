@@ -79,6 +79,7 @@ int32_t inverter_3phase_init_config(void)
 int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter_state_overwrite)
 {
 	int32_t aux;
+	
 
 	if(inverter_state_overwrite == INVERTER_STATE_NOT_OVERWRITE)
 	{
@@ -220,6 +221,8 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 	//PONER LOS CONTADORES DE PWM SEGUN LO QUE SE QUIERA HACER. EL PWM PRINCIPAL SETEARLO EN 0
 	//EL PWM SECUNDARIO PARA PONER TOFFS SE PONE SEGUN LO QUE SE CONFIGURE
 	board_pwm_start_with_ton();
+
+	//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 	return 0;
 }
 
@@ -363,11 +366,11 @@ int32_t	inverter_3phase_get_actual_comm_seq (void)
  *
  * 		  ||<--------comm_period_us----------->||<--------comm_period_us----------->||
  *
- *     COMM					   			  							COMM						  	       					 COMM
- * 	    ||               SEQ3        	 	     ||               SEQ4        	 			||
- * 		  ||   								   							 ||																		||
- * 		  ||   TOFF    |      PWM      |  TOFF ||																		||
- * 		  ||   		      ____   ____   _        ||		     	   ____   ____   _        ||
+ *     COMM					   			                COMM						            	       COMM
+ * 	    ||               SEQ3        	 	     ||               SEQ4        	 	    ||
+ * 		  ||   								   							 ||							 											||
+ * 		  ||   TOFF    |      PWM      |  TOFF ||									                  ||
+ * 		  ||   		      ____   ____   _        ||		         ____   ____   _        ||
  * 		  ||___________|    |_|    |_| |_______||___________|    |_|    |_| |_______||
  * 	 	   toff_begin_us             toff_final_us
  *
@@ -375,7 +378,6 @@ int32_t	inverter_3phase_get_actual_comm_seq (void)
 
 int32_t inverter_3phase_insert_toff_at_comm_begin_and_final(int32_t toff_us_begin,int32_t comm_period_us,int32_t toff_us_final)
 {
-	//TO DO??!?!?!?!
 	return 0;
 }
 /*******************************************************************************
@@ -405,14 +407,18 @@ int32_t inverter_3phase_get_actual_bemf_slope (void)
 	if(inverter_actual_comm_seq&(INVERTER_COMM_SEQ2|INVERTER_COMM_SEQ4|INVERTER_COMM_SEQ6))
 	{
 		if(inverter_comm_direction==INVERTER_COMM_DIRECTION_FOWARD)
+		{
 			return INVERTER_BEMF_SLOPE_POSITIVE;
+		}
 		else
 			return INVERTER_BEMF_SLOPE_NEGATIVE;
 	}
 	else
 	{
 		if(inverter_comm_direction==INVERTER_COMM_DIRECTION_FOWARD)
+		{
 			return INVERTER_BEMF_SLOPE_NEGATIVE;
+		}
 		else
 			return INVERTER_BEMF_SLOPE_POSITIVE;
 	}
@@ -437,14 +443,10 @@ int32_t inverter_3phase_get_actual_bemf_out (void)
  * Entra en esta funcion cada vez que la corriente por el shunt atraviese el umbral que tiene definido.
 ********************************************************************************/
 void current_sensor_i_peak_callback (void)
-{
-	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-	
+{	
 	//board_pwm_set_outputs_to_toff();							//Original de Fran
 	//board_pwm_reset_counter();										//Alternativa 2 Jose
 	board_pwm_set_counter_to_toff();								//Alternativa 1 Jose
-	
-	//__hardware_gpio_output_reset(GPIOA, 3);
 }
 
 
