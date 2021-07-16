@@ -25,7 +25,7 @@
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 										100
-#define PWM_STARTING_TON_uS 	  						 	 		80
+#define PWM_STARTING_TON_uS 	  						 	 		88
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
 #define START_FIRST_STEP_DURATION_INIT_us				  7000				//7000
@@ -300,7 +300,7 @@ int32_t motor_3phase_init(void)
 
 	link_zcd_expected_calculate_function(calculate_zcd_expected_default);
 
-	motor_3phase_set_pwm_ton_us_set_point(20);
+	motor_3phase_set_pwm_ton_us_set_point(40);
 
 	return 0;
 }
@@ -496,7 +496,7 @@ void motor_3phase_starting_state_machine(void)
 									break;
 
 		case STARTING_STATE_FIRST_STEPS_FROM_STAND:
-										gv.starting_sub_state = STARTING_SUB_STATE_RUNNING;
+										gv.starting_sub_state = STARTING_SUB_STATE_UPDATING_PWM_SET_POINT;
 										timer_ramp=0;
 										timer_to_running = board_scheduler_load_timer(TIME_TO_GET_RUNNING_TIMEOUT_mS);
 									break;
@@ -725,8 +725,6 @@ void zcd_event_correct_timing_comm(void)
 
 		//La siguiente conmutacion la hago a mitad entre las conmutaciones anteiores
 		bemf_commutation_set_within_us((gv.time_from_zcd_to_zcd>>1));
-
-		//Timer de keep alive
 
 		//Cambio la secuencia, esto lo hago al final porque la conmutacion deberia hacerse
 		//bastante mas adelante, pero eso queda para la futura optimizacion
