@@ -23,9 +23,7 @@
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
 #define STARTING_FIRST_STEPS_FROM_STAND_COUNT			150
 
-/*Configuracion de PWM que se va a usar desde la primer conmutacion */
-#define PWM_STARTING_PERIOD_uS 										100
-#define PWM_STARTING_TON_uS 	  						 	 		88
+
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
 #define START_FIRST_STEP_DURATION_INIT_us				  7000				//7000
@@ -45,6 +43,11 @@
 
 
 #define MASKED_SET_POINT_PWM_TON(set_point)		(set_point-(set_point&(SET_POINT_PWM_TON_INC_DEC_uS-1)))
+
+
+/*Configuracion de PWM que se va a usar desde la primer conmutacion */
+#define PWM_STARTING_PERIOD_uS 										100
+#define PWM_STARTING_TON_uS 	  						 	 		SET_POINT_MAX_PWM_TON_uS
 
 
 /*Blanking que se aplica cuando esta en close loop y correct timming*/
@@ -705,6 +708,10 @@ void zcd_event_freewheel_period_measure(void)
 *	un ZCD, sin demora ni nada extra.
 *	Luego desactiva la deteccion de ZCD hasta el proximo con pendiente positiva 
 *	(aprox) y asi sigue
+*	
+*	Esta funcion sirve para medir el tiempo entre 2 ZCD o que es lo mismo entre
+*	ZCD+ y ZCD+, luego dispara un timer que tiene el adelanto necesario para que
+*	la conmutacion se haga en el momento ideal
 ********************************************************************************/
 void zcd_event_correct_timing_comm(void)
 {
@@ -715,20 +722,55 @@ void zcd_event_correct_timing_comm(void)
 		//Tomo el tiempo entre zcd positivos 
 		gv.time_from_zcd_to_zcd = bemf_watchdog_get_count_us();
 		
+
 		//Configuro el watchdog de proteccion y lo reseteo para la medicion de los proximos zcd +
 		bemf_watchdog_set_timeout_us(gv.time_from_zcd_to_zcd<<3);		//Si da un poco mas de 1 vuelta sin zcd detengo el motor
-		
+
+
+		//Configuro el timer para saltar en el adelanto deseado
+		//El adelanto deberia ser de 30° electricos, se le resta un valor constante por tiempo de ejecucion hasta el momento
+		//El tiempo entre ZCD+ y ZCD+ son 120° por lo que el adelanto debera ser 1/4 de este valor
+		bemf_commutation_set_within_us((gv.time_from_zcd_to_zcd>>2)-0);
+		//TODO: Medir ese valor constante de correccion y cargarlo en el 0
+
 
 		//Desactivo la deteccion de ZCD por un tiempo para detectar el proximo positivo
 		bemf_zcd_disable_detection_within_time_us(gv.time_from_zcd_to_zcd - (gv.time_from_zcd_to_zcd>>2));
+	}
+}
 
 
-		//La siguiente conmutacion la hago a mitad entre las conmutaciones anteiores
-		bemf_commutation_set_within_us((gv.time_from_zcd_to_zcd>>1));
+/*******************************************************************************
+*	Funcion re armada por Jose
+*	
+*   Este callback esta realizando el cambio de secuencia a mitad de tiempo entre
+*	ZCDs.
+*	Esto hay que optimizarlo para que haga en el tiempo correcto considerando
+*	el adelanto.
+*
+*	
+*	
+ *******************************************************************************/
+void commutation_callback(void)
+{
+	__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
-		//Cambio la secuencia, esto lo hago al final porque la conmutacion deberia hacerse
-		//bastante mas adelante, pero eso queda para la futura optimizacion
-		inverter_3phase_comm_next_seq();
+	if(gv.stop_running_flag != STOP_RUNNING_FLAG_STOP_MOTOR)
+	{
+		if(inverter_3phase_get_actual_bemf_slope() == INVERTER_BEMF_SLOPE_POSITIVE)
+		{	//Estoy en secuencia 2, 4 o 6 y el ZCD que paso es +
+			//Hago el cambio de secuencia
+			inverter_3phase_comm_next_seq();
+			//Recargo el timer para el proximo cambio de sequencia
+			bemf_commutation_set_within_us((gv.time_from_zcd_to_zcd>>1));
+		}
+		
+		if(inverter_3phase_get_actual_bemf_slope() == INVERTER_BEMF_SLOPE_NEGATIVE)
+		{	//Estoy en secuencia 2, 4 o 6 y el ZCD que paso es +
+			//Hago el cambio de secuencia
+			inverter_3phase_comm_next_seq();
+			//No recargo el timer porque el proximo cambio se va a hacer con el ZCD
+		}
 	}
 }
 
@@ -844,30 +886,6 @@ void bemf_control_loop_calculate(void)
 	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2)+(gv.motor_comm_seq_period_us<<1);
 
 }
-
-
-/*******************************************************************************
-*	Funcion re armada por Jose
-*	
-*
-*	
-*	
-*	
-*
-*	
-*	
- *******************************************************************************/
-void commutation_callback(void)
-{
-	__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-
-	if(gv.stop_running_flag != STOP_RUNNING_FLAG_STOP_MOTOR)
-	{
-		inverter_3phase_comm_next_seq();
-	}
-}
-
-
 
 
 /*******************************************************************************
@@ -1025,3 +1043,13 @@ void motor_watchdog_callback(void)
 }
 
 
+
+/*******************************************************************************
+*	Esta funcion devuelve si el proximo ZCD esperado es con pendiente positiva 
+*	o negativa
+*	
+********************************************************************************/
+void inverter_3phase_get_next_zcd_slope(void)
+{
+	// Es identica a inverter_3phase_get_actual_bemf_slope() ???
+}
