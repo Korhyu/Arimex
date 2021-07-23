@@ -27,12 +27,20 @@ Project File Date:  06/03/2021
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'HT32'
+../Src/AL03_motor_3phase_driver.c(770): warning: operator '>>' has lower precedence than '+'; '+' will be evaluated first [-Wshift-op-parentheses]
+                        bemf_zcd_disable_detection_within_time_us(gv.time_from_zcd_to_zcd>>3 + gv.time_from_zcd_to_zcd>>4);
+                                                                                         ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+../Src/AL03_motor_3phase_driver.c(770): note: place parentheses around the '+' expression to silence this warning
+                        bemf_zcd_disable_detection_within_time_us(gv.time_from_zcd_to_zcd>>3 + gv.time_from_zcd_to_zcd>>4);
+                                                                                             ^
+                                                                                           (                          )
+1 warning generated.
 compiling AL03_motor_3phase_driver.c...
 linking...
-Program Size: Code=8996 RO-data=44 RW-data=164 ZI-data=680  
+Program Size: Code=9108 RO-data=44 RW-data=164 ZI-data=680  
 FromELF: creating hex file...
 After Build - User command #1: fromelf --bin -o ".\HT32\52241\Obj\HT32.axf.bin" ".\HT32\52241\Obj\HT32.axf"
-".\HT32\52241\Obj\HT32.axf" - 0 Error(s), 0 Warning(s).
+".\HT32\52241\Obj\HT32.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -45,7 +53,7 @@ Package Vendor: Holtek
   C:\Users\wks_admin\AppData\Local\Arm\Packs\Holtek\HT32_DFP\1.0.28\ARM\INC\Holtek\HT32F5xxxx
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>
