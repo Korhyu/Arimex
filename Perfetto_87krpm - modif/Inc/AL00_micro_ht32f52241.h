@@ -141,7 +141,7 @@ int32_t hardware_htim_link_callback (void (*func_pointer)(void), uint32_t __hard
 //#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	(BFTM_GetCounter(HT_TIM_BFTMx))
 
 //Funcion Jose
-#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	((BFTM_GetCounter(HT_TIM_BFTMx)*3277)>>17)
+#define __hardware_tim_bftm_get_count_us(HT_TIM_BFTMx)	((BFTM_GetCounter(HT_TIM_BFTMx)/40))
 
 
 

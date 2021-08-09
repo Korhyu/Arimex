@@ -47,7 +47,7 @@ int32_t board_scheduler_is_time_expired		(int32_t timer);
 
 																							 
 #define board_bemf_vref_select_vbus()					 __hardware_gpio_output_set  (BEMF_VREF_SELECT_PORT,BEMF_VREF_SELECT_PIN)
-#define board_bemf_vref_select_neutral_point() __hardware_gpio_output_reset(BEMF_VREF_SELECT_PORT,BEMF_VREF_SELECT_PIN)	 
+#define board_bemf_vref_select_neutral_point() 			__hardware_gpio_output_reset(BEMF_VREF_SELECT_PORT,BEMF_VREF_SELECT_PIN)	 
 //-------------------------------------------
 //						EXTERNAL COMPS
 //-------------------------------------------

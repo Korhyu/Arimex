@@ -5,7 +5,7 @@ void board_hardware_configuration (void)
 {
 	//Configuraciones de GPIO
 	//GPIOAx como Salida Push Pull
-	board_hardware_gpio_config_output_pp_pins_load_config  	(GPIOA,GPIO_PIN_0|GPIO_PIN_3);
+	board_hardware_gpio_config_output_pp_pins_load_config  	(GPIOA,GPIO_PIN_0|GPIO_PIN_3|GPIO_PIN_11);
 	//GPIOAx Como "Open Drain" / HiZ
 	board_hardware_gpio_config_hiz_pins_load_config		   		(GPIOA,GPIOA_PIN_15_HIZ|GPIOA_PIN_6_HIZ);
 	//GPIOAx Como deteccion(irq) en flancos
