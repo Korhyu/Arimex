@@ -21,27 +21,27 @@
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						100
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT			120
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				120
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
-#define PWM_STARTING_PERIOD_uS 										100
-#define PWM_STARTING_TON_uS 	  						 	 		40
+#define PWM_STARTING_PERIOD_uS 								25
+#define PWM_STARTING_TON_uS 	  						 	10
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
-#define START_FIRST_STEP_DURATION_INIT_us				  7000				//7000
+#define START_FIRST_STEP_DURATION_INIT_us				  	7000				//7000
 
 /*Este blanking se usa cada vez que se pretende medir ZCD en freewheel. Depende del motor*/
 #define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200			//200
 
-#define MAX_TIMEOUT_WATCHDOG_us 						  		30000
+#define MAX_TIMEOUT_WATCHDOG_us 						  	30000
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
-#define SET_POINT_PWM_TON_UPDATE_TIME_mS		  1		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
-#define SET_POINT_MAX_PWM_TON_uS							88	/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
-#define SET_POINT_MIN_PWM_TON_uS							20
+#define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
+#define SET_POINT_MAX_PWM_TON_uS						22		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
+#define SET_POINT_MIN_PWM_TON_uS						5
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
 
-#define TIME_TO_GET_RUNNING_TIMEOUT_mS				200
+#define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
 
 
 #define MASKED_SET_POINT_PWM_TON(set_point)		(set_point-(set_point&(SET_POINT_PWM_TON_INC_DEC_uS-1)))
@@ -62,19 +62,19 @@
 //******************************************
 
 //Estados de las maquina de estados del arranque del motor
-#define STARTING_STATE_INIT			 										0
+#define STARTING_STATE_INIT			 					0
 #define STARTING_STATE_BREAK_AND_CHARGE_BOOTSTRAP		1
-#define STARTING_STATE_ALIGMENT											2
-#define STARTING_STATE_FIRST_STEPS_FROM_STAND				3
+#define STARTING_STATE_ALIGMENT							2
+#define STARTING_STATE_FIRST_STEPS_FROM_STAND			3
 #define STARTING_STATE_FREEWHEEL_PERIOD_MEASURE			4
-#define STARTING_STATE_FREEWHEEL_SYNC								5
-#define STARTING_STATE_STEPS_CORRECT_TIMMING				6
-#define STARTING_STATE_COUNT												8
+#define STARTING_STATE_FREEWHEEL_SYNC					5
+#define STARTING_STATE_STEPS_CORRECT_TIMMING			6
+#define STARTING_STATE_COUNT							8
 
 #define STARTING_SUB_STATE_UPDATING_PWM_SET_POINT		0
 #define STARTING_SUB_STATE_ANALYZING_FAIL_SYNC			1
 #define STARTING_SUB_STATE_CORRECTING_PARAMETERS		2
-#define STARTING_SUB_STATE_RUNNING									3
+#define STARTING_SUB_STATE_RUNNING						3
 
 #define FIRST_ALIGMENT									0
 #define BREAK_ALIGMENT									1
@@ -82,22 +82,22 @@
 
 
 //Estados de BEMF en closeloop "correct timming"
-#define BEMF_STATE_COMMUTATE						0
+#define BEMF_STATE_COMMUTATE					0
 #define BEMF_STATE_BLANKING_ZCD					1
 #define BEMF_STATE_WAITING_ZCD					2
 #define BEMF_STATE_ZCD_DETECTED					3
-#define BEMF_STATE_ZCD_LOST							4
+#define BEMF_STATE_ZCD_LOST						4
 
 //Tipos de sensado de ZCD
 #define BEMF_SENSE_TYPE_SAMPLE_END_TOFF			0
-#define BEMF_SENSE_TYPE_CONTINUOUS					1
+#define BEMF_SENSE_TYPE_CONTINUOUS				1
 
 
-#define STOP_RUNNING_FLAG_STOP_MOTOR				0
+#define STOP_RUNNING_FLAG_STOP_MOTOR			0
 #define STOP_RUNNING_FLAG_DONT_STOP_MOTOR		1
 
-#define FAIL_SYNC_RATE_SENSE_DISABLE				0
-#define FAIL_SYNC_RATE_SENSE_ENABLE					1
+#define FAIL_SYNC_RATE_SENSE_DISABLE			0
+#define FAIL_SYNC_RATE_SENSE_ENABLE				1
 
 void motor_3phase_starting_state_machine		(void);
 void bemf_zcd_disable_detection_within_time_us 	(int32_t time_us);
@@ -108,10 +108,10 @@ int32_t  motor_3phase_abort_motor				(int32_t motor_stop_method,int32_t motor_st
 
 
 void end_of_toff_pwm_callback					(void);
-void blanking_timer_expired_callback	(void);
-void bemf_comp_callback								(void);
+void blanking_timer_expired_callback			(void);
+void bemf_comp_callback							(void);
 void motor_watchdog_callback					(void);
-void commutation_callback							(void);
+void commutation_callback						(void);
 
 void link_zcd_expected_calculate_function (int32_t(*func_pointer)(int32_t));
 
@@ -255,17 +255,17 @@ int32_t  motor_3phase_get_electrical_frequency_hz	(void)
 #define bemf_sense_zcd_sampled_end_toff_enable()							board_pwm_break_enable_irq()
 #define bemf_sense_zcd_sampled_end_toff_disable()							board_pwm_break_disable_irq()
 */
-#define bemf_sense_zcd_continous_enable()											board_comp_falling_edge_detection_only_enable(BOARD_COMP_BEMF)
-#define bemf_sense_zcd_continuous_disable()										{board_comp_bemf_disable_irqs_all_phases(); __hardware_gpio_output_reset(GPIOB, 11);}
+#define bemf_sense_zcd_continous_enable()									board_comp_falling_edge_detection_only_enable(BOARD_COMP_BEMF)
+#define bemf_sense_zcd_continuous_disable()									{board_comp_bemf_disable_irqs_all_phases(); __hardware_gpio_output_reset(GPIOB, 11);}
 
-#define bemf_watchdog_timer_callback_link(func_ptr)						board_timer_link_callback(func_ptr,BOARD_TIM_WATCHDOG_SEL_CALLBACK)
-#define bemf_watchdog_set_timeout_us(time_us)									board_tim_bftm_init_timer_with_timeout_irq_us(BOARD_TIM_BFTM_WATCHDOG,(time_us))
-#define bemf_watchdog_get_count_us()													board_tim_get_bftm_count_us(BOARD_TIM_BFTM_WATCHDOG)
-#define bemf_watchdog_abort()																	board_tim_bftm_abort(BOARD_TIM_BFTM_WATCHDOG)
+#define bemf_watchdog_timer_callback_link(func_ptr)							board_timer_link_callback(func_ptr,BOARD_TIM_WATCHDOG_SEL_CALLBACK)
+#define bemf_watchdog_set_timeout_us(time_us)								board_tim_bftm_init_timer_with_timeout_irq_us(BOARD_TIM_BFTM_WATCHDOG,(time_us))
+#define bemf_watchdog_get_count_us()										board_tim_get_bftm_count_us(BOARD_TIM_BFTM_WATCHDOG)
+#define bemf_watchdog_abort()												board_tim_bftm_abort(BOARD_TIM_BFTM_WATCHDOG)
 
 #define bemf_commutation_set_within_us(time_us)								board_tim_bftm_init_timer_with_timeout_irq_us(BOARD_TIM_BFTM_COMM,(time_us))
-#define bemf_commutation_get_count_us()												board_tim_get_bftm_count_us(BOARD_TIM_BFTM_COMM)
-#define bemf_commutation_abort()															board_tim_bftm_abort(BOARD_TIM_BFTM_COMM)
+#define bemf_commutation_get_count_us()										board_tim_get_bftm_count_us(BOARD_TIM_BFTM_COMM)
+#define bemf_commutation_abort()											board_tim_bftm_abort(BOARD_TIM_BFTM_COMM)
 #define bemf_commutation_callback_link(func_ptr)							board_timer_link_callback(func_ptr,BOARD_TIM_COMM_SEL_CALLBACK)
 
 /*******************************************************************************
@@ -281,7 +281,7 @@ int32_t motor_3phase_init(void)
 
 	bemf_blanking_timer_expired_callback_link(blanking_timer_expired_callback);
 
-	bemf_sense_zcd_sampled_end_toff_disable();		//Antes de linkear los callbacks, me aseguro de deshabilitar las detecciones
+	bemf_sense_zcd_sampled_end_toff_disable();				//Antes de linkear los callbacks, me aseguro de deshabilitar las detecciones
 	bemf_sense_zcd_continuous_disable();					//Porque sino hay falsas llamadas
 
 	bemf_end_toff_sense_callback_link(end_of_toff_pwm_callback);
@@ -299,13 +299,13 @@ int32_t motor_3phase_init(void)
 
 	bemf_watchdog_timer_callback_link(motor_watchdog_callback);
 
-	bemf_commutation_callback_link(commutation_callback);					//Luego de zcd_event_freewheel_period_measure esta funcion es llamada por el timer
+	bemf_commutation_callback_link(commutation_callback);	//Luego de zcd_event_freewheel_period_measure esta funcion es llamada por el timer
 
 	gv.motor_state = MOTOR_STATE_STOPPED;
 
 	link_zcd_expected_calculate_function(calculate_zcd_expected_default);
 
-	motor_3phase_set_pwm_ton_us_set_point(60);
+	motor_3phase_set_pwm_ton_us_set_point(15);
 
 	return 0;
 }
@@ -838,7 +838,7 @@ void calculate_times (void)
 
 	
 	//Error y adelanto
-	gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4);				//Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)
+	gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4) + (gv.time_from_zcd_to_zcd_avg>>6);				//Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)
 	gv.time_t_error = ((gv.time_from_zcd_to_zcd_avg>>1) - gv.motor_comm_seq_period_us);
 	gv.time_t_error = gv.time_t_error + (gv.time_from_comm_to_zcd_avg - gv.time_zcd_expected);
 
@@ -923,11 +923,12 @@ void commutation_callback(void)
 				bemf_commutation_set_within_us(gv.time_var_comm - 10);
 
 				//Habilito la deteccion de zcd luego del pulso del cambio de secuencia.
-				bemf_zcd_disable_detection_within_time_us(gv.time_var_comm + 20);
+				bemf_zcd_disable_detection_within_time_us(gv.time_var_comm + 10);
 
 				//snap_motor_data();
 				
 				gv.bemf_state = BEMF_STATE_COMMUTATE;
+				__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 			}
 		}
 		else if (inverter_3phase_get_actual_bemf_slope()==INVERTER_BEMF_SLOPE_NEGATIVE)
@@ -936,9 +937,10 @@ void commutation_callback(void)
 			inverter_3phase_comm_next_seq();
 			
 			//Ahora estoy en una seq con zcd+
-			bemf_commutation_set_within_us((gv.motor_comm_seq_period_us) - 20);
+			bemf_commutation_set_within_us((gv.motor_comm_seq_period_us));
 
-			gv.bemf_state = BEMF_STATE_WAITING_ZCD;			
+			gv.bemf_state = BEMF_STATE_WAITING_ZCD;
+			__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC		
 		}
 	}
 
