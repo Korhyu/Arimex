@@ -3606,16 +3606,16 @@
       <ActiveTab>0</ActiveTab>
       <Doc>
         <Name>..\Src\AL03_motor_3phase_driver.c</Name>
-        <ColumnNumber>29</ColumnNumber>
-        <TopLine>909</TopLine>
-        <CurrentLine>925</CurrentLine>
+        <ColumnNumber>74</ColumnNumber>
+        <TopLine>834</TopLine>
+        <CurrentLine>858</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>..\Src\AL00_micro_ht32f52241.c</Name>
-        <ColumnNumber>14</ColumnNumber>
+        <ColumnNumber>22</ColumnNumber>
         <TopLine>534</TopLine>
         <CurrentLine>559</CurrentLine>
         <Folding>1</Folding>
@@ -3641,7 +3641,7 @@
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
-        <Name>..\Inc\AL00_micro_ht32f52241.h</Name>
+        <Name>D:\Jose\Firmware\Perfetto_Adelanto\Inc\AL00_micro_ht32f52241.h</Name>
         <ColumnNumber>14</ColumnNumber>
         <TopLine>123</TopLine>
         <CurrentLine>143</CurrentLine>

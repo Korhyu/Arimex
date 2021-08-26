@@ -623,9 +623,9 @@ int32_t hardware_pwm_set_ton_us	(int32_t ton_us)
 		}
 		else
 		{
-			TM_SetCaptureCompare(HT_MCTM0,TM_CH_0,HT_MCTM0->CRR-ton_us+1);
-			TM_SetCaptureCompare(HT_MCTM0,TM_CH_1,HT_MCTM0->CRR-ton_us+1);
-			TM_SetCaptureCompare(HT_MCTM0,TM_CH_3,HT_MCTM0->CRR-ton_us+1);
+			TM_SetCaptureCompare(HT_MCTM0,TM_CH_0, HT_MCTM0->CRR-ton_us+1);
+			TM_SetCaptureCompare(HT_MCTM0,TM_CH_1, HT_MCTM0->CRR-ton_us+1);
+			TM_SetCaptureCompare(HT_MCTM0,TM_CH_3, HT_MCTM0->CRR-ton_us+1);
 			
 			TM_SetCaptureCompare(HT_MCTM0,TM_CH_2, HT_MCTM0->CRR-ton_us - pwm_time_before_ton_start_us + 1);
 		}

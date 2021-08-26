@@ -42,6 +42,7 @@ int32_t motor_3phase_get_pwm_ton_us_set_point(void);
 
 int32_t bemf_get_fail_sync_rate_ppm (void);
 
+void calculate_times (void);
 
 void motor_3phase_starting_state_machine(void);
 
@@ -70,7 +71,8 @@ struct motor_3phase_drive{
 	int32_t time_zcd_expected;
 	int32_t time_t_error;
 	int32_t time_var_comm;						//Tiempo de conmutacion variable (con el error)
-	int32_t time_advance;						//Tiempo de adelanto (idealmente 30ª)
+	int32_t time_advance;						//Tiempo de adelanto
+	int32_t time_update;						//Flag para control de actualizacion de tiempos.
 
 	int32_t zcd_blanking_time;
 
@@ -83,6 +85,8 @@ struct motor_3phase_drive{
 
 	int32_t seq_actual;
 	int32_t phase_next_zcd;
+
+
 };
 
 #endif /* AL03_MOTOR_3PHASE_DRIVER_H_ */

@@ -78,37 +78,37 @@ void hardware_gpio_config_inputs_pins_load_config				(HT_GPIO_TypeDef *GPIOx,uin
 #endif
 
 
-#define __hardware_gpio_output_reset(gpio_port,GPIOnum)												(gpio_port->RR     = (1<<GPIOnum))
-#define __hardware_gpio_output_set(gpio_port,GPIOnum)													(gpio_port->SRR    = (1<<GPIOnum))
-#define __hardware_gpio_output_toggle(gpio_port,GPIOnum)											(gpio_port->DOUTR ^= (1<<GPIOnum))
+#define __hardware_gpio_output_reset(gpio_port,GPIOnum)										(gpio_port->RR     = (1<<GPIOnum))
+#define __hardware_gpio_output_set(gpio_port,GPIOnum)										(gpio_port->SRR    = (1<<GPIOnum))
+#define __hardware_gpio_output_toggle(gpio_port,GPIOnum)									(gpio_port->DOUTR ^= (1<<GPIOnum))
 
-#define __hardware_gpio_input_read_state(gpio_port,GPIOnum)										(GPIO_ReadInBit(gpio_port,(1<<GPIOnum)))
-#define __hardware_gpio_read_entire_port(gpio_port)														(gpio_port->DINR)
+#define __hardware_gpio_input_read_state(gpio_port,GPIOnum)									(GPIO_ReadInBit(gpio_port,(1<<GPIOnum)))
+#define __hardware_gpio_read_entire_port(gpio_port)											(gpio_port->DINR)
 
 #define __hardware_gpio_config_set_as_hiz_pin(gpio_port,GPIOnum)							(gpio_port->DIRCR &= ~(1<<GPIOnum))
 #define __hardware_gpio_config_set_as_pushpull_output_pin(gpio_port,GPIOnum)	(gpio_port->DIRCR |= (1<<GPIOnum))
 
 
-#define __hardware_gpio_event_detection_disable(GPIOnum)											(HT_EXTI->CR 				&= ~(1 << GPIOnum))
+#define __hardware_gpio_event_detection_disable(GPIOnum)								(HT_EXTI->CR 				&= ~(1 << GPIOnum))
 
-#define __hardware_gpio_event_rising_only_detection_enable(GPIOnum)						{(HT_EXTI->EDGEFLGR 								|=	(1 << GPIOnum));\
-																																							 (HT_EXTI->EDGESR										|=	(1 << GPIOnum));\
-																																							 (*((&HT_EXTI->CFGR0)+GPIOnum)			&= ~(7 << 28));\
-																																							 (*((&HT_EXTI->CFGR0)+GPIOnum)			|=	(3 << 28));\
-																																							 (HT_EXTI->CR												|=	(1 << GPIOnum));}
+#define __hardware_gpio_event_rising_only_detection_enable(GPIOnum)					{(HT_EXTI->EDGEFLGR 		|=	(1 << GPIOnum));\
+																					(HT_EXTI->EDGESR						|=	(1 << GPIOnum));\
+																					(*((&HT_EXTI->CFGR0)+GPIOnum)			&= ~(7 << 28));\
+																					(*((&HT_EXTI->CFGR0)+GPIOnum)			|=	(3 << 28));\
+																					(HT_EXTI->CR							|=	(1 << GPIOnum));}
 
 
-#define __hardware_gpio_event_falling_only_detection_enable(GPIOnum)					{(HT_EXTI->EDGEFLGR 								|=	(1 << GPIOnum));\
-																																							 (HT_EXTI->EDGESR										|=	(1 << GPIOnum));\
-																																							 (*((&HT_EXTI->CFGR0)+GPIOnum)			&= ~(7 << 28));\
-																																							 (*((&HT_EXTI->CFGR0)+GPIOnum)			|=	(2 << 28));\
-																																							 (HT_EXTI->CR												|=	(1 <<GPIOnum));}																																										 
+#define __hardware_gpio_event_falling_only_detection_enable(GPIOnum)				{(HT_EXTI->EDGEFLGR 		|=	(1 << GPIOnum));\
+																					(HT_EXTI->EDGESR						|=	(1 << GPIOnum));\
+																					(*((&HT_EXTI->CFGR0)+GPIOnum)			&= ~(7 << 28));\
+																					(*((&HT_EXTI->CFGR0)+GPIOnum)			|=	(2 << 28));\
+																					(HT_EXTI->CR							|=	(1 <<GPIOnum));}
 
-#define __hardware_gpio_event_both_edges_detection_enable(GPIOnum)						{(HT_EXTI->EDGEFLGR 								|=	(1 << GPIOnum));\
-																																							 (HT_EXTI->EDGESR										|=	(1 << GPIOnum));\
-																																							 (*((&HT_EXTI->CFGR0)+GPIOnum)			&= ~(7 << 28));\
-																																							 (*((&HT_EXTI->CFGR0)+GPIOnum)			|=	(4 << 28));\
-																																							 (HT_EXTI->CR												|=	(1 <<GPIOnum));}
+#define __hardware_gpio_event_both_edges_detection_enable(GPIOnum)					{(HT_EXTI->EDGEFLGR 				|=	(1 << GPIOnum));\
+																					(HT_EXTI->EDGESR					|=	(1 << GPIOnum));\
+																					(*((&HT_EXTI->CFGR0)+GPIOnum)		&= ~(7 << 28));\
+																					(*((&HT_EXTI->CFGR0)+GPIOnum)		|=	(4 << 28));\
+																					(HT_EXTI->CR						|=	(1 <<GPIOnum));}
 																																							 
 //-------------------------------------------
 //				 TIMERS
