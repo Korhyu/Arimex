@@ -19,6 +19,13 @@
 #define MOTOR_DIRECTION_FOWARD	INVERTER_COMM_DIRECTION_FOWARD
 #define MOTOR_DIRECTION_REVERSE INVERTER_COMM_DIRECTION_REVERSE
 
+
+//Set del PWM para las diferentes velocidades
+#define MOTOR_MAX_SPEED_PWM		60
+#define MOTOR_MID_SPEED_PWM		50
+#define MOTOR_MIN_SPEED_PWM		40
+
+
 int32_t  motor_3phase_init 						(void);
 void	 motor_3phase_task						(void);
 
@@ -39,6 +46,9 @@ int32_t motor_3phase_set_pwm_ton_us_set_point(int32_t pwm_ton_set_point);
 int32_t motor_3phase_get_pwm_ton_us_max_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_min_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_set_point(void);
+
+void motor_3phase_speed_up (void);
+void motor_3phase_speed_down (void);
 
 int32_t bemf_get_fail_sync_rate_ppm (void);
 

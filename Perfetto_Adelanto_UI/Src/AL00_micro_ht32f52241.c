@@ -257,11 +257,11 @@ static void micro_gpios_inputs_pullup_config(void)
 					
 							if(gpio_config_inputs_pins[gpio_port_sel_index] & gpio_pin_index)
 							{
-									AFIO_GPxConfig					(gpio_port_sel_index, gpio_pin_index, AFIO_FUN_GPIO);
+									AFIO_GPxConfig				(gpio_port_sel_index, gpio_pin_index, AFIO_FUN_GPIO);
 								
 									GPIO_DirectionConfig		(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_DIR_IN);
-									GPIO_PullResistorConfig	(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_PR_UP);
-									GPIO_InputConfig				(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, ENABLE);
+									GPIO_PullResistorConfig		(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_PR_UP);
+									GPIO_InputConfig			(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, ENABLE);
 							}
 							gpio_pin_index<<=1;
 							
@@ -287,11 +287,11 @@ static void micro_gpios_hiz_config(void)
 					
 							if(gpio_config_hiz_pins[gpio_port_sel_index] & gpio_pin_index)
 							{
-									AFIO_GPxConfig					(gpio_port_sel_index, gpio_pin_index, AFIO_FUN_GPIO);
+									AFIO_GPxConfig				(gpio_port_sel_index, gpio_pin_index, AFIO_FUN_GPIO);
 								
 									GPIO_DirectionConfig		(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_DIR_IN);
-									GPIO_PullResistorConfig	(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_PR_DISABLE);
-									GPIO_DriveConfig				(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_DV_16MA);
+									GPIO_PullResistorConfig		(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_PR_DISABLE);
+									GPIO_DriveConfig			(GPIO_PORTs[gpio_port_sel_index], gpio_pin_index, GPIO_DV_16MA);
 							}
 							gpio_pin_index<<=1;
 							

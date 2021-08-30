@@ -965,7 +965,6 @@ void commutation_callback(void)
 }
 
 
-
 /*******************************************************************************
 *	Se llega a esta funcion cuando se detecta ZCD.
 *	En el modo BEMF_SENSE_TYPE_SAMPLE_END_TOFF, ZCD puede ser
@@ -1242,3 +1241,66 @@ void motor_watchdog_callback(void)
 }
 
 
+
+
+
+/*******************************************************************************
+*	Funciones de modificacion de Velocidad de Jose
+*	
+*	Por como se plantea el funcionamiento hoy (lazo abierto) se modifica el PWM
+*	Entre 3 posibles valores para obtener las diferentes velocidades
+ *******************************************************************************/
+void motor_3phase_speed_up (void)
+{
+	//Paso al siguiente set del PWM
+	int32_t actual_pwm_set = 0;
+
+	actual_pwm_set = motor_3phase_get_pwm_ton_us_set_point();
+
+	if(actual_pwm_set < MOTOR_MAX_SPEED_PWM)
+	{
+		//No estoy en la velocidad maxima
+		if(actual_pwm_set < MOTOR_MID_SPEED_PWM)
+		{
+			//Estoy en la velocidad minima
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MID_SPEED_PWM);
+		}
+		else
+		{
+			//Estoy en la velocidad media
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MAX_SPEED_PWM);
+		}
+	}
+	else
+	{
+		//Ya estoy en la velocidad maxima
+	}
+}
+
+
+void motor_3phase_speed_down (void)
+{
+	//Paso al valor anterior del set de PWM
+	int32_t actual_pwm_set = 0;
+
+	actual_pwm_set = motor_3phase_get_pwm_ton_us_set_point();
+
+	if(actual_pwm_set > MOTOR_MIN_SPEED_PWM)
+	{
+		//No estoy en la velocidad maxima
+		if(actual_pwm_set > MOTOR_MID_SPEED_PWM)
+		{
+			//Estoy en la velocidad maxima
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MID_SPEED_PWM);
+		}
+		else
+		{
+			//Estoy en la velocidad media
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MIN_SPEED_PWM);
+		}
+	}
+	else
+	{
+		//Ya estoy en la velocidad minima
+	}
+}

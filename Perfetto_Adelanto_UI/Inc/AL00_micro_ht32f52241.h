@@ -86,7 +86,7 @@ void hardware_gpio_config_inputs_pins_load_config				(HT_GPIO_TypeDef *GPIOx,uin
 #define __hardware_gpio_read_entire_port(gpio_port)											(gpio_port->DINR)
 
 #define __hardware_gpio_config_set_as_hiz_pin(gpio_port,GPIOnum)							(gpio_port->DIRCR &= ~(1<<GPIOnum))
-#define __hardware_gpio_config_set_as_pushpull_output_pin(gpio_port,GPIOnum)	(gpio_port->DIRCR |= (1<<GPIOnum))
+#define __hardware_gpio_config_set_as_pushpull_output_pin(gpio_port,GPIOnum)				(gpio_port->DIRCR |= (1<<GPIOnum))
 
 
 #define __hardware_gpio_event_detection_disable(GPIOnum)								(HT_EXTI->CR 				&= ~(1 << GPIOnum))

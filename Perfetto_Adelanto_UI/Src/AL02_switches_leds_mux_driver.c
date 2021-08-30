@@ -167,50 +167,28 @@ void ui_mux_driver_routine (void)
 	static uint8_t state_count = 0;
 	uint8_t switches=0, switches_prev=0;
 	
-	//__hardware_gpio_output_set(GPIOB,GPIO2);			// PIN LIBRE (sin cablear a ningun lado) - Asumo que lo usaba para debug
-	
 	switch(actual_state)
 	{
 		case UI_STATE_RESET:		ui_mux_switches_comm_disable();
 														ui_mux_leds_state_update();
 		
-		case UI_STATE_SWITCHES:		ui_timer_set_irq_within_us(MUX_TIME_SWITCHES_us);				
+		case UI_STATE_SWITCHES:	ui_timer_set_irq_within_us(MUX_TIME_SWITCHES_us);
+															
 														ui_mux_leds_comm_disable();
-														ui_mux_leds_comm_set_high();
+														//ui_mux_leds_comm_set_high();
 														ui_mux_io_bus_set_as_input();
 														ui_mux_switches_comm_enable();
 														actual_state = UI_STATE_LEDS;		
 														break;	
 		
-		//Estos case no estan invertidos? - En el estado de LEDs se actualizan los switches y viceversa
 		case UI_STATE_LEDS:			ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);
 															
-														switches = 	(ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK) 	+
+														switches = 	(ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK)  +
 																	(ui_switch_lock_get_state()		<<	UI_SWITCH_LOCK_SHIFT_MASK)		+
 																	(ui_switch_inc_fan_get_state()	<<	UI_SWITCH_INC_FAN_SHIFT_MASK)	+
 																	(ui_switch_dec_fan_get_state()	<<	UI_SWITCH_DEC_FAN_SHIFT_MASK)	+
-																	(ui_switch_inc_heat_get_state()	<<	UI_SWITCH_INC_HEAT_SHIFT_MASK) 	+
+																	(ui_switch_inc_heat_get_state()	<<	UI_SWITCH_INC_HEAT_SHIFT_MASK)  +
 																	(ui_switch_dec_heat_get_state()	<<	UI_SWITCH_DEC_HEAT_SHIFT_MASK);
-		
-														//TODO: Quizas aqui previo a actualizar el valor de la variable global deberia consultar si el estado de los switches
-														//se mantiene durante 20 o mas veces que se llama a la funcion para que funcione como antirebote
-														if (switches == switches_prev)
-														{
-															//El estado actual es igual al anterior, incremento el contador
-															state_count++;
-														}
-														else
-														{
-															//El estado anterior era diferente y lo actualizo para la proxima vuelta
-															switches_prev = switches;
-														}
-
-														if (state_count >= COUNT_DEBOUNCE)
-														{
-															//Cumpli la cantidad de estados
-															state_count = 0;
-															switches_change_flag = TRUE;
-														}
 
 														switches_state = switches;	//Actualizo variable global de intercambio
 		
@@ -225,7 +203,23 @@ void ui_mux_driver_routine (void)
 
 
 /* ----------- Codigo Jose ----------- */
+uint8_t switches_state_changed (void)
+{
+	//Funcion que devuelve TRUE si se registro un cambio en el estado de los switches
+	if (switches_change_flag == TRUE)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
 
+void reset_switches_state_changed (void)
+{
+	switches_change_flag = FALSE;
+}
 
 uint8_t switches_status (void)
 {

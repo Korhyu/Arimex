@@ -38,6 +38,8 @@ void 		ui_mux_driver_routine 		(void);
 void		ui_mux_leds_state_update 	(void);
 void 		ui_mux_init 				(void);
 
-uint8_t     switches_status             (void)                //Devuelve si se opero alguna accion con la UI
+uint8_t     switches_state_changed      (void);
+void        reset_switches_state_changed (void);
+uint8_t     switches_status             (void);                //Devuelve si se opero alguna accion con la UI
 
 #endif /* AL02_SWITCHES_LEDS_MUX_DRIVER_H */
