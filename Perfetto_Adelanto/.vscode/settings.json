@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "al02_inverter_3phase.h": "c"
+        "al02_inverter_3phase.h": "c",
+        "al01_board_iq_aed_rev20191011.h": "c"
     }
 }

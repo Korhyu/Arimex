@@ -882,10 +882,10 @@ void micro_config (void)
 {
 	//RECORDAR DE MODIFICAR EL ARCHIVO "system_ht32f5xxxxx_02.c" PARA CONFIGURAR EL CLOCK CON EL OSC INTERNO (HSI)
 		
-  NVIC_Configuration();               /* NVIC configuration                                                 */
-  CKCU_Configuration();               /* System Related configuration                                       */
-  GPIO_Configuration();               /* GPIO Related configuration                                         */
-  RETARGET_Configuration();           /* Retarget Related configuration                                     */
+  	NVIC_Configuration();               /* NVIC configuration                                                 */
+  	CKCU_Configuration();               /* System Related configuration                                       */
+  	GPIO_Configuration();               /* GPIO Related configuration                                         */
+  	RETARGET_Configuration();           /* Retarget Related configuration                                     */
 	SYSTICK_Configuration();
 	
 	micro_gpios_outputs_pp_config();	
