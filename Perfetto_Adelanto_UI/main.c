@@ -43,7 +43,7 @@ int main(void)
 	//motor_3phase_init();
 	//motor_3phase_start_motor();
 	
-	//TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
+	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
 	//TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE);
 	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
@@ -53,6 +53,7 @@ int main(void)
 	{
 		//motor_3phase_task();
 
+		
 		sw_command = ui_mux_get_switches_state();
 
 		if (sw_command & (1<<UI_SWITCH_COLDSHOT_SHIFT_MASK))
@@ -97,6 +98,7 @@ int main(void)
 
 			ui_mux_set_leds_state(var);
 		}
+		
 	}
 }
 

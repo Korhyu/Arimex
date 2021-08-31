@@ -80,6 +80,8 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 {
 	int32_t aux;
 	hardware_pwm_set_outputs_to_toff();
+	//Como alternativa a la funcion de arriba uso esta. La funcion de arriba no setea en toff, quizas es porque no suceden los eventos y esto no cambia los estados
+	//hardware_pwm_set_counter_to_toff();
 
 	if(inverter_state_overwrite == INVERTER_STATE_NOT_OVERWRITE)
 	{

@@ -6,3 +6,7 @@
 *.dwl
 *.dwl2
 Documentacion/~$timizacion.docx
+
+
+##Directories
+Obj/*

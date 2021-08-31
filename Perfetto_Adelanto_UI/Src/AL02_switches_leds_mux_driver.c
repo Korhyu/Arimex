@@ -12,9 +12,9 @@
 										 __hardware_gpio_config_set_as_pushpull_output_pin(BOARD_UI_LED_ENABLE2b_PORT,BOARD_UI_LED_ENABLE2b_PIN);}
 
 #define ui_mux_leds_comm_disable() 	   {__hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE1a_PORT,BOARD_UI_LED_ENABLE1a_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE1a_PORT,BOARD_UI_LED_ENABLE1a_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE1a_PORT,BOARD_UI_LED_ENABLE1a_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE1a_PORT,BOARD_UI_LED_ENABLE1a_PIN);}
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE1b_PORT,BOARD_UI_LED_ENABLE1b_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE2a_PORT,BOARD_UI_LED_ENABLE2a_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_LED_ENABLE2b_PORT,BOARD_UI_LED_ENABLE2b_PIN);}
 	
 #define ui_mux_leds_comm_set_high()		{__hardware_gpio_output_set(BOARD_UI_LED_ENABLE1a_PORT,BOARD_UI_LED_ENABLE1a_PIN);\
 										 __hardware_gpio_output_set(BOARD_UI_LED_ENABLE1b_PORT,BOARD_UI_LED_ENABLE1b_PIN);\
@@ -174,10 +174,14 @@ void ui_mux_driver_routine (void)
 		
 		case UI_STATE_SWITCHES:	ui_timer_set_irq_within_us(MUX_TIME_SWITCHES_us);
 															
-														ui_mux_leds_comm_disable();
-														//ui_mux_leds_comm_set_high();
-														ui_mux_io_bus_set_as_input();
-														ui_mux_switches_comm_enable();
+														ui_mux_leds_comm_disable();				//Pone en Hiz los pines bajos de los LEDS
+														ui_mux_leds_comm_set_high();			//Opcional?
+														ui_mux_io_bus_set_as_input();			//Pone en Hiz los pines intermedios (los que estan despues de los SW)
+														ui_mux_switches_comm_enable();			//Pone como push-pull el pin del UI_SW_ENABLE
+														//No iria aca el opcional?
+
+														//config_gpio_switch_pulldown();
+
 														actual_state = UI_STATE_LEDS;		
 														break;	
 		
@@ -192,10 +196,13 @@ void ui_mux_driver_routine (void)
 
 														switches_state = switches;	//Actualizo variable global de intercambio
 		
-														ui_mux_switches_comm_disable();
-														ui_mux_io_bus_set_as_output();
-														ui_mux_leds_comm_set_low();
-														ui_mux_leds_comm_enable();
+														ui_mux_switches_comm_disable();			//Pone como Hiz el pin del UI_SW_ENABLE
+														ui_mux_io_bus_set_as_output();			//Pone en push-pull los pines intermedios (los que estan despues de los SW)
+														ui_mux_leds_comm_set_low();				//Opcional?
+														ui_mux_leds_comm_enable();				//Pone en push-pull los pines bajos de los LEDS
+
+														//config_gpio_switch_pull_disable();	//Desabilito la R de pull down
+
 														actual_state = UI_STATE_SWITCHES;
 														break;
 	}
@@ -268,4 +275,39 @@ uint8_t switches_status (void)
 	{
 		return NO_CHANGE_SW;			//No hay cambio respecto al estado anterior de los switches
 	}
+}
+
+
+void config_gpio_switch_pulldown (void)
+{
+	//Configura resistencias de pulldown en los pines de entrada
+	GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DOWN);
+	GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DOWN);
+	GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);
+	GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_DOWN);
+	GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_DOWN);
+	GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_DOWN);
+}
+
+void config_gpio_switch_pullup (void)
+{
+	//Configura resistencias de pullup en los pines de entrada
+	GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_UP);
+	GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_UP);
+	GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_UP);
+	GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_UP);
+	GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_UP);
+	GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_UP);
+}
+
+
+void config_gpio_switch_pull_disable (void)
+{
+	//Configura resistencias de pullup en los pines de entrada
+	GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DISABLE);
+	GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DISABLE);
+	GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DISABLE);
+	GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_DISABLE);
+	GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_DISABLE);
+	GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_DISABLE);
 }

@@ -435,86 +435,86 @@ static void micro_pwm_config(void)
 {
 	/*	HT32F52231/41
 			 
-			PB15    PA14    PC1  	      |		CH0
-			PA10		PB0     PB7    	    | 	CH1
-			PC6     PB2								  | 	CH2  
-			PB9									        | 	CH3
-																	|
-			PB4			PC3		    					|		BREAK
+	PB15    PA14    PC1  	    |	CH0
+	PA10	PB0     PB7    	    | 	CH1
+	PC6     PB2					| 	CH2  
+	PB9							| 	CH3
+								|
+	PB4			PC3		    	|	BREAK
 	*/
-	
+
 	TM_TimeBaseInitTypeDef 	 TM_TimeBaseInitStructure;
-  TM_OutputInitTypeDef 		 TM_OutputInitStructure;
+	TM_OutputInitTypeDef 		 TM_OutputInitStructure;
 	
 	MCTM_CHBRKCTRInitTypeDef CHBRKCTRInitStructure;
 	
-  CKCU_PeripClockConfig_TypeDef CKCUClock = {{ 0 }};
-  CKCUClock.Bit.AFIO       = 1;
-  CKCUClock.Bit.MCTM0      = 1;
-  CKCU_PeripClockConfig(CKCUClock, ENABLE);
-		
+	CKCU_PeripClockConfig_TypeDef CKCUClock = {{ 0 }};
+	CKCUClock.Bit.AFIO       = 1;
+	CKCUClock.Bit.MCTM0      = 1;
+	CKCU_PeripClockConfig(CKCUClock, ENABLE);
+
 	/* Configure the GPIO as TM channel output AFIO function                                       */
-  //AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);	//CH1 PA10
+	//AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);	//CH1 PA10
 	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_9 , AFIO_FUN_MCTM_GPTM);	//CH3 PB9
 	//AFIO_GPxConfig(GPIO_PB, AFIO_PIN_15, AFIO_FUN_MCTM_GPTM);	//CH0 PB15
-	
+
 	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_4 , AFIO_FUN_MCTM_GPTM);	//PB4: BREAK PIN
-	
+
 	//AFIO_GPxConfig(GPIO_PC, AFIO_PIN_2, AFIO_FUN_MCTM_GPTM);		//CH0 PC2 - LED Built in  - Directo
 	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_15, AFIO_FUN_MCTM_GPTM);		//CH0 PB15 - Negado - W
 	AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);		//CH1 PA10 - Negado - U
 	//AFIO_GPxConfig(GPIO_PA, AFIO_PIN_10, AFIO_FUN_MCTM_GPTM);		//CH1 PA11 - Directo
 	AFIO_GPxConfig(GPIO_PB, AFIO_PIN_9 , AFIO_FUN_MCTM_GPTM);		//CH3 PB9  - Negado - V
-	
-	
+
+
 	TM_TimeBaseInitStructure.CounterReload = 100;
-  TM_TimeBaseInitStructure.Prescaler = 40;
-  TM_TimeBaseInitStructure.RepetitionCounter = 0;
-  TM_TimeBaseInitStructure.CounterMode = TM_CNT_MODE_UP;
-  TM_TimeBaseInitStructure.PSCReloadTime = TM_PSC_RLD_IMMEDIATE;
-  TM_TimeBaseInit(HT_MCTM0, &TM_TimeBaseInitStructure);
-	
-  
-  TM_OutputInitStructure.OutputMode = TM_OM_PWM2;
-  TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;				//TM_CHCTL_DISABLE
-  TM_OutputInitStructure.ControlN = TM_CHCTL_DISABLE;			//TM_CHCTL_ENABLE
-  TM_OutputInitStructure.Polarity = TM_CHP_NONINVERTED;		//TM_CHP_NONINVERTED
-  TM_OutputInitStructure.PolarityN = TM_CHP_INVERTED;			//TM_CHP_INVERTED
-  TM_OutputInitStructure.IdleState = MCTM_OIS_LOW;
-  TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;			//MCTM_OIS_LOW 
-	
+	TM_TimeBaseInitStructure.Prescaler = 40;
+	TM_TimeBaseInitStructure.RepetitionCounter = 0;
+	TM_TimeBaseInitStructure.CounterMode = TM_CNT_MODE_UP;
+	TM_TimeBaseInitStructure.PSCReloadTime = TM_PSC_RLD_IMMEDIATE;
+	TM_TimeBaseInit(HT_MCTM0, &TM_TimeBaseInitStructure);
+
+
+	TM_OutputInitStructure.OutputMode = TM_OM_PWM2;
+	TM_OutputInitStructure.Control = TM_CHCTL_ENABLE;			//TM_CHCTL_DISABLE
+	TM_OutputInitStructure.ControlN = TM_CHCTL_DISABLE;			//TM_CHCTL_ENABLE
+	TM_OutputInitStructure.Polarity = TM_CHP_NONINVERTED;		//TM_CHP_NONINVERTED
+	TM_OutputInitStructure.PolarityN = TM_CHP_INVERTED;			//TM_CHP_INVERTED
+	TM_OutputInitStructure.IdleState = MCTM_OIS_LOW;
+	TM_OutputInitStructure.IdleStateN = MCTM_OIS_HIGH;			//MCTM_OIS_LOW 
+
 	//HIN3 CH0 (PB15) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_0;
 	TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN1 CH1 (PA10) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_1;
-  TM_OutputInitStructure.Compare = 80;
+	TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
 	//HIN2 CH3 (PB9) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_3;
 	TM_OutputInitStructure.Compare = 80;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
-	
+
 	//HIN2 CH3 (PB9) - Directo
 	TM_OutputInitStructure.Channel = TM_CH_2;
 	TM_OutputInitStructure.Compare = 50;
 	TM_OutputInit(HT_MCTM0, &TM_OutputInitStructure);
-	
-	
+
+
 	TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);				//IRQ de time_before_ton
 	NVIC_EnableIRQ(MCTM0_IRQn);
-	
+
 	TM_Cmd(HT_MCTM0, ENABLE);
-	
+
 	MCTM_CHMOECmd(HT_MCTM0, ENABLE);
-	
+
 	TM_ChannelConfig(HT_MCTM0, TM_CH_0, TM_CHCTL_ENABLE);
 	TM_ChannelConfig(HT_MCTM0, TM_CH_1, TM_CHCTL_ENABLE);
 	TM_ChannelConfig(HT_MCTM0, TM_CH_2, TM_CHCTL_ENABLE);
 	TM_ChannelConfig(HT_MCTM0, TM_CH_3, TM_CHCTL_ENABLE);
-	
-	
+
+
 	CHBRKCTRInitStructure.AutomaticOutput = MCTM_CHAOE_ENABLE;
 	CHBRKCTRInitStructure.Break0 = MCTM_BREAK_ENABLE;
 	CHBRKCTRInitStructure.Break0Polarity = MCTM_BREAK_POLARITY_HIGH; 
@@ -523,9 +523,9 @@ static void micro_pwm_config(void)
 	CHBRKCTRInitStructure.LockLevel = MCTM_LOCK_LEVEL_OFF;
 	CHBRKCTRInitStructure.OSSIState = MCTM_OSSI_STATE_ENABLE;
 	CHBRKCTRInitStructure.OSSRState = MCTM_OSSR_STATE_ENABLE;
-	
+
 	MCTM_CHBRKCTRConfig(HT_MCTM0,&CHBRKCTRInitStructure);
-	
+
 	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
 	TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE);
 	TM_IntConfig(HT_MCTM0,TM_INT_UEV,DISABLE);
