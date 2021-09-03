@@ -9,6 +9,8 @@
 #define MOTOR_STATE_RUNNING		2
 #define MOTOR_STATE_FAIL		3
 
+#define FAIL_STARTS_MAX_COUNT	3			//Cantidad maxima de veces que reinicio el arranque antes de apagarlo completamente
+
 #define MOTOR_FAIL_TIMEOUT_1	-1
 #define MOTOR_FAIL_TIMEOUT_2	-2
 #define MOTOR_FAIL_TIMEOUT_3	-3

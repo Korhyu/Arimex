@@ -65,6 +65,11 @@
 
 /*Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)*/
 #define __default_zcd_expected_calc(time) ((time>>2)+(time>>4))
+
+#define DEEP_FREEWHEEL_SHIFTER							6		//Voy a dejar el freewheel por aproximadamente 64 secuencias para luego retomar el sincronismo
+#define ZCD_LOST_MAX_COUNT								6		//Cantidad de ZCD LOST maxima que puedo tener antes de ir a un deep freewheel
+#define ZCD_HIT_COUNT_RESET								6		//Cantidad de ZCD HIT que tengo que tener antes de restar un ZCD LOST
+
 /*********************************************************
 **********************************************************/
 
@@ -356,7 +361,7 @@ int32_t motor_3phase_init(void)
 
 	link_zcd_expected_calculate_function(calculate_zcd_expected_default);
 
-	motor_3phase_set_pwm_ton_us_set_point(20);
+	motor_3phase_set_pwm_ton_us_set_point(PWM_OPERATING_TON_uS);
 
 	return 0;
 }
@@ -656,7 +661,6 @@ void motor_3phase_starting_state_machine(void)
 									
 									break;
 
-
 		default:					while(1);//DEV_ERROR
 	}
 }
@@ -683,7 +687,7 @@ void motor_3phase_starting_state_machine(void)
 *
 *	Se ejecuta en contexto de interrupcion ya que se llama desde "zcd_event()"
 ********************************************************************************/
-#define AVG_FACTOR_ELECTRICAL_PERIOD	11
+#define AVG_FACTOR_ELECTRICAL_PERIOD	1
 void zcd_event_first_steps_state (void)
 {
 	gv.bemf_state = BEMF_STATE_ZCD_DETECTED;
@@ -947,6 +951,8 @@ void zcd_event_correct_timing_comm(void)
  *******************************************************************************/
 void commutation_callback(void)
 {
+	static int16_t zcd_lost_count = 0;						//Contador de ZCD LOST para calcular fail ratio
+	static int16_t zcd_hit_count = 0;						//ZCD exitosos luego del primer LOST para calcular fail ratio
 	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
 	if(gv.stop_running_flag != STOP_RUNNING_FLAG_STOP_MOTOR)
@@ -956,32 +962,61 @@ void commutation_callback(void)
 		if(inverter_3phase_get_actual_bemf_slope()==INVERTER_BEMF_SLOPE_POSITIVE)
 		{
 			if(gv.bemf_state != BEMF_STATE_ZCD_DETECTED)
-			{//ZCD LOST!!
-				//Si se pierde la deteccion, se vuelve a FREEWHEEL a detectar ZCD y volver a medir el periodo electrico de una secuencia.
-				gv.bemf_state = BEMF_STATE_ZCD_LOST;
-				//inverter_3phase_comm_next_seq();
-				inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
-				board_bemf_vref_select_neutral_point();
-				gv.starting_state = STARTING_STATE_FREEWHEEL_SYNC;
-				bemf_zcd_disable_detection_within_time_us(gv.motor_comm_seq_period_us_avg>>1);
+			{
+				//ZCD LOST!!
+				//Conteo de ZCD lost para mandar a un "deep freewheel"
+				zcd_lost_count++;
+		
+				if ( zcd_lost_count > ZCD_LOST_MAX_COUNT )
+				{
+					/* -------------------------------------- DEEP FREEWHEEL -------------------------------------- */
+					//Tengo un alto indice de ZCD LOST y tengo que pasar a "deep freewheel"
+					zcd_lost_count = 0;		//Reseteo el contador
+
+					gv.bemf_state = BEMF_STATE_ZCD_LOST;
+					inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
+					bemf_zcd_disable_detection_within_time_us(gv.motor_comm_seq_period_us_avg<<DEEP_FREEWHEEL_SHIFTER);
+					board_bemf_vref_select_neutral_point();
+					gv.starting_state = STARTING_STATE_FREEWHEEL_SYNC;
+				}
+				else
+				{
+					//Si se pierde la deteccion, se vuelve a FREEWHEEL a detectar ZCD y volver a medir el periodo electrico de una secuencia.
+					gv.bemf_state = BEMF_STATE_ZCD_LOST;
+					//inverter_3phase_comm_next_seq();
+					inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
+					bemf_zcd_disable_detection_within_time_us(gv.motor_comm_seq_period_us_avg>>1);
+					board_bemf_vref_select_neutral_point();
+					gv.starting_state = STARTING_STATE_FREEWHEEL_SYNC;
+				}	
 			}
 			else
 			{
 				//Entre por una secuencia que tiene un zcd+ lo primero que hago es hacer el cambio de seq
 				inverter_3phase_comm_next_seq();
-				
-				//calculate_times();
 
 				//Ahora estoy en una seq con zcd-
 				bemf_commutation_set_within_us(gv.time_var_comm - 10);
 
 				//Habilito la deteccion de zcd luego del pulso del cambio de secuencia.
 				bemf_zcd_disable_detection_within_time_us(gv.time_var_comm + 10);
-
-				//snap_motor_data();
 				
 				gv.bemf_state = BEMF_STATE_COMMUTATE;
-				//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+
+
+				/* ---------------------------------- DEEP FREEWHEEL COUNTER --------------------------------- */
+				if ( zcd_lost_count > 0 )
+				{
+					//Si sucedio algun ZCD LOST, comienzo el control, cada ZCD_HIT_COUNT_RESET de ZCD exitosos, resto un ZCD LOST
+					//Si el contador de ZCD LOST supera cierto valor, mando a deep freewheel
+					zcd_hit_count++;
+
+					if( zcd_hit_count >= ZCD_HIT_COUNT_RESET)
+					{
+						zcd_lost_count--;		//Resto un ZCD LOST
+						zcd_hit_count = 0;		//Reinicio la cuenta para la proxima resta
+					}
+				}
 			}
 		}
 		else
@@ -1273,7 +1308,36 @@ void blanking_timer_expired_callback (void)
 ********************************************************************************/
 void motor_watchdog_callback(void)
 {
-	motor_3phase_abort_motor(MOTOR_STOP_METHOD_FREEWHEEL,MOTOR_STATE_FAIL);
+	//Garantizar arranque
+	if (gv.starting_state != STARTING_STATE_STEPS_CORRECT_TIMMING)
+	{
+		static int8_t starting_fail_count = 0;			//Contador de intentos fallidos de arranque
+		starting_fail_count++;
+
+		//Si no estoy en CORRECT_TIMMING es que estoy en arranque
+		if ( starting_fail_count < FAIL_STARTS_MAX_COUNT)
+		{
+			//Si fallo durante los primeros pasos vuelvo a etapas anteriores para intentar de nuevo
+			if(gv.starting_state == STARTING_STATE_FIRST_STEPS_FROM_STAND)
+			{
+				gv.starting_state = STARTING_STATE_INIT;	//Vuelvo al principio para darle tiempo a un frenado, carga de bootsrap y reinicio
+			}
+			else
+			{
+				//Fallo en otra etapa. Hay que ver donde puede fallar y que accion tomar
+			}
+		}
+		else
+		{
+			motor_3phase_abort_motor(MOTOR_STOP_METHOD_FREEWHEEL,MOTOR_STATE_FAIL);
+		}
+	}
+	else
+	{
+		//Si estoy en CORRECT_TIMMING es que estoy en funcionamiento normal y algo paso
+		motor_3phase_abort_motor(MOTOR_STOP_METHOD_FREEWHEEL,MOTOR_STATE_FAIL);
+	}
+	
 }
 
 
