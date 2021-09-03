@@ -28,8 +28,11 @@
 #define PWM_STARTING_TON_uS 	  						 	30
 
 /* Configuracion de PWM que se va a usar previo a la rampa de aceleracion */
-#define PWM_OPERATING_PERIOD_uS								90
-#define PWM_OPERATING_TON_uS								60
+#define PWM_OPERATING_PERIOD_uS								100
+#define PWM_OPERATING_TON_uS								80
+
+/*Configuracion de PWM que se va a usar enregimen permanente */
+#define PWM_OPERATING_DUTY_PER								80
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
 #define START_FIRST_STEP_DURATION_INIT_us				  	7000				//7000
@@ -41,6 +44,7 @@
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
 #define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el dury del PWM*/
 #define SET_POINT_MAX_PWM_TON_uS						88		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
 #define SET_POINT_MIN_PWM_TON_uS						10
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
@@ -139,8 +143,45 @@ int32_t (*calculate_zcd_expected)(int32_t);	//Puntero a la funcion que calcula Z
 static volatile struct motor_3phase_drive gv; //Variables globales de este archivo
 
 
+/*******************************************************************************
+ *	JOSE - Esta funcion retorna el valor del set point del duty del pwm:
+ *	
+********************************************************************************/
+int32_t motor_3phase_get_pwm_duty_set (void)
+{
+	return gv.pwm_duty_set_point;
+}
 
 
+/*******************************************************************************
+ *	JOSE - Esta funcion escribe el valor del set point del duty del pwm:
+ *	
+********************************************************************************/
+void motor_3phase_set_pwm_duty_set (int32_t pwm_duty_set_point)
+{
+	gv.pwm_duty_set_point = pwm_duty_set_point;
+}
+
+/*******************************************************************************
+ *	JOSE - Esta funcion retorna el valor actual del duty del pwm:
+ *	
+********************************************************************************/
+int32_t motor_3phase_get_pwm_duty_actual (void)
+{
+	return gv.pwm_duty_actual;
+}
+
+
+
+/*******************************************************************************
+ *	JOSE - Esta funcion retorna el valor actual del duty del pwm:
+ *	
+********************************************************************************/
+int32_t motor_3phase_get_pwm_duty
+ (void)
+{
+	return gv.pwm_duty_actual;
+}
 
 /*********************************************************************
  * Devuevel el maximo set point que se puede poner
@@ -149,6 +190,7 @@ int32_t motor_3phase_get_pwm_ton_us_max_set_point(void)
 {
 	return SET_POINT_MAX_PWM_TON_uS;
 }
+
 /*********************************************************************
  * Devuevel el minimo set point que se puede poner
 **********************************************************************/
@@ -224,7 +266,6 @@ int32_t motor_3phase_set_motor_direction(int32_t motor_direction)
 }
 
 
-
 /*******************************************************************************
  *	Esta funcion retorna el valor de la maquina de estados del motor:
  *	MOTOR_STATE_STOPPED,MOTOR_STATE_STARTING,MOTOR_STATE_RUNNING,MOTOR_STATE_FAIL
@@ -250,7 +291,7 @@ int32_t  motor_3phase_get_electrical_frequency_hz	(void)
 }
 
 #define bemf_blanking_timer_expired_callback_link(func_ptr)		board_timer_link_callback(func_ptr,BOARD_TIM_BLANKING_SEL_CALLBACK)
-#define bemf_end_toff_sense_callback_link(func_ptr)						board_pwm_end_toff_link_callback(func_ptr)
+#define bemf_end_toff_sense_callback_link(func_ptr)				board_pwm_end_toff_link_callback(func_ptr)
 
 
 /* JOSE - TODO: Tengo dudas sobre estas 2 y escribo las mias
@@ -430,67 +471,6 @@ int32_t  motor_3phase_stop_motor (int32_t motor_stop_method)
 }
 
 
-
-
-/*******************************************************************************
- * FUncion para enviar datos del motor
- * 
- * 
- *******************************************************************************/
-static int32_t data_send = FALSE;
-void send_motor_data (struct motor_3phase_drive *p)
-{
-	printf("\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
-	printf("time_from_zcd_to_zcd = %d\n",p->time_from_zcd_to_zcd);
-	printf("time_from_zcd_to_zcd_avg = %d\n",p->time_from_zcd_to_zcd_avg);
-
-	printf("motor_comm_seq_period_us = %d\n",p->motor_comm_seq_period_us);
-	printf("motor_comm_seq_period_us_avg = %d\n",p->motor_comm_seq_period_us_avg);
-
-	printf("time_from_comm_to_zcd = %d\n",p->time_from_comm_to_zcd);
-	printf("time_from_comm_to_zcd_avg = %d\n",p->time_from_comm_to_zcd_avg);
-	
-	printf("motor_electrical_period_us_avg = %d\n",p->motor_electrical_period_us_avg);
-	printf("zcd_blanking_time = %d\n",p->zcd_blanking_time);
-	printf("time_zcd_expected = %d\n",p->time_zcd_expected);
-	printf("time_t_error = %d\n",p->time_t_error);
-	printf("time_var_comm = %d\n",p->time_var_comm);
-	printf("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-\n");
-}
-
-#define MAX_DATA 48
-static int i=0;
-void snap_motor_data (void)
-{
-	static struct motor_3phase_drive ms[MAX_DATA];		//Motor Snap data
-
-	ms[i].motor_comm_seq_period_us = gv.motor_comm_seq_period_us;
-	ms[i].time_from_comm_to_zcd = gv.time_from_comm_to_zcd;
-	ms[i].time_from_zcd_to_zcd = gv.time_from_zcd_to_zcd;
-	ms[i].time_zcd_expected = gv.time_zcd_expected;
-	ms[i].time_t_error = gv.time_t_error;
-	ms[i].motor_comm_seq_period_us_avg = gv.motor_comm_seq_period_us_avg;
-	ms[i].time_from_comm_to_zcd_avg = gv.time_from_comm_to_zcd_avg;
-	ms[i].time_from_zcd_to_zcd_avg = gv.time_from_zcd_to_zcd_avg;
-	ms[i].motor_electrical_period_us_avg = gv.motor_electrical_period_us_avg;
-	ms[i].time_var_comm = gv.time_var_comm;
-
-	ms[i].zcd_blanking_time = gv.zcd_blanking_time;
-
-	i++;
-	if (i > MAX_DATA)
-	{
-		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
-		gv.stop_running_flag = STOP_RUNNING_FLAG_STOP_MOTOR;
-
-		for(i=0; i < MAX_DATA; i++)
-		{
-			send_motor_data(&ms[i]);
-		}
-	}
-}
-
-
 /*******************************************************************************
  * Maquina de estados para el arranque del motor, estas instrucciones se ejecutan
  * en contexto normal, hay parte de la maquina de estados que cambiará en
@@ -635,6 +615,7 @@ void motor_3phase_starting_state_machine(void)
 																		}
 																		*/
 																		gv.starting_sub_state = STARTING_SUB_STATE_RUNNING;								//Jose
+																		
 																		break;
 
 										case STARTING_SUB_STATE_ANALYZING_FAIL_SYNC:
@@ -660,6 +641,7 @@ void motor_3phase_starting_state_machine(void)
 																		{
 																			//Si esta disponible actualizo los tiempos de seq
 																			calculate_times();
+																			update_pwm();
 																			gv.time_update = TIME_UPDATE_READY;
 																		}
 
@@ -701,7 +683,7 @@ void motor_3phase_starting_state_machine(void)
 *
 *	Se ejecuta en contexto de interrupcion ya que se llama desde "zcd_event()"
 ********************************************************************************/
-#define AVG_FACTOR_ELECTRICAL_PERIOD	1
+#define AVG_FACTOR_ELECTRICAL_PERIOD	11
 void zcd_event_first_steps_state (void)
 {
 	gv.bemf_state = BEMF_STATE_ZCD_DETECTED;
@@ -718,9 +700,9 @@ void zcd_event_first_steps_state (void)
 	if(gv.starting_first_steps_counter>1)
 	{
 		if(inverter_3phase_get_actual_bemf_slope() == INVERTER_BEMF_SLOPE_NEGATIVE)
-			{
-				gv.starting_first_steps_counter--;
-			}
+		{
+			gv.starting_first_steps_counter--;
+		}
 
 		inverter_3phase_comm_next_seq();
 		//Hago un blanking de ZCD de 1/8 de lo que dura una secuencia de excitacion.
@@ -854,7 +836,10 @@ void calculate_times (void)
 	gv.zcd_blanking_time = (gv.time_from_zcd_to_zcd_avg - (gv.time_from_zcd_to_zcd_avg>>2) - (gv.time_from_zcd_to_zcd_avg>>4));
 	
 	//Error y adelanto
-	gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4) + (gv.time_from_zcd_to_zcd_avg>>6);				//Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)
+	//1/4 + 1/16 + 1/64 = 0.328125
+	//1/4 + 1/16		= 0.3125
+	gv.time_zcd_expected = gv.time_from_zcd_to_zcd_avg * 0.33;
+	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4) + (gv.time_from_zcd_to_zcd_avg>>6);				//Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)
 	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4);
 	gv.time_t_error = ((gv.time_from_zcd_to_zcd_avg>>1) - gv.motor_comm_seq_period_us);
 	gv.time_t_error = gv.time_t_error + (gv.time_from_comm_to_zcd_avg - gv.time_zcd_expected);
@@ -873,6 +858,57 @@ void calculate_times (void)
 	//Por alguna razon Fran actualiza estos valores LUEGO del calculo de error
 	gv.motor_comm_seq_period_us = (gv.time_from_zcd_to_zcd_avg>>1);
 	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1);
+}
+
+
+/*******************************************************************************
+*	Funcion armada por Jose
+*	
+********************************************************************************/
+void update_pwm (void)
+{
+	//Funcion que sincroniza el PWM con la velocidad de rotacion para 
+	
+	int32_t duty = inverter_3phase_pwm_get_ton_us();
+	int32_t periodo = gv.motor_comm_seq_period_us / 1;
+
+	inverter_3phase_pwm_set_period_us(periodo * 1.1);
+	inverter_3phase_pwm_set_ton_us((periodo * PWM_OPERATING_DUTY_PER) / 100 );
+	//inverter_3phase_pwm_set_toff_us(periodo - gv.motor_comm_seq_period_us);
+	
+	/*
+	int32_t duty = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us() ;
+	int32_t period;
+	int32_t period_modif;
+
+	if (duty >= MOTOR_MAX_SPEED_PWM)
+	{
+		//Estoy en la velocidad Maxima
+		period_modif = 1;
+	}
+	else if (duty >= MOTOR_MID_SPEED_PWM)
+	{
+		//Estoy en la velocidad media
+		period_modif = 3;
+	}
+	else
+	{
+		//Estoy en la velocidad minima
+		period_modif = 5;
+	}
+
+	period = gv.motor_comm_seq_period_us / period_modif;
+	inverter_3phase_pwm_set_period_us(period * 1.1);
+	inverter_3phase_pwm_set_ton_us((period * duty) / 100 );
+	//tener aproximadamente 1 pulso por secuencia
+	// 1 SEQ = 60º
+	//Si quiero tener 1 pulso por SEQ entonces Ton = motor_comm_seq_period_us
+	//Y el duty = Ton / T ---> T = Ton / duty
+	int32_t periodo = (gv.motor_comm_seq_period_us * 100) / PWM_OPERATING_DUTY_PER;						//Aca hay que remplazar el define por el duty deseado para la velocidad especifica
+
+	inverter_3phase_pwm_set_period_us(periodo);		
+	inverter_3phase_pwm_set_ton_us((gv.motor_comm_seq_period_us * 80) / 100);
+	*/
 }
 
 
@@ -933,7 +969,7 @@ void commutation_callback(void)
 			{
 				//Entre por una secuencia que tiene un zcd+ lo primero que hago es hacer el cambio de seq
 				inverter_3phase_comm_next_seq();
-
+				
 				//calculate_times();
 
 				//Ahora estoy en una seq con zcd-
@@ -1302,5 +1338,67 @@ void motor_3phase_speed_down (void)
 	else
 	{
 		//Ya estoy en la velocidad minima
+	}
+}
+
+
+
+
+
+/*******************************************************************************
+ * FUncion para enviar datos del motor
+ * 
+ * 
+ *******************************************************************************/
+static int32_t data_send = FALSE;
+void send_motor_data (struct motor_3phase_drive *p)
+{
+	printf("\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+	printf("time_from_zcd_to_zcd = %d\n",p->time_from_zcd_to_zcd);
+	printf("time_from_zcd_to_zcd_avg = %d\n",p->time_from_zcd_to_zcd_avg);
+
+	printf("motor_comm_seq_period_us = %d\n",p->motor_comm_seq_period_us);
+	printf("motor_comm_seq_period_us_avg = %d\n",p->motor_comm_seq_period_us_avg);
+
+	printf("time_from_comm_to_zcd = %d\n",p->time_from_comm_to_zcd);
+	printf("time_from_comm_to_zcd_avg = %d\n",p->time_from_comm_to_zcd_avg);
+	
+	printf("motor_electrical_period_us_avg = %d\n",p->motor_electrical_period_us_avg);
+	printf("zcd_blanking_time = %d\n",p->zcd_blanking_time);
+	printf("time_zcd_expected = %d\n",p->time_zcd_expected);
+	printf("time_t_error = %d\n",p->time_t_error);
+	printf("time_var_comm = %d\n",p->time_var_comm);
+	printf("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-\n");
+}
+
+#define MAX_DATA 48
+static int i=0;
+void snap_motor_data (void)
+{
+	static struct motor_3phase_drive ms[MAX_DATA];		//Motor Snap data
+
+	ms[i].motor_comm_seq_period_us = gv.motor_comm_seq_period_us;
+	ms[i].time_from_comm_to_zcd = gv.time_from_comm_to_zcd;
+	ms[i].time_from_zcd_to_zcd = gv.time_from_zcd_to_zcd;
+	ms[i].time_zcd_expected = gv.time_zcd_expected;
+	ms[i].time_t_error = gv.time_t_error;
+	ms[i].motor_comm_seq_period_us_avg = gv.motor_comm_seq_period_us_avg;
+	ms[i].time_from_comm_to_zcd_avg = gv.time_from_comm_to_zcd_avg;
+	ms[i].time_from_zcd_to_zcd_avg = gv.time_from_zcd_to_zcd_avg;
+	ms[i].motor_electrical_period_us_avg = gv.motor_electrical_period_us_avg;
+	ms[i].time_var_comm = gv.time_var_comm;
+
+	ms[i].zcd_blanking_time = gv.zcd_blanking_time;
+
+	i++;
+	if (i > MAX_DATA)
+	{
+		inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_NOT_OVERWRITE);
+		gv.stop_running_flag = STOP_RUNNING_FLAG_STOP_MOTOR;
+
+		for(i=0; i < MAX_DATA; i++)
+		{
+			send_motor_data(&ms[i]);
+		}
 	}
 }

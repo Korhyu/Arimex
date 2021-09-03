@@ -52,6 +52,7 @@ int32_t	inverter_3phase_set_comm_direction				   			 (int32_t inverter_direction
 /* Jose */
 #define inverter_3phase_pwm_get_duty_percentage()								  	{((int32_t)board_pwm_get_ton_us()); / ((int32_t)board_pwm_get_period_us());}
 
+
 #endif /* AL02_INVERTER_3PHASE */
 
 

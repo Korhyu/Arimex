@@ -37,11 +37,11 @@ int main(void)
 	board_hardware_configuration();
 
 	// UI Config
-	ui_mux_init();
+	//ui_mux_init();
 	
 	//Arranque Fran
-	//motor_3phase_init();
-	//motor_3phase_start_motor();
+	motor_3phase_init();
+	motor_3phase_start_motor();
 	
 	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
 	//TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE);
@@ -51,9 +51,9 @@ int main(void)
 	
 	while(1)
 	{
-		//motor_3phase_task();
+		motor_3phase_task();
 
-		
+		/*
 		sw_command = ui_mux_get_switches_state();
 
 		if (sw_command & (1<<UI_SWITCH_COLDSHOT_SHIFT_MASK))
@@ -98,7 +98,7 @@ int main(void)
 
 			ui_mux_set_leds_state(var);
 		}
-		
+		*/
 	}
 }
 

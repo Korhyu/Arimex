@@ -47,12 +47,16 @@ int32_t motor_3phase_get_pwm_ton_us_max_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_min_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_set_point(void);
 
+
+
 void motor_3phase_speed_up (void);
 void motor_3phase_speed_down (void);
 
 int32_t bemf_get_fail_sync_rate_ppm (void);
 
-void calculate_times (void);
+void calculate_times (void);							//Calcula los tiempos de conmutacion y error
+void update_pwm (void);									//Actualiza los tiempos del PWM
+int32_t motor_3phase_get_pwm_duty(void);				//Devuelve en porcentaje el duty actual del PWM
 
 void motor_3phase_starting_state_machine(void);
 
@@ -87,6 +91,8 @@ struct motor_3phase_drive{
 	int32_t zcd_blanking_time;
 
 	int32_t pwm_ton_us_set_point;
+	int32_t pwm_duty_set_point;					//Valor set point del duty
+	int32_t pwm_duty_actual;					//Valor actual del duty
 
 	int32_t fail_sync_rate_enable_flag;
 	int32_t fail_sync_rate_comm_counter;

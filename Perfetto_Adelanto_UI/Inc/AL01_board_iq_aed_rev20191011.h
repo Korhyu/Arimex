@@ -145,6 +145,8 @@ int32_t board_scheduler_is_time_expired		(int32_t timer);
 #define board_pwm_start_with_ton()											hardware_pwm_start_with_ton()
 #define board_pwm_set_outputs_to_toff()							    		hardware_pwm_set_outputs_to_toff()
 
+#define board_pwm_start_with_toff()							    			hardware_pwm_set_outputs_to_toff()
+
 void hardware_pwm_break_function_link_callback (void (*func_pointer)(void));
 																																			 
 																																			 

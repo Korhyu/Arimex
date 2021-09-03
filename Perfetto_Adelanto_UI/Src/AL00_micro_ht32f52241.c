@@ -549,12 +549,13 @@ void MCTM0_IRQHandler (void)
 		(*func_ptr_callback_pwm_break)();	
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);
+
+		__hardware_gpio_output_toggle(GPIOB, 11);					//GPIO aux para monitoreo en OSC
 	}
 	
 	//if(TM_GetFlagStatus(HT_MCTM0,TM_FLAG_CH2CC) && !TM_GetFlagStatus(HT_MCTM0,TM_FLAG_UEV))
 	if(TM_GetFlagStatus(HT_MCTM0,TM_FLAG_CH2CC))
 	{
-		//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 		(*func_ptr_callback_pwm_end_toff)();
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);
 	}
@@ -684,7 +685,7 @@ void    hardware_pwm_start_with_ton									(void)
 	TM_SetCounter(HT_MCTM0,TM_GetCaptureCompare(HT_MCTM0,TM_CH_0));
 }
 
-void 		hardware_pwm_set_outputs_to_toff						(void)
+void 	hardware_pwm_set_outputs_to_toff							(void)
 {
 	TM_SetCounter(HT_MCTM0,0);
 }
@@ -715,7 +716,7 @@ void hardware_pwm_set_counter_to_toff (void)
 	}
 	if ( (HT_MCTM0->CH0OCFR & 0x0007) == TM_OM_PWM2)				//Si esta en modo 2
 	{
-		HT_MCTM0->CNTR = (HT_MCTM0->CRR)-1;
+		HT_MCTM0->CNTR = (HT_MCTM0->CRR);
 		//HT_MCTM0->CNTR = 0;
 	}
 	//TM_GenerateEvent(HT_MCTM0, TM_EVENT_BRKEV);
@@ -727,7 +728,7 @@ void hardware_pwm_set_counter_to_toff (void)
 // Ver paginas 180 y 224 del manual, ver tambien seccion reset
 void 		hardware_pwm_reset_counter						(void)
 {
-	TM_GenerateEvent(HT_MCTM0, TM_EVENT_BRKEV);		//Revisar el primer argumento de esta funcion, puede estar mal
+	TM_GenerateEvent(HT_MCTM0, TM_EVENT_UEV);		//Revisar el primer argumento de esta funcion, puede estar mal
 }
 
 

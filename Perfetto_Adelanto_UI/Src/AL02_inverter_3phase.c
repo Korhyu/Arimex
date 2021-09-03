@@ -79,9 +79,10 @@ int32_t inverter_3phase_init_config(void)
 int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter_state_overwrite)
 {
 	int32_t aux;
-	hardware_pwm_set_outputs_to_toff();
-	//Como alternativa a la funcion de arriba uso esta. La funcion de arriba no setea en toff, quizas es porque no suceden los eventos y esto no cambia los estados
-	//hardware_pwm_set_counter_to_toff();
+	__hardware_gpio_output_toggle(GPIOA, 3);						//GPIO aux para monitoreo en OSC
+	//hardware_pwm_set_outputs_to_toff();
+	//hardware_pwm_reset_counter();
+	
 
 	if(inverter_state_overwrite == INVERTER_STATE_NOT_OVERWRITE)
 	{
@@ -226,7 +227,7 @@ int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter
 	//EL PWM SECUNDARIO PARA PONER TOFFS SE PONE SEGUN LO QUE SE CONFIGURE
 	board_pwm_start_with_ton();
 
-	//__hardware_gpio_output_toggle(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+
 	return 0;
 }
 
