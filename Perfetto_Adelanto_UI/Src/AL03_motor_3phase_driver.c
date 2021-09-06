@@ -21,7 +21,7 @@
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						100
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				120
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				30
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 								100
@@ -29,7 +29,8 @@
 
 /* Configuracion de PWM que se va a usar previo a la rampa de aceleracion */
 #define PWM_OPERATING_PERIOD_uS								100
-#define PWM_OPERATING_TON_uS								80
+#define PWM_OPERATING_TON_uS								30
+#define PWM_OPERATING_DUTY									80
 
 /*Configuracion de PWM que se va a usar enregimen permanente */
 #define PWM_OPERATING_DUTY_PER								80
@@ -48,6 +49,12 @@
 #define SET_POINT_MAX_PWM_TON_uS						88		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
 #define SET_POINT_MIN_PWM_TON_uS						10
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
+
+#define SET_POINT_MAX_PWM_DUTY							90		//Valor maximo de duty aplicable al motor
+#define SET_POINT_MIN_PWM_DUTY							20		//Valor minimo de duty aplicable al motor
+#define SET_POINT_PWM_DUTY_INC_DEC						1		//Valor de incremento/decremento del duty
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		//Intervalo en milisegundos en que se modifica el duty del PWM
+
 
 #define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
 
@@ -240,6 +247,39 @@ int32_t motor_3phase_set_pwm_ton_us_set_point(int32_t pwm_ton_us_set_point)
 	return -2;
 }
 
+
+/*********************************************************************
+ *	JOSE - Esta funcion setea el valor de duty del pwm que se desea aplicarse.
+ *
+ *	Si se elije un Ton por fuera de los limites definidos por:
+ *
+ *	SET_POINT_MAX_PWM_DUTY y SET_POINT_MIN_PWM_DUTY
+ *
+ *	Asignara saturará al limite que corresponda y retornará -1.
+ *
+ *	En caso que el valor de Ton deseado esté comprendido dentro de los
+ *	umbrales definidos, lo asignará al set point y retornará 0
+ ********************************************************************/
+int32_t motor_3phase_set_pwm_duty_set_point(int32_t pwm_duty_set_point)
+{
+	if(pwm_duty_set_point <= SET_POINT_MAX_PWM_DUTY && pwm_duty_set_point >= SET_POINT_MIN_PWM_DUTY)
+	{
+		gv.pwm_duty_set_point = pwm_duty_set_point;
+		return 0;
+	}
+	else if(pwm_duty_set_point>SET_POINT_MAX_PWM_DUTY)
+	{
+		gv.pwm_duty_set_point = SET_POINT_MAX_PWM_DUTY;
+		return -1;
+	}
+	else if(pwm_duty_set_point<SET_POINT_MIN_PWM_DUTY)
+	{
+		gv.pwm_duty_set_point = SET_POINT_MIN_PWM_DUTY;
+		return -1;
+	}
+	return -2;
+}
+
 /*********************************************************************
  *  Esta funcion retorna el set point de TON del pwm aplicado en microsegundos
  *********************************************************************/
@@ -361,7 +401,8 @@ int32_t motor_3phase_init(void)
 
 	link_zcd_expected_calculate_function(calculate_zcd_expected_default);
 
-	motor_3phase_set_pwm_ton_us_set_point(PWM_OPERATING_TON_uS);
+	//motor_3phase_set_pwm_ton_us_set_point(PWM_OPERATING_TON_uS);
+	motor_3phase_set_pwm_duty_set_point(PWM_OPERATING_DUTY);
 
 	return 0;
 }
@@ -483,7 +524,7 @@ int32_t  motor_3phase_stop_motor (int32_t motor_stop_method)
 ********************************************************************************/
 void motor_3phase_starting_state_machine(void)
 {
-	static int32_t timer_bootstrap, timer_alineacion, timer_ramp, timer_to_running;
+	static int32_t timer_bootstrap, timer_alineacion, timer_to_running;
 	static int32_t alignment_count;
 	
 
@@ -584,8 +625,7 @@ void motor_3phase_starting_state_machine(void)
 									break;
 
 		case STARTING_STATE_FIRST_STEPS_FROM_STAND:
-										gv.starting_sub_state = STARTING_SUB_STATE_UPDATING_PWM_SET_POINT;
-										timer_ramp=0;
+										gv.starting_sub_state = STARTING_SUB_STATE_RUNNING;
 										timer_to_running = board_scheduler_load_timer(TIME_TO_GET_RUNNING_TIMEOUT_mS);
 
 									break;
@@ -599,26 +639,7 @@ void motor_3phase_starting_state_machine(void)
 									switch(gv.starting_sub_state)
 									{
 										case STARTING_SUB_STATE_UPDATING_PWM_SET_POINT:
-																		/*
-																		if(timer_ramp==0 || board_scheduler_is_time_expired(timer_ramp))
-																		{
-																			timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_TON_UPDATE_TIME_mS);
 
-																			if(inverter_3phase_pwm_get_ton_us()<MASKED_SET_POINT_PWM_TON(gv.pwm_ton_us_set_point))
-																			{
-																				inverter_3phase_pwm_set_ton_us(inverter_3phase_pwm_get_ton_us()+SET_POINT_PWM_TON_INC_DEC_uS);
-																			}
-																			else if (inverter_3phase_pwm_get_ton_us()>MASKED_SET_POINT_PWM_TON(gv.pwm_ton_us_set_point))
-																			{
-																				inverter_3phase_pwm_set_ton_us(inverter_3phase_pwm_get_ton_us()-SET_POINT_PWM_TON_INC_DEC_uS);
-																			}
-																			else
-																			{
-																				//gv.motor_state = MOTOR_STATE_RUNNING;
-																				gv.starting_sub_state = STARTING_SUB_STATE_RUNNING;								//Jose
-																			}
-																		}
-																		*/
 																		gv.starting_sub_state = STARTING_SUB_STATE_RUNNING;								//Jose
 																		
 																		break;
@@ -634,14 +655,7 @@ void motor_3phase_starting_state_machine(void)
 										case STARTING_SUB_STATE_RUNNING:
 																		//En running hay que verificar que el set point es igual o no al actual,
 																		//Cuando no sea igual hay que ir "STARTING_SUB_STATE_UPDATING_PWM_SET_POINT"
-																		/*
-																		if (inverter_3phase_pwm_get_ton_us() != motor_3phase_get_pwm_ton_us_set_point())
-																		{
-																			gv.starting_sub_state = STARTING_SUB_STATE_UPDATING_PWM_SET_POINT;
-																		}
-																		*/
-																		timer_to_running = board_scheduler_load_timer(TIME_TO_GET_RUNNING_TIMEOUT_mS);
-
+																		
 																		if ( gv.time_update == TIME_UPDATE_AVAIABLE )
 																		{
 																			//Si esta disponible actualizo los tiempos de seq
@@ -649,6 +663,8 @@ void motor_3phase_starting_state_machine(void)
 																			update_pwm();
 																			gv.time_update = TIME_UPDATE_READY;
 																		}
+
+																		timer_to_running = board_scheduler_load_timer(TIME_TO_GET_RUNNING_TIMEOUT_mS);
 
 																		break;
 
@@ -739,6 +755,7 @@ void zcd_event_first_steps_state (void)
 		//Cambio el PWM al valor de regimen permanente
 		inverter_3phase_pwm_set_period_us(PWM_OPERATING_PERIOD_uS);
 		inverter_3phase_pwm_set_ton_us(PWM_OPERATING_TON_uS);
+		gv.pwm_duty_actual = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us();
 	}
 }
 
@@ -809,7 +826,6 @@ void zcd_event_freewheel_period_measure(void)
 
 		gv.starting_state = STARTING_STATE_STEPS_CORRECT_TIMMING;
 
-
 		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us);
 
 		//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
@@ -862,6 +878,8 @@ void calculate_times (void)
 	//Por alguna razon Fran actualiza estos valores LUEGO del calculo de error
 	gv.motor_comm_seq_period_us = (gv.time_from_zcd_to_zcd_avg>>1);
 	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1);
+
+	
 }
 
 
@@ -871,14 +889,53 @@ void calculate_times (void)
 ********************************************************************************/
 void update_pwm (void)
 {
-	//Funcion que sincroniza el PWM con la velocidad de rotacion para 
+	static int32_t timer_ramp = 0;
+	int32_t periodo = gv.motor_comm_seq_period_us;
 	
-	int32_t duty = inverter_3phase_pwm_get_ton_us();
-	int32_t periodo = gv.motor_comm_seq_period_us / 1;
+	if (gv.pwm_duty_actual != gv.pwm_duty_set_point)
+	{
+		if(board_scheduler_is_time_expired(timer_ramp))
+		{
+			timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
+			//gv.pwm_duty_actual = (inverter_3phase_pwm_get_ton_us() * 100) / periodo;
 
+			if (gv.pwm_duty_actual >= MOTOR_MAX_SPEED_PWM)
+			{
+				//Estoy en la velocidad Maxima
+				periodo = periodo / 1;
+			}
+			else if (gv.pwm_duty_actual >= MOTOR_MID_SPEED_PWM)
+			{
+				//Estoy en la velocidad media
+				periodo = periodo / 3;
+			}
+			else
+			{
+				//Estoy en la velocidad minima
+				periodo = periodo / 5;
+			}
+			
+			if( (gv.pwm_duty_actual+SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point )
+			{
+				gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
+			}
+			else if ((gv.pwm_duty_actual-SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point)
+			{
+				gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
+			}
+		}
+		else if (timer_ramp==0)
+		{
+			timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
+		}
+	}
+	
 	inverter_3phase_pwm_set_period_us(periodo * 1.1);
-	inverter_3phase_pwm_set_ton_us((periodo * PWM_OPERATING_DUTY_PER) / 100 );
-	//inverter_3phase_pwm_set_toff_us(periodo - gv.motor_comm_seq_period_us);
+	inverter_3phase_pwm_set_ton_us((periodo * gv.pwm_duty_actual) / 100 );
+	//inverter_3phase_pwm_set_toff_us(periodo - gv.motor_comm_seq_period_us);			//PWM_OPERATING_DUTY
+
+	
+
 	
 	/*
 	int32_t duty = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us() ;

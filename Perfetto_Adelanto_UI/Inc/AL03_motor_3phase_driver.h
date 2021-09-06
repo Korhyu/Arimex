@@ -23,8 +23,8 @@
 
 
 //Set del PWM para las diferentes velocidades
-#define MOTOR_MAX_SPEED_PWM		60
-#define MOTOR_MID_SPEED_PWM		50
+#define MOTOR_MAX_SPEED_PWM		80
+#define MOTOR_MID_SPEED_PWM		60
 #define MOTOR_MIN_SPEED_PWM		40
 
 
@@ -49,6 +49,8 @@ int32_t motor_3phase_get_pwm_ton_us_max_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_min_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_set_point(void);
 
+
+int32_t motor_3phase_set_pwm_duty_set_point(int32_t pwm_duty_set_point);
 
 
 void motor_3phase_speed_up (void);
