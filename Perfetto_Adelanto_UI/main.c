@@ -68,23 +68,25 @@ int main(void)
 		{
 			__hardware_gpio_output_set(GPIOB, 11);					//GPIO aux para monitoreo en OSC
 			//var = 0b00111000;
-			//motor_3phase_speed_up();
+			//motor_3phase_speed_change(MORE_SPEED);
 		}
 		if (sw_command & (1<<UI_SWITCH_DEC_FAN_SHIFT_MASK))
 		{
 			__hardware_gpio_output_reset(GPIOB, 11);				//GPIO aux para monitoreo en OSC
 			//var = 0b00001000;
-			//motor_3phase_speed_down();
+			//motor_3phase_speed_change(LESS_SPEED);
 		}
 		if (sw_command & (1<<UI_SWITCH_INC_HEAT_SHIFT_MASK))
 		{
 			__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 			//var = 0b00000111;
+			//motor_3phase_phase_lead_change(MORE_LEAD);
 		}
 		if (sw_command & (1<<UI_SWITCH_DEC_HEAT_SHIFT_MASK))
 		{
 			__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 			//var = 0b00000001;
+			//motor_3phase_phase_lead_change(LESS_LEAD);
 		}
 
 		if(timer_ui==0 || board_scheduler_is_time_expired(timer_ui))
