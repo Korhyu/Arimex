@@ -653,26 +653,17 @@ void motor_3phase_starting_state_machine(void)
 																		break;
 
 										case STARTING_SUB_STATE_RUNNING:
-																		//Regimen permanente
-
-																		//Control de velocidad
-																		if (gv.pwm_duty_actual != gv.pwm_duty_set_point)
-																		{
-																			//El set_point es diferente al duty actual por lo tanto lo modifico
-																			update_pwm_duty();
-																		}
+																		//En running hay que verificar que el set point es igual o no al actual,
+																		//Cuando no sea igual hay que ir "STARTING_SUB_STATE_UPDATING_PWM_SET_POINT"
 																		
-																		//Sincronismo de PWM con velocidad
 																		if ( gv.time_update == TIME_UPDATE_AVAIABLE )
 																		{
-																			//Tengo mediciones nuevas de tiempos para hacer los calculos de tiempos de conmutacion y etc.
+																			//Si esta disponible actualizo los tiempos de seq
 																			calculate_times();
-																			//Si esta disponible actualizo el periodo del PWM
-																			update_pwm_period();
+																			update_pwm();
 																			gv.time_update = TIME_UPDATE_READY;
 																		}
 
-																		//Recargo el timer de keep alive
 																		timer_to_running = board_scheduler_load_timer(TIME_TO_GET_RUNNING_TIMEOUT_mS);
 
 																		break;
@@ -765,7 +756,6 @@ void zcd_event_first_steps_state (void)
 		inverter_3phase_pwm_set_period_us(PWM_OPERATING_PERIOD_uS);
 		inverter_3phase_pwm_set_ton_us(PWM_OPERATING_TON_uS);
 		gv.pwm_duty_actual = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us();
-		gv.phase_zcd_fraction_advance = 0.33;					//Adelanto que se implementa en el calculo de tiempos
 	}
 }
 
@@ -868,8 +858,7 @@ void calculate_times (void)
 	//Error y adelanto
 	//1/4 + 1/16 + 1/64 = 0.328125
 	//1/4 + 1/16		= 0.3125
-	//gv.time_zcd_expected = (int32_t)(gv.time_from_zcd_to_zcd_avg * gv.phase_zcd_fraction_advance);
-	gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg * 0.33);
+	gv.time_zcd_expected = gv.time_from_zcd_to_zcd_avg * 0.33;
 	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4) + (gv.time_from_zcd_to_zcd_avg>>6);				//Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)
 	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4);
 	gv.time_t_error = ((gv.time_from_zcd_to_zcd_avg>>1) - gv.motor_comm_seq_period_us);
@@ -889,74 +878,65 @@ void calculate_times (void)
 	//Por alguna razon Fran actualiza estos valores LUEGO del calculo de error
 	gv.motor_comm_seq_period_us = (gv.time_from_zcd_to_zcd_avg>>1);
 	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1);
-	//common_update_average(gv.motor_electrical_period_us_avg, (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1), AVG_FACTOR_ELECTRICAL_PERIOD);
+
+	
 }
 
 
 /*******************************************************************************
 *	Funcion armada por Jose
-*	Esta funcion modifica el periodo del PWM para que tenga una candidad determinada
-*	de periodos por conmutacion, si la velocidad es alta se usa 1 periodo por conmutacion
-*	si es media son 3 y si es baja son 5.
-*	De esta forma garantizo la deteccion del ZCD en bajos duty del PWM
+*	
 ********************************************************************************/
-void update_pwm_period (void)
-{
-	//Actualizo el periodo para que este en sincronismo con la velocidad del motor
-	int32_t periodo_pwm = gv.motor_comm_seq_period_us + (gv.motor_comm_seq_period_us>>3);	//Le sumo un porcentaje para evitar una conmutacion extra
-
-
-	if (gv.motor_electrical_period_us_avg >= MOTOR_MAX_SPEED_PERIOD_MIN)
-	{
-		//Estoy en la velocidad Maxima
-		periodo_pwm = periodo_pwm / 1;		//Configuro 1 periodo del PWM por conmutacion
-	}
-	else if (gv.motor_electrical_period_us_avg >= MOTOR_MID_SPEED_PERIOD_MIN)
-	{
-		//Estoy en la velocidad media
-		periodo_pwm = periodo_pwm / 3;		//Configuro 3 periodos del PWM por conmutacion
-	}
-	else
-	{
-		//Estoy en la velocidad minima
-		periodo_pwm = periodo_pwm / 5;		//Configuro 5 periodos del PWM por conmutacion
-	}
-
-	inverter_3phase_pwm_set_period_us(periodo_pwm);
-	inverter_3phase_pwm_set_ton_us((periodo_pwm * gv.pwm_duty_actual) / 100 );
-	//inverter_3phase_pwm_set_toff_us(periodo_pwm - gv.motor_comm_seq_period_us);			//PWM_OPERATING_DUTY
-}
-
-/*******************************************************************************
-*	Funcion armada por Jose
-*	Esta funcion modifica el duty del PWM utilizando una rampa
-*	Cuando el UI modifica el gv.pwm_duty_set_point esta funcion lleva el duty actual
-*	a ese set point en forma gradual
-********************************************************************************/
-void update_pwm_duty (void)
+void update_pwm (void)
 {
 	static int32_t timer_ramp = 0;
 	int32_t periodo = gv.motor_comm_seq_period_us;
+	
+	if (gv.pwm_duty_actual != gv.pwm_duty_set_point)
+	{
+		if(board_scheduler_is_time_expired(timer_ramp))
+		{
+			timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
+			//gv.pwm_duty_actual = (inverter_3phase_pwm_get_ton_us() * 100) / periodo;
+
+			if (gv.pwm_duty_actual >= MOTOR_MAX_SPEED_PWM)
+			{
+				//Estoy en la velocidad Maxima
+				periodo = periodo / 1;
+			}
+			else if (gv.pwm_duty_actual >= MOTOR_MID_SPEED_PWM)
+			{
+				//Estoy en la velocidad media
+				periodo = periodo / 3;
+			}
+			else
+			{
+				//Estoy en la velocidad minima
+				periodo = periodo / 5;
+			}
+			
+			if( (gv.pwm_duty_actual+SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point )
+			{
+				gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
+			}
+			else if ((gv.pwm_duty_actual-SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point)
+			{
+				gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
+			}
+		}
+		else if (timer_ramp==0)
+		{
+			timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
+		}
+	}
+	
+	inverter_3phase_pwm_set_period_us(periodo * 1.1);
+	inverter_3phase_pwm_set_ton_us((periodo * gv.pwm_duty_actual) / 100 );
+	//inverter_3phase_pwm_set_toff_us(periodo - gv.motor_comm_seq_period_us);			//PWM_OPERATING_DUTY
 
 	
-	if(board_scheduler_is_time_expired(timer_ramp))
-	{
-		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
 
-		if( (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point )
-		{
-			gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
-		}
-		else if ((gv.pwm_duty_actual - SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point)
-		{
-			gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
-		}
-	}
-	else if (timer_ramp==0)
-	{
-		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
-	}
-
+	
 	/*
 	int32_t duty = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us() ;
 	int32_t period;
@@ -1041,7 +1021,8 @@ void commutation_callback(void)
 			if(gv.bemf_state != BEMF_STATE_ZCD_DETECTED)
 			{
 				//ZCD LOST!!
-				zcd_lost_count++;			//Conteo de ZCD lost para mandar a un "deep freewheel"
+				//Conteo de ZCD lost para mandar a un "deep freewheel"
+				zcd_lost_count++;
 		
 				if ( zcd_lost_count > ZCD_LOST_MAX_COUNT )
 				{
@@ -1128,6 +1109,8 @@ void commutation_callback(void)
 ********************************************************************************/
 void zcd_event (void)
 {
+	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+
 	if(gv.stop_running_flag != STOP_RUNNING_FLAG_STOP_MOTOR)
 	{
 		if(gv.starting_state==STARTING_STATE_STEPS_CORRECT_TIMMING)
@@ -1143,6 +1126,8 @@ void zcd_event (void)
 			zcd_event_first_steps_state();
 		}
 	}
+
+	//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 }
 
 
@@ -1422,98 +1407,67 @@ void motor_watchdog_callback(void)
 *	Por como se plantea el funcionamiento hoy (lazo abierto) se modifica el PWM
 *	Entre 3 posibles valores para obtener las diferentes velocidades
  *******************************************************************************/
-void motor_3phase_speed_change (int32_t modif)
+void motor_3phase_speed_up (void)
 {
 	//Paso al siguiente set del PWM
 	int32_t actual_pwm_set = 0;
 
 	actual_pwm_set = motor_3phase_get_pwm_ton_us_set_point();
 
-	if(modif == MORE_SPEED)
-		if(actual_pwm_set < MOTOR_MAX_SPEED_PWM)
+	if(actual_pwm_set < MOTOR_MAX_SPEED_PWM)
+	{
+		//No estoy en la velocidad maxima
+		if(actual_pwm_set < MOTOR_MID_SPEED_PWM)
 		{
-			//No estoy en la velocidad maxima
-			if(actual_pwm_set < MOTOR_MID_SPEED_PWM)
-			{
-				//Estoy en la velocidad minima
-				//motor_3phase_set_pwm_ton_us_set_point(MOTOR_MID_SPEED_PWM);
-				gv.pwm_duty_set_point = MOTOR_MID_SPEED_PWM;
-			}
-			else
-			{
-				//Estoy en la velocidad media
-				//motor_3phase_set_pwm_ton_us_set_point(MOTOR_MAX_SPEED_PWM);
-				gv.pwm_duty_set_point = MOTOR_MAX_SPEED_PWM;
-			}
+			//Estoy en la velocidad minima
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MID_SPEED_PWM);
 		}
 		else
 		{
-			//Ya estoy en la velocidad maxima
+			//Estoy en la velocidad media
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MAX_SPEED_PWM);
 		}
+	}
 	else
 	{
-		if(actual_pwm_set > MOTOR_MIN_SPEED_PWM)
-		{
-			//No estoy en la velocidad maxima
-			if(actual_pwm_set > MOTOR_MID_SPEED_PWM)
-			{
-				//Estoy en la velocidad maxima
-				//motor_3phase_set_pwm_ton_us_set_point(MOTOR_MID_SPEED_PWM);
-				gv.pwm_duty_set_point = MOTOR_MID_SPEED_PWM;
-			}
-			else
-			{
-				//Estoy en la velocidad media
-				//motor_3phase_set_pwm_ton_us_set_point(MOTOR_MIN_SPEED_PWM);
-				gv.pwm_duty_set_point = MOTOR_MIN_SPEED_PWM;
-			}
-		}
-		else
-		{
-			//Ya estoy en la velocidad minima
-		}
+		//Ya estoy en la velocidad maxima
 	}
 }
 
 
-/*******************************************************************************
-*	Funciones de modificacion de adelanto de Jose
-*	
-*	Esta funcion modifica el valor de la variable gv.phase_zcd_fraction_advance
-*	para poder modificar en forma dinamica el avance utilizado en el motor
- *******************************************************************************/
-void motor_3phase_phase_lead_change (int32_t modif)
+void motor_3phase_speed_down (void)
 {
-	#define	TABLE_MAX	11
+	//Paso al valor anterior del set de PWM
+	int32_t actual_pwm_set = 0;
 
-	static int8_t index = 5;
-	const float lead_table[TABLE_MAX] = {0.25, 0.27, 0.29, 0.31, 0.32, 0.33, 0.34, 0.35, 0.37, 0.39, 0.41};
-	
-	if (modif == MORE_LEAD)
+	actual_pwm_set = motor_3phase_get_pwm_ton_us_set_point();
+
+	if(actual_pwm_set > MOTOR_MIN_SPEED_PWM)
 	{
-		index++;
-		if (index >= TABLE_MAX)
+		//No estoy en la velocidad maxima
+		if(actual_pwm_set > MOTOR_MID_SPEED_PWM)
 		{
-			index = TABLE_MAX;
+			//Estoy en la velocidad maxima
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MID_SPEED_PWM);
+		}
+		else
+		{
+			//Estoy en la velocidad media
+			motor_3phase_set_pwm_ton_us_set_point(MOTOR_MIN_SPEED_PWM);
 		}
 	}
 	else
 	{
-		index--;
-		if (index <= 0)
-		{
-			index = 0;
-		}
+		//Ya estoy en la velocidad minima
 	}
-	
-	gv.phase_zcd_fraction_advance = lead_table[index];
 }
 
 
 
 
+
 /*******************************************************************************
- * Funcion para enviar datos del motor
+ * FUncion para enviar datos del motor
  * 
  * 
  *******************************************************************************/

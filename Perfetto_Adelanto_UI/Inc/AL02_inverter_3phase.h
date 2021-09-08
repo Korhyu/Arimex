@@ -29,18 +29,8 @@
 #define INVERTER_BEMF_ON_OUTPUT_3		2
 
 
-int32_t inverter_3phase_get_actual_bemf_slope			  			(void);
-int32_t inverter_3phase_get_actual_bemf_out				   			(void);
-int32_t inverter_3phase_comm_set_seq					   			(int32_t inverter_comm_seq,int32_t inverter_state_overwrite);
-int32_t	inverter_3phase_get_actual_comm_seq 			   			(void);
-int32_t inverter_3phase_comm_next_seq 			   		   			(void);     //Cambio a las variables para estar en la siguiente secuencia, cambiando los TR de salida
 int32_t inverter_3phase_comm_next_seq_pasive                        (void);     //Cambio a las variables para estar en la siguiente secuencia, sin cambiar los TR de salida
-int32_t inverter_3phase_init_config						   		 	(void);
-int32_t inverter_3phase_insert_toff_at_comm_begin_and_final         (int32_t toff_us_begin,int32_t comm_period_us,int32_t toff_us_final);
-int32_t inverter_3phase_get_toff_at_comm_final			   		    (void);
-int32_t inverter_3phase_get_toff_at_comm_begin			   		    (void);
-int32_t	inverter_3phase_get_comm_direction				   		    (void);
-int32_t	inverter_3phase_set_comm_direction				   			(int32_t inverter_direction);
+int32_t inverter_3phase_comm_next_seq 			   		   			(void);     //Cambio a las variables para estar en la siguiente secuencia, cambiando los TR de salida
 
 #define inverter_3phase_pwm_set_sense_on_toff_before_ton_us(time_before_ton_us)		board_pwm_set_sense_on_toff_before_ton_us(time_before_ton_us)
 #define inverter_3phase_pwm_set_period_us(pwm_period_us)							board_pwm_set_period_us(pwm_period_us)
