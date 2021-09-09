@@ -185,7 +185,7 @@ void ui_mux_driver_routine (void)
 														actual_state = UI_STATE_LEDS;		
 														break;	
 		
-		case UI_STATE_LEDS:			ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);
+		case UI_STATE_LEDS:		ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);
 															
 														switches = 	(ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK)  +
 																	(ui_switch_lock_get_state()		<<	UI_SWITCH_LOCK_SHIFT_MASK)		+
