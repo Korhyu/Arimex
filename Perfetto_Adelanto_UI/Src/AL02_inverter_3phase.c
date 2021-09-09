@@ -79,7 +79,7 @@ int32_t inverter_3phase_init_config(void)
 int32_t inverter_3phase_comm_set_seq (int32_t inverter_comm_seq,int32_t inverter_state_overwrite)
 {
 	int32_t aux;
-	__hardware_gpio_output_toggle(GPIOA, 3);						//GPIO aux para monitoreo en OSC
+	//__hardware_gpio_output_toggle(GPIOA, 3);						//GPIO aux para monitoreo en OSC
 	//hardware_pwm_set_outputs_to_toff();
 	//hardware_pwm_reset_counter();
 	
