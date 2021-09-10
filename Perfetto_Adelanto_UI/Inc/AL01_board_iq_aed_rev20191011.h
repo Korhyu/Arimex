@@ -98,7 +98,7 @@ int32_t board_scheduler_is_time_expired		(int32_t timer);
 //	Defines de pines de GPIO outputs! para las funciones de config
 #define board_pin_set(port, pin)												__hardware_gpio_output_set(port, pin)
 #define board_pin_reset(port, pin)											__hardware_gpio_output_reset(port, pin)
-#define board_pin_toggle(port, pin)											_hardware_gpio_output_toggle(gpio_port,GPIOnum)								
+#define board_pin_toggle(port, pin)											__hardware_gpio_output_toggle(gpio_port,GPIOnum)								
 
 
 //-------------------------------------------
