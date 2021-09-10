@@ -1,5 +1,7 @@
 ##Filetypes
 *.o
+*.s
+*.d
 *.bin
 *.bak
 *.tmp
