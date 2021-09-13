@@ -12,40 +12,38 @@
 **********************************************************/
 /*Tiempo de carga de bootstrap (ojo que tambien es frenado electrico del motor)*/
 #define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						200
+
 /*Tiempo de alineacion del rotor a posicion conocida*/
 #define MOTOR_ALIGNMENT_TIME_mS 							50
 #define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ3
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
-#define PWM_IN_CYCLE_BY_CYCLE_PERIOD						6000
-#define PWM_IN_CYCLE_BY_CYCLE_TOFF    						100
+#define PWM_IN_CYCLE_BY_CYCLE_PERIOD						1000
+#define PWM_IN_CYCLE_BY_CYCLE_TOFF    						600
+#define PWM_IN_CYCLE_BY_CYCLE_TON							100
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				30
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				12
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 								100
-#define PWM_STARTING_TON_uS 	  						 	30
+#define PWM_STARTING_TON_uS 	  						 	40
 
 /* Configuracion de PWM que se va a usar previo a la rampa de aceleracion */
 #define PWM_OPERATING_PERIOD_uS								100
 #define PWM_OPERATING_TON_uS								30
-#define PWM_OPERATING_DUTY									80
-
-/*Configuracion de PWM que se va a usar enregimen permanente */
-#define PWM_OPERATING_DUTY_PER								80
+#define PWM_OPERATING_DUTY									75
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
-#define START_FIRST_STEP_DURATION_INIT_us				  	7000				//7000
+#define START_FIRST_STEP_DURATION_INIT_us				  	7000
 
 /*Este blanking se usa cada vez que se pretende medir ZCD en freewheel. Depende del motor*/
-#define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200			//200
+#define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200
 
 #define MAX_TIMEOUT_WATCHDOG_us 						  	30000
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
 #define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el dury del PWM*/
 #define SET_POINT_MAX_PWM_TON_uS						88		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
 #define SET_POINT_MIN_PWM_TON_uS						10
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
@@ -53,12 +51,12 @@
 #define SET_POINT_MAX_PWM_DUTY							90		//Valor maximo de duty aplicable al motor
 #define SET_POINT_MIN_PWM_DUTY							20		//Valor minimo de duty aplicable al motor
 #define SET_POINT_PWM_DUTY_INC_DEC						1		//Valor de incremento/decremento del duty
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		//Intervalo en milisegundos en que se modifica el duty del PWM
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		//Intervalo en milisegundos en que se modifica el duty del PWM
 
 
 #define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
 
-#define	PID_P_CONSTANT									1		//Valor P delPID del error
+#define	PID_P_CONSTANT									1		//Valor P del PID del error
 
 #define TIME_UPDATE_AVAIABLE							0		//Estan disponibles los datos para actualizar los tiempos de seq
 #define TIME_UPDATE_READY								1		//Los tiempos de seq estan actualizados
@@ -566,6 +564,7 @@ void motor_3phase_starting_state_machine(void)
 
 										//Hay que setear siempre primero el periodo y despues Ton o Toff. Sino: puede fallar
 										inverter_3phase_pwm_set_period_us(PWM_IN_CYCLE_BY_CYCLE_PERIOD);
+										//inverter_3phase_pwm_set_ton_us(PWM_IN_CYCLE_BY_CYCLE_TON);
 										inverter_3phase_pwm_set_toff_us(PWM_IN_CYCLE_BY_CYCLE_TOFF);
 
 										timer_alineacion = board_scheduler_load_timer(MOTOR_ALIGNMENT_TIME_mS);
