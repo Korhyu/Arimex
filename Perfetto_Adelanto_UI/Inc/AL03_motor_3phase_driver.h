@@ -21,11 +21,20 @@
 #define MOTOR_DIRECTION_FOWARD	INVERTER_COMM_DIRECTION_FOWARD
 #define MOTOR_DIRECTION_REVERSE INVERTER_COMM_DIRECTION_REVERSE
 
-
 //Set del PWM para las diferentes velocidades
 #define MOTOR_MAX_SPEED_PWM		80					//La velocidad deberia ser 110000 rpm de la especificacion de GAMA
 #define MOTOR_MID_SPEED_PWM		60					//La velocidad deberia ser  90000 rpm de la especificacion de GAMA
 #define MOTOR_MIN_SPEED_PWM		40					//La velocidad deberia ser  70000 rpm de la especificacion de GAMA
+
+//Set de periodos del motor para las diferentes velocidades
+#define MOTOR_MAX_SPEED_PERIOD	537					//Periodo del motor en 110000 rpm
+#define MOTOR_MID_SPEED_PERIOD	667					//Periodo del motor en  90000 rpm
+#define MOTOR_MIN_SPEED_PERIOD	857					//Periodo del motor en  70000 rpm
+
+//Set de las diferentes velocidades PWM para las diferentes velocidades
+#define MOTOR_MAX_SPEED_FREQ	1830				//La velocidad deberia ser 110000 rpm de la especificacion de GAMA
+#define MOTOR_MID_SPEED_FREQ	1500				//La velocidad deberia ser  90000 rpm de la especificacion de GAMA
+#define MOTOR_MIN_SPEED_FREQ	1160				//La velocidad deberia ser  70000 rpm de la especificacion de GAMA
 
 //Periodos umbrales para cambiar la sincronizacion del periodo del PWM
 //TODO: Estos valores hay que actualizarlos cuando se hagan las mediciones de las velocidades
@@ -75,6 +84,7 @@ int32_t bemf_get_fail_sync_rate_ppm (void);
 void calculate_times (void);							//Calcula los tiempos de conmutacion y error
 void update_pwm_period(void);							//Actualiza el periodo del PWM para estar en sincronismo con el tiempo de secuencia
 void update_pwm_duty(void);								//Actualiza el duty para especificar el set point del mismo
+int32_t	speed_update(void);								//Compara la velocidad actual con el set point y modifica el duty si es necesario
 int32_t motor_3phase_get_pwm_duty(void);				//Devuelve en porcentaje el duty actual del PWM
 
 void motor_3phase_starting_state_machine(void);
@@ -113,6 +123,8 @@ struct motor_3phase_drive{
 	int32_t pwm_duty_set_point;					//Valor set point del duty
 	int32_t pwm_duty_actual;					//Valor actual del duty
 	float phase_zcd_fraction_advance;			//Cantidad de adelanto que se implementa en funcion del tiempo zcd_to_zcd
+
+	int32_t speed_period_set_point;				//Set point de la periodo a la que debe girar el motor
 
 	int32_t fail_sync_rate_enable_flag;
 	int32_t fail_sync_rate_comm_counter;

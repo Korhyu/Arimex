@@ -13,7 +13,7 @@
 /*Tiempo de carga de bootstrap (ojo que tambien es frenado electrico del motor)*/
 #define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						5			//200
 /*Tiempo de alineacion del rotor a posicion conocida*/
-#define MOTOR_ALIGNMENT_TIME_mS 							15
+#define MOTOR_ALIGNMENT_TIME_mS 							15			//50
 #define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ3
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
@@ -30,10 +30,10 @@
 /* Configuracion de PWM que se va a usar previo a la rampa de aceleracion */
 #define PWM_OPERATING_PERIOD_uS								100
 #define PWM_OPERATING_TON_uS								30
-#define PWM_OPERATING_DUTY									98
+#define PWM_OPERATING_DUTY									80
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
-#define START_FIRST_STEP_DURATION_INIT_us				  	7000				//7000
+#define START_FIRST_STEP_DURATION_INIT_us				  	7000		//7000
 
 /*Este blanking se usa cada vez que se pretende medir ZCD en freewheel. Depende del motor*/
 #define DISABLE_ZCD_DETECTION_AFTER_FREEWHEEL_SETTING_us	200			//200
@@ -42,7 +42,6 @@
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
 #define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		5		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		/*Intervalo en milisegundos en que se modifica el duty del PWM*/
 #define SET_POINT_MAX_PWM_TON_uS						100		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
 #define SET_POINT_MIN_PWM_TON_uS						10
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
@@ -50,9 +49,9 @@
 #define SET_POINT_MAX_PWM_DUTY							99		//Valor maximo de duty aplicable al motor
 #define SET_POINT_MIN_PWM_DUTY							20		//Valor minimo de duty aplicable al motor
 #define SET_POINT_PWM_DUTY_INC_DEC						1		//Valor de incremento/decremento del duty
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		//Intervalo en milisegundos en que se modifica el duty del PWM
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		//Intervalo en milisegundos en que se modifica el duty del PWM
 
-#define ZCD_CHANGE_DUTY_COUNT							30		//Cantidad de zcd que va a esperar antes de recalcular el periodo y el duty
+#define ZCD_COUNT_CHANGE_SPEED							30		//Cantidad de zcd que va a esperar para modificar la velocidad (periodo y duty)
 
 
 #define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
@@ -63,8 +62,24 @@
 #define TIME_UPDATE_READY								1		//Los tiempos de seq estan actualizados
 
 
+#define SPEED_IN_RANGE									0		//Indicacion de que la velocidad esta en rango
+#define SPEED_UP										1		//Indicacion de que se subio el duty para al set_point de velocidad
+#define SPEED_DOWN										2		//Indicacion de que se bajo el duty para al set_point de velocidad
+#define SPEED_MAX_DUTY									3		//No se puede subir mas el duty
+#define SPEED_MIN_DUTY									4		//No se puede bajar mas el duty
+
+
 #define MASKED_SET_POINT_PWM_TON(set_point)		(set_point-(set_point&(SET_POINT_PWM_TON_INC_DEC_uS-1)))
 
+//Macros para calculo de % aproximados
+#define PLUS_12_PERCENT(data)					(data + (data>>3))
+#define MINUS_12_PERCENT(data)					(data - (data>>3))
+#define PLUS_6_PERCENT(data)					(data + (data>>4))
+#define MINUS_6_PERCENT(data)					(data - (data>>4))
+#define PLUS_3_PERCENT(data)					(data + (data>>5))
+#define MINUS_3_PERCENT(data)					(data - (data>>5))
+#define PLUS_1_PERCENT(data)					(data + (data>>6))
+#define MINUS_1_PERCENT(data)					(data - (data>>6))
 
 /*Blanking que se aplica cuando esta en close loop y correct timming*/
 #define bemf_close_loop_blanking_time_calc(comm_time_us) (((comm_time_us)>>3)+((comm_time_us)>>6))
@@ -280,6 +295,29 @@ int32_t motor_3phase_set_pwm_duty_set_point(int32_t pwm_duty_set_point)
 }
 
 /*********************************************************************
+ *  Esta cambia el set point del periodo de giro del motor
+ *********************************************************************/
+int32_t motor_3phase_set_pwm_period_set_point(int32_t speed_period_set_point)
+{
+	if(speed_period_set_point <= MOTOR_MIN_SPEED_PERIOD && speed_period_set_point >= MOTOR_MAX_SPEED_PERIOD)
+	{
+		gv.speed_period_set_point = speed_period_set_point;
+		return 0;
+	}
+	else if(speed_period_set_point>MOTOR_MIN_SPEED_PERIOD)
+	{
+		gv.speed_period_set_point = MOTOR_MIN_SPEED_PERIOD;
+		return -1;
+	}
+	else if(speed_period_set_point<MOTOR_MAX_SPEED_PERIOD)
+	{
+		gv.speed_period_set_point = MOTOR_MAX_SPEED_PERIOD;
+		return -1;
+	}
+	return -2;
+}
+
+/*********************************************************************
  *  Esta funcion retorna el set point de TON del pwm aplicado en microsegundos
  *********************************************************************/
 int32_t motor_3phase_get_pwm_ton_us_set_point(void)
@@ -292,6 +330,8 @@ int32_t bemf_get_fail_sync_rate_ppm (void)
 {
 	return gv.fail_sync_ppm;
 }
+
+
 
 
 /*******************************************************************************
@@ -402,6 +442,8 @@ int32_t motor_3phase_init(void)
 
 	//motor_3phase_set_pwm_ton_us_set_point(PWM_OPERATING_TON_uS);
 	motor_3phase_set_pwm_duty_set_point(PWM_OPERATING_DUTY);
+	motor_3phase_set_pwm_period_set_point(MOTOR_MAX_SPEED_PERIOD);
+	
 
 	return 0;
 }
@@ -654,16 +696,20 @@ void motor_3phase_starting_state_machine(void)
 
 										case STARTING_SUB_STATE_RUNNING:
 																		//Regimen permanente
-
-
-																		if(zcd_count == ZCD_CHANGE_DUTY_COUNT)
+																		if(zcd_count == ZCD_COUNT_CHANGE_SPEED)
 																		{
-																			//Control de velocidad
+																			//control de Velocidad
+																			speed_update();
+																			
+																			/*
+																			//Control de duty
 																			if (gv.pwm_duty_actual != gv.pwm_duty_set_point)
 																			{
 																				//El set_point es diferente al duty actual por lo tanto lo modifico
 																				update_pwm_duty();
 																			}
+																			*/
+
 																			//Actualizo el periodo del PWM
 																			update_pwm_period();
 
@@ -698,9 +744,118 @@ void motor_3phase_starting_state_machine(void)
 }
 
 
+/*******************************************************************************
+*	Funcion armada por Jose
+*	Compara la velocidad actual con la velocidad del set point y devuelve 
+*	- SPEED_UP_REQUIRED si la velocidad actual esta por debajo de un % del set point
+*	- SPEED_DOWN_REQUIRED si la velocidad actual esta por encima de un % del set point
+*	- SPEED_IN_RANGE si la velocidad actual esta dentro del rango del set_point
+********************************************************************************/
+int32_t speed_update(void)
+{
+	if( gv.motor_electrical_period_us_avg > PLUS_1_PERCENT(gv.speed_period_set_point) )
+	{
+		//La velocidad actual esta por encima del % del set point y hay que bajarla
+		if ((gv.pwm_duty_actual - SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) >= SET_POINT_MIN_PWM_DUTY)
+		{
+			gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
 
+			return SPEED_DOWN;
+		}
+		else
+		{
+			//Estoy en la duty minimo
+			gv.pwm_duty_actual = SET_POINT_MIN_PWM_DUTY;
 
+			return SPEED_MIN_DUTY;
+		}
+	}
+	else if ( gv.motor_electrical_period_us_avg < MINUS_1_PERCENT(gv.speed_period_set_point) )
+	{
+		//La velocidad actual esta por debajo del % del set point y hay que subirla
+		if( (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= SET_POINT_MAX_PWM_DUTY)
+		{
+			gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
 
+			return SPEED_UP;
+		}
+		else
+		{
+			//Estoy en la duty maximo
+			gv.pwm_duty_actual = SET_POINT_MAX_PWM_DUTY;
+
+			return SPEED_MAX_DUTY;
+		}
+	}
+	else
+	{
+		//La velocidad esta dentro de la tolerancia
+		return SPEED_IN_RANGE;
+	}
+}
+
+/*******************************************************************************
+*	Funcion armada por Jose
+*	Esta funcion modifica el periodo del PWM para que tenga una candidad determinada
+*	de periodos por conmutacion, si la velocidad es alta se usa 1 periodo por conmutacion
+*	si es media son 3 y si es baja son 5.
+*	De esta forma garantizo la deteccion del ZCD en bajos duty del PWM
+********************************************************************************/
+void update_pwm_period (void)
+{
+	//Actualizo el periodo para que este en sincronismo con la velocidad del motor
+	//int32_t periodo_pwm = gv.motor_comm_seq_period_us + (gv.motor_comm_seq_period_us>>3);	//Le sumo un porcentaje para evitar una conmutacion extra
+	int32_t periodo_pwm = gv.motor_comm_seq_period_us_avg+ (gv.motor_comm_seq_period_us>>3);
+
+	if (gv.motor_electrical_period_us_avg <= MOTOR_MAX_SPEED_PERIOD_MIN)
+	{
+		//Estoy en la velocidad Maxima
+		periodo_pwm = periodo_pwm / 1;		//Configuro 1 periodo del PWM por conmutacion
+	}
+	else if (gv.motor_electrical_period_us_avg <= MOTOR_MID_SPEED_PERIOD_MIN)
+	{
+		//Estoy en la velocidad media
+		periodo_pwm = periodo_pwm / 3;		//Configuro 3 periodos del PWM por conmutacion
+	}
+	else
+	{
+		//Estoy en la velocidad minima
+		periodo_pwm = periodo_pwm / 5;		//Configuro 5 periodos del PWM por conmutacion
+	}
+
+	inverter_3phase_pwm_set_period_us(periodo_pwm);
+	inverter_3phase_pwm_set_ton_us((periodo_pwm * gv.pwm_duty_actual) / 100 );
+	//inverter_3phase_pwm_set_toff_us(periodo_pwm - gv.motor_comm_seq_period_us);			//PWM_OPERATING_DUTY
+}
+
+/*******************************************************************************
+*	Funcion armada por Jose
+*	Esta funcion modifica el duty del PWM utilizando una rampa
+*	Cuando el UI modifica el gv.pwm_duty_set_point esta funcion lleva el duty actual
+*	a ese set point en forma gradual
+********************************************************************************/
+void update_pwm_duty (void)
+{
+	static int32_t timer_ramp = 0;
+
+	if(board_scheduler_is_time_expired(timer_ramp))
+	{
+		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
+
+		if( (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= SET_POINT_MAX_PWM_DUTY)
+		{
+			gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
+		}
+		else if ((gv.pwm_duty_actual - SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) >= SET_POINT_MIN_PWM_DUTY)
+		{
+			gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
+		}
+	}
+	else if (timer_ramp==0)
+	{
+		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
+	}
+}
 
 
 /*******************************************************************************
@@ -897,72 +1052,6 @@ void calculate_times (void)
 	gv.motor_electrical_period_us_avg = (gv.time_from_zcd_to_zcd_avg<<1) + gv.time_from_zcd_to_zcd_avg;
 	//common_update_average(gv.motor_electrical_period_us_avg, (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1), AVG_FACTOR_ELECTRICAL_PERIOD);
 }
-
-
-/*******************************************************************************
-*	Funcion armada por Jose
-*	Esta funcion modifica el periodo del PWM para que tenga una candidad determinada
-*	de periodos por conmutacion, si la velocidad es alta se usa 1 periodo por conmutacion
-*	si es media son 3 y si es baja son 5.
-*	De esta forma garantizo la deteccion del ZCD en bajos duty del PWM
-********************************************************************************/
-void update_pwm_period (void)
-{
-	//Actualizo el periodo para que este en sincronismo con la velocidad del motor
-	//int32_t periodo_pwm = gv.motor_comm_seq_period_us + (gv.motor_comm_seq_period_us>>3);	//Le sumo un porcentaje para evitar una conmutacion extra
-	int32_t periodo_pwm = gv.motor_comm_seq_period_us_avg+ (gv.motor_comm_seq_period_us>>3);
-
-	if (gv.motor_electrical_period_us_avg <= MOTOR_MAX_SPEED_PERIOD_MIN)
-	{
-		//Estoy en la velocidad Maxima
-		periodo_pwm = periodo_pwm / 1;		//Configuro 1 periodo del PWM por conmutacion
-	}
-	else if (gv.motor_electrical_period_us_avg <= MOTOR_MID_SPEED_PERIOD_MIN)
-	{
-		//Estoy en la velocidad media
-		periodo_pwm = periodo_pwm / 3;		//Configuro 3 periodos del PWM por conmutacion
-	}
-	else
-	{
-		//Estoy en la velocidad minima
-		periodo_pwm = periodo_pwm / 5;		//Configuro 5 periodos del PWM por conmutacion
-	}
-
-	inverter_3phase_pwm_set_period_us(periodo_pwm);
-	inverter_3phase_pwm_set_ton_us((periodo_pwm * gv.pwm_duty_actual) / 100 );
-	//inverter_3phase_pwm_set_toff_us(periodo_pwm - gv.motor_comm_seq_period_us);			//PWM_OPERATING_DUTY
-}
-
-/*******************************************************************************
-*	Funcion armada por Jose
-*	Esta funcion modifica el duty del PWM utilizando una rampa
-*	Cuando el UI modifica el gv.pwm_duty_set_point esta funcion lleva el duty actual
-*	a ese set point en forma gradual
-********************************************************************************/
-void update_pwm_duty (void)
-{
-	static int32_t timer_ramp = 0;
-
-	if(board_scheduler_is_time_expired(timer_ramp))
-	{
-		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
-
-		if( (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= SET_POINT_MAX_PWM_DUTY)
-		{
-			gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
-		}
-		else if ((gv.pwm_duty_actual - SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) >= SET_POINT_MIN_PWM_DUTY)
-		{
-			gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
-		}
-	}
-	else if (timer_ramp==0)
-	{
-		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
-	}
-}
-
-
 
 /*******************************************************************************
 *	Funcion re armada por Jose
