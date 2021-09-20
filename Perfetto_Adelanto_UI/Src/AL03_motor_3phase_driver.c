@@ -49,7 +49,7 @@
 #define SET_POINT_MAX_PWM_DUTY							99		//Valor maximo de duty aplicable al motor
 #define SET_POINT_MIN_PWM_DUTY							20		//Valor minimo de duty aplicable al motor
 #define SET_POINT_PWM_DUTY_INC_DEC						1		//Valor de incremento/decremento del duty
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		//Intervalo en milisegundos en que se modifica el duty del PWM
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		//Intervalo en milisegundos en que se modifica el duty del PWM
 
 #define ZCD_COUNT_CHANGE_SPEED							30		//Cantidad de zcd que va a esperar para modificar la velocidad (periodo y duty)
 
