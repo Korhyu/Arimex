@@ -438,6 +438,11 @@
               <FileType>1</FileType>
               <FilePath>.\debug.c</FilePath>
             </File>
+            <File>
+              <FileName>AL03_ui_interaction.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\AL03_ui_interaction.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

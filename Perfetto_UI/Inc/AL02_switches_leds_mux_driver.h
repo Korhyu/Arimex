@@ -38,11 +38,11 @@ void 		ui_mux_driver_routine 		(void);
 void		ui_mux_leds_state_update 	(void);
 void 		ui_mux_init 				(void);
 
-uint8_t     switches_state_changed      (void);
-void        reset_switches_state_changed (void);
-uint8_t     switches_status             (void);                //Devuelve si se opero alguna accion con la UI
-void        config_gpio_switch_pulldown (void);
-void        config_gpio_switch_pullup   (void);
-void        config_gpio_switch_pull_disable   (void);
+uint8_t     switches_state_changed          (void);
+void        reset_switches_state_changed    (void);
+uint8_t     switches_status                 (void);                //Devuelve si se opero alguna accion con la UI
+void        config_gpio_switch_pulldown     (void);
+void        config_gpio_switch_pullup       (void);
+void        config_gpio_switch_pull_disable (void);
 
 #endif /* AL02_SWITCHES_LEDS_MUX_DRIVER_H */

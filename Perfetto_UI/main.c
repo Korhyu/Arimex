@@ -4,7 +4,7 @@
 #include "AL02_inverter_3phase.h"
 #include "AL02_switches_leds_mux_driver.h"
 #include "AL03_motor_3phase_driver.h"
-#include "AL04_ui_interaction.h"
+#include "AL03_ui_interaction.h"
 
 
 /* Global functions ----------------------------------------------------------------------------------------*/
@@ -56,8 +56,6 @@ int main(void)
 			ui_timer = board_scheduler_load_timer(TIME_REFRESH_mS);
 			ui_update();
 		}
-
-		
 	}
 }
 

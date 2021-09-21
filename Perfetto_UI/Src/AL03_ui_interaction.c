@@ -1,6 +1,6 @@
 #include "AL02_switches_leds_mux_driver.h"
 #include "AL03_motor_3phase_driver.h"
-#include "AL04_ui_interaction.h"
+#include "AL03_ui_interaction.h"
 
 
 
@@ -22,23 +22,23 @@ void ui_update (void)
     }
     if ( (sw_command & (1<<UI_SWITCH_INC_FAN_SHIFT_MASK)) != 0)
     {
-        __hardware_gpio_output_set(GPIOB, 11);					//GPIO aux para monitoreo en OSC
-        //motor_3phase_speed_change(MORE_SPEED);
+        //__hardware_gpio_output_set(GPIOB, 11);				//GPIO aux para monitoreo en OSC
+        motor_3phase_speed_change(MORE_SPEED);
     }
     if ( (sw_command & (1<<UI_SWITCH_DEC_FAN_SHIFT_MASK)) != 0)
     {
-        __hardware_gpio_output_reset(GPIOB, 11);				//GPIO aux para monitoreo en OSC
-        //motor_3phase_speed_change(LESS_SPEED);
+        //__hardware_gpio_output_reset(GPIOB, 11);				//GPIO aux para monitoreo en OSC
+        motor_3phase_speed_change(LESS_SPEED);
     }
     if ( (sw_command & (1<<UI_SWITCH_INC_HEAT_SHIFT_MASK)) != 0)
     {
-        __hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-        //motor_3phase_phase_lead_change(MORE_LEAD);
+        //__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
+        motor_3phase_phase_lead_change(MORE_LEAD);
     }
     if ( (sw_command & (1<<UI_SWITCH_DEC_HEAT_SHIFT_MASK)) != 0)
     {
-        __hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-        //motor_3phase_phase_lead_change(LESS_LEAD);
+        //__hardware_gpio_output_reset(GPIOA, 3);				//GPIO aux para monitoreo en OSC
+        motor_3phase_phase_lead_change(LESS_LEAD);
     }
 
     ui_mux_set_leds_state(sw_command);

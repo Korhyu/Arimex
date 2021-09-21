@@ -44,8 +44,7 @@
 #define MAX_TIMEOUT_WATCHDOG_us 						  	30000
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
-#define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		/*Intervalo en milisegundos en que se modifica el dury del PWM*/
+#define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		5		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
 #define SET_POINT_MAX_PWM_TON_uS						88		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
 #define SET_POINT_MIN_PWM_TON_uS						10
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
@@ -53,7 +52,10 @@
 #define SET_POINT_MAX_PWM_DUTY							90		//Valor maximo de duty aplicable al motor
 #define SET_POINT_MIN_PWM_DUTY							20		//Valor minimo de duty aplicable al motor
 #define SET_POINT_PWM_DUTY_INC_DEC						1		//Valor de incremento/decremento del duty
-#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		1		//Intervalo en milisegundos en que se modifica el duty del PWM
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		//Intervalo en milisegundos en que se modifica el duty del PWM
+
+#define ZCD_CHANGE_DUTY_COUNT							30		//Cantidad de zcd que va a esperar antes de recalcular el periodo y el duty
+
 
 
 #define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
@@ -526,6 +528,7 @@ void motor_3phase_starting_state_machine(void)
 {
 	static int32_t timer_bootstrap, timer_alineacion, timer_to_running;
 	static int32_t alignment_count;
+	static int32_t zcd_count;
 	
 
 	switch (gv.starting_state)
@@ -655,20 +658,26 @@ void motor_3phase_starting_state_machine(void)
 										case STARTING_SUB_STATE_RUNNING:
 																		//Regimen permanente
 
-																		//Control de velocidad
-																		if (gv.pwm_duty_actual != gv.pwm_duty_set_point)
+																		if(zcd_count == ZCD_CHANGE_DUTY_COUNT)
 																		{
-																			//El set_point es diferente al duty actual por lo tanto lo modifico
-																			update_pwm_duty();
+																			//Control de velocidad
+																			if (gv.pwm_duty_actual != gv.pwm_duty_set_point)
+																			{
+																				//El set_point es diferente al duty actual por lo tanto lo modifico
+																				update_pwm_duty();
+																			}
+																			//Actualizo el periodo del PWM
+																			update_pwm_period();
+
+																			zcd_count = 0;
 																		}
+
 																		
 																		//Sincronismo de PWM con velocidad
 																		if ( gv.time_update == TIME_UPDATE_AVAIABLE )
 																		{
 																			//Tengo mediciones nuevas de tiempos para hacer los calculos de tiempos de conmutacion y etc.
 																			calculate_times();
-																			//Si esta disponible actualizo el periodo del PWM
-																			update_pwm_period();
 																			gv.time_update = TIME_UPDATE_READY;
 																		}
 

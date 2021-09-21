@@ -4,7 +4,8 @@
 #include "AL02_inverter_3phase.h"
 #include "AL02_switches_leds_mux_driver.h"
 #include "AL03_motor_3phase_driver.h"
-//#include "Jose.h"
+#include "AL03_ui_interaction.h"
+
 
 /* Global functions ----------------------------------------------------------------------------------------*/
 /* Settings ------------------------------------------------------------------------------------------------*/
@@ -22,14 +23,11 @@
   * @brief  Main program.
   * @retval None
   ***********************************************************************************************************/
-#define TIM 			250
-#define TIME_UI_mS		250			//Tiempo entre verificaciones de cambios de la UI
-
-
 static int32_t 	timer_ui = 0;		//Auxiliar para conteo de tiempo en UI
 static int8_t	sw_command = 0;
 uint8_t var=0b00111111;
 uint8_t aux=0;
+int32_t ui_timer=0;
 
 int main(void)
 {	
@@ -52,55 +50,15 @@ int main(void)
 	while(1)
 	{
 		motor_3phase_task();
-
+		
 		/*
-		sw_command = ui_mux_get_switches_state();
-
-		if (sw_command & (1<<UI_SWITCH_COLDSHOT_SHIFT_MASK))
+		if(ui_timer==0 || board_scheduler_is_time_expired(ui_timer))
 		{
-
-		}
-		if (sw_command & (1<<UI_SWITCH_LOCK_SHIFT_MASK))
-		{
-			
-		}
-		if (sw_command & (1<<UI_SWITCH_INC_FAN_SHIFT_MASK))
-		{
-			__hardware_gpio_output_set(GPIOB, 11);					//GPIO aux para monitoreo en OSC
-			//var = 0b00111000;
-			//motor_3phase_speed_change(MORE_SPEED);
-		}
-		if (sw_command & (1<<UI_SWITCH_DEC_FAN_SHIFT_MASK))
-		{
-			__hardware_gpio_output_reset(GPIOB, 11);				//GPIO aux para monitoreo en OSC
-			//var = 0b00001000;
-			//motor_3phase_speed_change(LESS_SPEED);
-		}
-		if (sw_command & (1<<UI_SWITCH_INC_HEAT_SHIFT_MASK))
-		{
-			__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-			//var = 0b00000111;
-			//motor_3phase_phase_lead_change(MORE_LEAD);
-		}
-		if (sw_command & (1<<UI_SWITCH_DEC_HEAT_SHIFT_MASK))
-		{
-			__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-			//var = 0b00000001;
-			//motor_3phase_phase_lead_change(LESS_LEAD);
-		}
-
-		if(timer_ui==0 || board_scheduler_is_time_expired(timer_ui))
-		{
-			timer_ui = board_scheduler_load_timer(TIME_UI_mS);
-
-			if(var>=0x40)
-				var=1;
-			else
-				var<<=1;
-
-			ui_mux_set_leds_state(var);
+			ui_timer = board_scheduler_load_timer(TIME_REFRESH_mS);
+			ui_update();
 		}
 		*/
+
 	}
 }
 
