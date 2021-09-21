@@ -15,13 +15,13 @@
 #define UI_SW_ENABLE_HT_PORT 		HT_GPIOB
 
 #define UI_IO_1_PORT		GPIO_PC
-#define UI_IO_2_PORT		GPIO_PB
+#define UI_IO_2_PORT		GPIO_PC
 #define UI_IO_3_PORT		GPIO_PA
 #define UI_IO_4_PORT		GPIO_PB
 #define UI_IO_5_PORT		GPIO_PC
 #define UI_IO_6_PORT		GPIO_PA
 #define UI_IO_1_HT_PORT		HT_GPIOC
-#define UI_IO_2_HT_PORT		HT_GPIOB
+#define UI_IO_2_HT_PORT		HT_GPIOC
 #define UI_IO_3_HT_PORT		HT_GPIOA
 #define UI_IO_4_HT_PORT		HT_GPIOB
 #define UI_IO_5_HT_PORT		HT_GPIOC
@@ -293,7 +293,14 @@
 #define ui_led_mid_heat_set_on()		__hardware_gpio_output_set	(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN)
 #define ui_led_mid_heat_set_off()		__hardware_gpio_output_reset(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN)
 #define ui_led_min_heat_set_on()		__hardware_gpio_output_set	(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN)
-#define ui_led_min_heat_set_off()		__hardware_gpio_output_reset(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN)		
+#define ui_led_min_heat_set_off()		__hardware_gpio_output_reset(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN)
+
+#define ui_led_min_heat_toggle()		__hardware_gpio_output_toggle(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN)
+#define ui_led_mid_heat_toggle()		__hardware_gpio_output_toggle(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN)
+#define ui_led_max_heat_toggle()		__hardware_gpio_output_toggle(BOARD_UI_IO_3_PORT,BOARD_UI_IO_3_PIN)
+#define ui_led_min_fan_toggle()			__hardware_gpio_output_toggle(BOARD_UI_IO_4_PORT,BOARD_UI_IO_4_PIN)
+#define ui_led_mid_fan_toggle()			__hardware_gpio_output_toggle(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN)
+#define ui_led_max_fan_toggle()			__hardware_gpio_output_toggle(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN)
 
 #define ui_switch_coldshot_get_state()	__hardware_gpio_input_read_state(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN)
 #define ui_switch_lock_get_state()		__hardware_gpio_input_read_state(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN)
@@ -515,39 +522,3 @@ uint8_t switches_status (void)
 		return NO_CHANGE_SW;			//No hay cambio respecto al estado anterior de los switches
 	}
 }
-
-/*
-void config_gpio_switch_pulldown (void)
-{
-	//Configura resistencias de pulldown en los pines de entrada
-	GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DOWN);
-	GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DOWN);
-	GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);
-	GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_DOWN);
-	GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_DOWN);
-	GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_DOWN);
-}
-
-void config_gpio_switch_pullup (void)
-{
-	//Configura resistencias de pullup en los pines de entrada
-	GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_UP);
-	GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_UP);
-	GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_UP);
-	GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_UP);
-	GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_UP);
-	GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_UP);
-}
-
-
-void config_gpio_switch_pull_disable (void)
-{
-	//Configura resistencias de pullup en los pines de entrada
-	GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DISABLE);
-	GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DISABLE);
-	GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DISABLE);
-	GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_DISABLE);
-	GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_DISABLE);
-	GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_DISABLE);
-}
-*/

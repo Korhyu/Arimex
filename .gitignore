@@ -5,6 +5,7 @@
 *.hcouto
 *.uvoptx
 *.fgalli
+*.uvguix
 *.o
 *.s
 *.d
@@ -13,6 +14,7 @@
 *.tmp
 *.dwl
 *.dwl2
+*.log
 Documentacion/~$timizacion.docx
 
 
