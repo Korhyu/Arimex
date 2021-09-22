@@ -31,19 +31,14 @@ int32_t ui_timer=0;
 
 int main(void)
 {	
-	//GPIO_Config();
 	board_hardware_configuration();
 
-	// UI Config
-	//ui_mux_init();
+	//UI Config
+	ui_mux_init();
 	
 	//Arranque Fran
 	motor_3phase_init();
 	motor_3phase_start_motor();
-	
-	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV,ENABLE);
-	//TM_IntConfig(HT_MCTM0,TM_INT_CH2CC,DISABLE);
-	//__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 
 	printf("Hola, soy Icu, tu asistente virtual\n");
 	
@@ -51,13 +46,13 @@ int main(void)
 	{
 		motor_3phase_task();
 		
-		/*
+		
 		if(ui_timer==0 || board_scheduler_is_time_expired(ui_timer))
 		{
 			ui_timer = board_scheduler_load_timer(TIME_REFRESH_mS);
 			ui_update();
 		}
-		*/
+		
 
 	}
 }

@@ -75,13 +75,14 @@
 										 GPIO_PullResistorConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, GPIO_PR_DISABLE);\
 										 GPIO_PullResistorConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, GPIO_PR_DISABLE);\
 										 GPIO_PullResistorConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, GPIO_PR_DISABLE);\
-										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DISABLE);\
+										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DISABLE);}
+										 /*
 										 GPIO_InputConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_2_HT_PORT, UI_IO_2_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, DISABLE);\
-										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, DISABLE);}
+										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, DISABLE);}*/
 
 //Esta macro configura los pines centrales como ENTRADAS - Se deberia llamar en cada cambio de estado de la maquina
 #define ui_io_intput_state()			{GPIO_DirectionConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, GPIO_DIR_IN);\
@@ -95,13 +96,14 @@
 										 GPIO_PullResistorConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DOWN);\
+										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DOWN);}
+										 /*
 										 GPIO_InputConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_2_HT_PORT, UI_IO_2_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, ENABLE);\
-										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, ENABLE);}
+										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, ENABLE);}*/
 
 //Configuro los pines bajos de los leds como SALIDAS - Se deberia llamar 1 sola vez
 #define ui_leds_output_state()			{AFIO_GPxConfig(UI_LED_ENABLE1a_PORT, UI_LED_ENABLE1a_PIN, AFIO_MODE_1);\
@@ -207,6 +209,13 @@
 										 __hardware_gpio_config_set_as_pushpull_output_pin(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN);\
 										 __hardware_gpio_config_set_as_pushpull_output_pin(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN);}
 
+#define ui_mux_io_bus_set_as_input()	{__hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_3_PORT,BOARD_UI_IO_3_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_4_PORT,BOARD_UI_IO_4_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN);}
+
 //#define ui_mux_io_bus_set_as_output()	{AFIO_GPxConfig(GPIO_PC, BOARD_UI_IO_1_PIN, 0);\
 										 AFIO_GPxConfig(GPIO_PC, BOARD_UI_IO_2_PIN, 0);\
 										 AFIO_GPxConfig(GPIO_PA, BOARD_UI_IO_3_PIN, 0);\
@@ -243,21 +252,6 @@
 										 GPIO_InputConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, ENABLE);\
 										 GPIO_InputConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, ENABLE);}
 
-#define ui_mux_io_bus_set_as_input()	{__hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_3_PORT,BOARD_UI_IO_3_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_4_PORT,BOARD_UI_IO_4_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN);\
-										 GPIO_InputConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, ENABLE);\
-										 GPIO_InputConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, ENABLE);\
-										 GPIO_InputConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, ENABLE);\
-										 GPIO_InputConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, ENABLE);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);}
-
 #define config_gpio_switch_pulldown()	{GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);\
@@ -278,8 +272,10 @@
 											 GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_DISABLE);\
 											 GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_DISABLE);\
 											 GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_DISABLE);}
-*/
 
+
+// Fin Codigo Viejo ---------------------------------------------------------------------------------------------------
+*/
 
 #define ui_led_max_fan_set_on()			__hardware_gpio_output_set	(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN)
 #define ui_led_max_fan_set_off()		__hardware_gpio_output_reset(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN)
@@ -311,8 +307,8 @@
 
 #define ui_timer_set_irq_within_us(time_us)	board_tim_sctm_init_timer_with_timeout_irq_us(BOARD_TIM_SCTM_UI,time_us)
 
-#define MUX_TIME_LEDS_uS			4500
-#define MUX_TIME_SWITCHES_us	 	500
+#define MUX_TIME_LEDS_uS			23000
+#define MUX_TIME_SWITCHES_us	 	2000
 
 #define UI_STATE_RESET				0
 #define UI_STATE_LEDS				1
@@ -417,8 +413,6 @@ void ui_mux_driver_routine (void)
 			ui_io_pin_gpio_config();		//Configuro los pines medios como GPIO
 			ui_leds_output_state();			//Configurlo los pines bajos de los leds como GPIO y salidas
 			ui_sw_output_state();			//Configuro el pin alto de los SW como GPIO y salida
-
-
 		
 		case UI_STATE_SWITCHES:
 			//En este estado leo los switches y luego dejo los LEDS listos
@@ -436,7 +430,6 @@ void ui_mux_driver_routine (void)
 			ui_sw_reset_state();				//Pongo el pin alto del SW en reset para evitar que si se presiona se enciendan los LEDS
 			ui_leds_reset_state();				//Pongo los pines bajos de los LEDS en reset para poder encenderlos
 			ui_io_output_state();				//Configuro los pines medios como SALIDAS
-
 			
 			actual_state = UI_STATE_LEDS;		
 			break;	
@@ -448,7 +441,7 @@ void ui_mux_driver_routine (void)
 			ui_sw_set_state();					//Pongo el pin alto del SW en set para leer el estado alto cuando se pulsa un pulsador
 			ui_leds_set_state();				//Pongo los pines bajos de los LEDS en set para evitar que se enciendan cuando se pulsa un pulsador
 			ui_io_intput_state();				//Configuro los pines medios como entradas.
-
+			
 			actual_state = UI_STATE_SWITCHES;
 			break;			
 	}

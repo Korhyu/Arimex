@@ -11,9 +11,9 @@
 *    Parametros que gobiernan el arranque del motor      *
 **********************************************************/
 /*Tiempo de carga de bootstrap (ojo que tambien es frenado electrico del motor)*/
-#define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						200
+#define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						10			//200
 /*Tiempo de alineacion del rotor a posicion conocida*/
-#define MOTOR_ALIGNMENT_TIME_mS 							50
+#define MOTOR_ALIGNMENT_TIME_mS 							20
 #define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ3
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
@@ -21,19 +21,16 @@
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						100
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				30
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				18
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 								100
-#define PWM_STARTING_TON_uS 	  						 	30
+#define PWM_STARTING_TON_uS 	  						 	40
 
 /* Configuracion de PWM que se va a usar previo a la rampa de aceleracion */
 #define PWM_OPERATING_PERIOD_uS								100
 #define PWM_OPERATING_TON_uS								30
-#define PWM_OPERATING_DUTY									80
-
-/*Configuracion de PWM que se va a usar enregimen permanente */
-#define PWM_OPERATING_DUTY_PER								80
+#define PWM_OPERATING_DUTY									75
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
 #define START_FIRST_STEP_DURATION_INIT_us				  	7000				//7000
@@ -45,11 +42,12 @@
 
 /*Estos parametros de aca abajo dominan la rampa de aceleracion en el arranque*/
 #define SET_POINT_PWM_TON_UPDATE_TIME_mS		  		5		/*Intervalo en milisegundos en que se modifica el Ton del PWM*/
-#define SET_POINT_MAX_PWM_TON_uS						88		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
+#define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		/*Intervalo en milisegundos en que se modifica el duty del PWM*/
+#define SET_POINT_MAX_PWM_TON_uS						100		/*Valor de TON maximo para la rampa (OJO NO PUEDE SER MENOR QUE EL PERIODO NI QUE "PWM_STARTING_TON_uS")*/
 #define SET_POINT_MIN_PWM_TON_uS						10
 #define SET_POINT_PWM_TON_INC_DEC_uS	 				1		/*Valor de incremento/decremento de TON */
 
-#define SET_POINT_MAX_PWM_DUTY							90		//Valor maximo de duty aplicable al motor
+#define SET_POINT_MAX_PWM_DUTY							99		//Valor maximo de duty aplicable al motor
 #define SET_POINT_MIN_PWM_DUTY							20		//Valor minimo de duty aplicable al motor
 #define SET_POINT_PWM_DUTY_INC_DEC						1		//Valor de incremento/decremento del duty
 #define SET_POINT_PWM_DUTY_UPDATE_TIME_mS		  		5		//Intervalo en milisegundos en que se modifica el duty del PWM
@@ -57,10 +55,9 @@
 #define ZCD_CHANGE_DUTY_COUNT							30		//Cantidad de zcd que va a esperar antes de recalcular el periodo y el duty
 
 
+#define TIME_TO_GET_RUNNING_TIMEOUT_mS					500
 
-#define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
-
-#define	PID_P_CONSTANT									1		//Valor P delPID del error
+#define	PID_P_CONSTANT									1		//Valor P del PID del error
 
 #define TIME_UPDATE_AVAIABLE							0		//Estan disponibles los datos para actualizar los tiempos de seq
 #define TIME_UPDATE_READY								1		//Los tiempos de seq estan actualizados
@@ -75,9 +72,9 @@
 /*Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)*/
 #define __default_zcd_expected_calc(time) ((time>>2)+(time>>4))
 
-#define DEEP_FREEWHEEL_SHIFTER							6		//Voy a dejar el freewheel por aproximadamente 64 secuencias para luego retomar el sincronismo
+#define DEEP_FREEWHEEL_SHIFTER							4		//Voy a dejar el freewheel por aproximadamente 64 secuencias para luego retomar el sincronismo
 #define ZCD_LOST_MAX_COUNT								6		//Cantidad de ZCD LOST maxima que puedo tener antes de ir a un deep freewheel
-#define ZCD_HIT_COUNT_RESET								6		//Cantidad de ZCD HIT que tengo que tener antes de restar un ZCD LOST
+#define ZCD_HIT_COUNT_RESET								12		//Cantidad de ZCD HIT que tengo que tener antes de restar un ZCD LOST
 
 /*********************************************************
 **********************************************************/
@@ -354,7 +351,7 @@ int32_t  motor_3phase_get_electrical_frequency_hz	(void)
 #define bemf_sense_zcd_sampled_end_toff_disable()							board_pwm_break_disable_irq()
 */
 #define bemf_sense_zcd_continous_enable()									board_comp_falling_edge_detection_only_enable(BOARD_COMP_BEMF)
-#define bemf_sense_zcd_continuous_disable()									{board_comp_bemf_disable_irqs_all_phases(); __hardware_gpio_output_reset(GPIOB, 11);}
+#define bemf_sense_zcd_continuous_disable()									board_comp_bemf_disable_irqs_all_phases()
 
 #define bemf_watchdog_timer_callback_link(func_ptr)							board_timer_link_callback(func_ptr,BOARD_TIM_WATCHDOG_SEL_CALLBACK)
 #define bemf_watchdog_set_timeout_us(time_us)								board_tim_bftm_init_timer_with_timeout_irq_us(BOARD_TIM_BFTM_WATCHDOG,(time_us))
@@ -528,7 +525,7 @@ void motor_3phase_starting_state_machine(void)
 {
 	static int32_t timer_bootstrap, timer_alineacion, timer_to_running;
 	static int32_t alignment_count;
-	static int32_t zcd_count;
+	static int32_t zcd_count = 0;
 	
 
 	switch (gv.starting_state)
@@ -658,6 +655,7 @@ void motor_3phase_starting_state_machine(void)
 										case STARTING_SUB_STATE_RUNNING:
 																		//Regimen permanente
 
+
 																		if(zcd_count == ZCD_CHANGE_DUTY_COUNT)
 																		{
 																			//Control de velocidad
@@ -672,13 +670,13 @@ void motor_3phase_starting_state_machine(void)
 																			zcd_count = 0;
 																		}
 
-																		
 																		//Sincronismo de PWM con velocidad
 																		if ( gv.time_update == TIME_UPDATE_AVAIABLE )
 																		{
 																			//Tengo mediciones nuevas de tiempos para hacer los calculos de tiempos de conmutacion y etc.
 																			calculate_times();
 																			gv.time_update = TIME_UPDATE_READY;
+																			zcd_count++;
 																		}
 
 																		//Recargo el timer de keep alive
@@ -773,7 +771,7 @@ void zcd_event_first_steps_state (void)
 		//Cambio el PWM al valor de regimen permanente
 		inverter_3phase_pwm_set_period_us(PWM_OPERATING_PERIOD_uS);
 		inverter_3phase_pwm_set_ton_us(PWM_OPERATING_TON_uS);
-		gv.pwm_duty_actual = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us();
+		gv.pwm_duty_actual = (PWM_OPERATING_TON_uS * 100) / PWM_OPERATING_PERIOD_uS;
 		gv.phase_zcd_fraction_advance = 0.33;					//Adelanto que se implementa en el calculo de tiempos
 	}
 }
@@ -847,7 +845,6 @@ void zcd_event_freewheel_period_measure(void)
 
 		bemf_watchdog_set_timeout_us(MAX_TIMEOUT_WATCHDOG_us);
 
-		//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 		//snap_motor_data();
 	}
 }
@@ -877,8 +874,8 @@ void calculate_times (void)
 	//Error y adelanto
 	//1/4 + 1/16 + 1/64 = 0.328125
 	//1/4 + 1/16		= 0.3125
-	//gv.time_zcd_expected = (int32_t)(gv.time_from_zcd_to_zcd_avg * gv.phase_zcd_fraction_advance);
-	gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg * 0.33);
+	gv.time_zcd_expected = (int32_t)(gv.time_from_zcd_to_zcd_avg * gv.phase_zcd_fraction_advance);
+	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg * 0.33);
 	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4) + (gv.time_from_zcd_to_zcd_avg>>6);				//Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)
 	//gv.time_zcd_expected = (gv.time_from_zcd_to_zcd_avg>>2) + (gv.time_from_zcd_to_zcd_avg>>4);
 	gv.time_t_error = ((gv.time_from_zcd_to_zcd_avg>>1) - gv.motor_comm_seq_period_us);
@@ -897,7 +894,7 @@ void calculate_times (void)
 	
 	//Por alguna razon Fran actualiza estos valores LUEGO del calculo de error
 	gv.motor_comm_seq_period_us = (gv.time_from_zcd_to_zcd_avg>>1);
-	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1);
+	gv.motor_electrical_period_us_avg = (gv.time_from_zcd_to_zcd_avg<<1) + gv.time_from_zcd_to_zcd_avg;
 	//common_update_average(gv.motor_electrical_period_us_avg, (gv.motor_comm_seq_period_us<<2) + (gv.motor_comm_seq_period_us<<1), AVG_FACTOR_ELECTRICAL_PERIOD);
 }
 
@@ -912,8 +909,8 @@ void calculate_times (void)
 void update_pwm_period (void)
 {
 	//Actualizo el periodo para que este en sincronismo con la velocidad del motor
-	int32_t periodo_pwm = gv.motor_comm_seq_period_us + (gv.motor_comm_seq_period_us>>3);	//Le sumo un porcentaje para evitar una conmutacion extra
-
+	//int32_t periodo_pwm = gv.motor_comm_seq_period_us + (gv.motor_comm_seq_period_us>>3);	//Le sumo un porcentaje para evitar una conmutacion extra
+	int32_t periodo_pwm = gv.motor_comm_seq_period_us_avg+ (gv.motor_comm_seq_period_us>>3);
 
 	if (gv.motor_electrical_period_us_avg <= MOTOR_MAX_SPEED_PERIOD_MIN)
 	{
@@ -945,18 +942,16 @@ void update_pwm_period (void)
 void update_pwm_duty (void)
 {
 	static int32_t timer_ramp = 0;
-	int32_t periodo = gv.motor_comm_seq_period_us;
 
-	
 	if(board_scheduler_is_time_expired(timer_ramp))
 	{
 		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
 
-		if( (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point )
+		if( (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) <= SET_POINT_MAX_PWM_DUTY)
 		{
 			gv.pwm_duty_actual += SET_POINT_PWM_DUTY_INC_DEC;
 		}
-		else if ((gv.pwm_duty_actual - SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point)
+		else if ((gv.pwm_duty_actual - SET_POINT_PWM_DUTY_INC_DEC) >= gv.pwm_duty_set_point && (gv.pwm_duty_actual + SET_POINT_PWM_DUTY_INC_DEC) >= SET_POINT_MIN_PWM_DUTY)
 		{
 			gv.pwm_duty_actual -= SET_POINT_PWM_DUTY_INC_DEC;
 		}
@@ -965,40 +960,6 @@ void update_pwm_duty (void)
 	{
 		timer_ramp = board_scheduler_load_timer(SET_POINT_PWM_DUTY_UPDATE_TIME_mS);
 	}
-
-	/*
-	int32_t duty = (inverter_3phase_pwm_get_ton_us() * 100) / inverter_3phase_pwm_get_period_us() ;
-	int32_t period;
-	int32_t period_modif;
-
-	if (duty >= MOTOR_MAX_SPEED_PWM)
-	{
-		//Estoy en la velocidad Maxima
-		period_modif = 1;
-	}
-	else if (duty >= MOTOR_MID_SPEED_PWM)
-	{
-		//Estoy en la velocidad media
-		period_modif = 3;
-	}
-	else
-	{
-		//Estoy en la velocidad minima
-		period_modif = 5;
-	}
-
-	period = gv.motor_comm_seq_period_us / period_modif;
-	inverter_3phase_pwm_set_period_us(period * 1.1);
-	inverter_3phase_pwm_set_ton_us((period * duty) / 100 );
-	//tener aproximadamente 1 pulso por secuencia
-	// 1 SEQ = 60º
-	//Si quiero tener 1 pulso por SEQ entonces Ton = motor_comm_seq_period_us
-	//Y el duty = Ton / T ---> T = Ton / duty
-	int32_t periodo = (gv.motor_comm_seq_period_us * 100) / PWM_OPERATING_DUTY_PER;						//Aca hay que remplazar el define por el duty deseado para la velocidad especifica
-
-	inverter_3phase_pwm_set_period_us(periodo);		
-	inverter_3phase_pwm_set_ton_us((gv.motor_comm_seq_period_us * 80) / 100);
-	*/
 }
 
 
@@ -1043,8 +1004,6 @@ void commutation_callback(void)
 
 	if(gv.stop_running_flag != STOP_RUNNING_FLAG_STOP_MOTOR)
 	{
-		//__hardware_gpio_output_toggle(GPIOB, 11);					//GPIO aux para monitoreo en OSC
-		
 		if(inverter_3phase_get_actual_bemf_slope()==INVERTER_BEMF_SLOPE_POSITIVE)
 		{
 			if(gv.bemf_state != BEMF_STATE_ZCD_DETECTED)
@@ -1112,12 +1071,9 @@ void commutation_callback(void)
 			//Ahora estoy en una seq con zcd+
 			bemf_commutation_set_within_us((gv.motor_comm_seq_period_us));
 
-			gv.bemf_state = BEMF_STATE_WAITING_ZCD;
-			//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC		
+			gv.bemf_state = BEMF_STATE_WAITING_ZCD;	
 		}
 	}
-
-	//__hardware_gpio_output_reset(GPIOA, 3);					//GPIO aux para monitoreo en OSC
 }
 
 
@@ -1191,45 +1147,6 @@ int32_t calculate_zcd_expected_default (int32_t time_zcd_to_zcd_avg)
 {
 	return	__default_zcd_expected_calc(time_zcd_to_zcd_avg);
 }
-
-/*******************************************************************************
- *	Esta funcion calcula la temporizacion de cada secuencia de excitacion.
- *	Manteniendo la velocidad que deba tener el motor.
- *
- *	Los ajustes de avance o retroceso de la conmutacion se tocan en esta funcion
- *	en el calculo de time_zcd_expected.
- *******************************************************************************/
-void bemf_control_loop_calculate(void)
-{
-	common_update_average(gv.time_from_zcd_to_zcd_avg, gv.time_from_zcd_to_zcd , 1); //Actualizo ZCD-ZCD_AVG
-
-	common_update_average(gv.time_from_comm_to_zcd_avg, gv.time_from_comm_to_zcd , 1);
-
-	//Se espera que ZCD caiga en el medio de la secuencia. Osea que T_comm_seq = Tzcd-zcd/2
-	//Para que caiga en la mitad de Tcomm_seq.
-	//Tcomm_zcd_Expected = Tcomm_seq/2 = Tzcd_zcd/4. = Tzcd_zcd>>2
-	//Se le agrega un pequeño ajuste, en funcion del adelanto o atraso que se le quiera meter a la conmutacion
-
-	gv.time_zcd_expected = calculate_zcd_expected(gv.time_from_zcd_to_zcd_avg);
-
-	//Voy a calcular cuanto voy a acortar la siguiente secuencia (que es sin sensar, en flanco negativo).
-	//La correccion se debe a:
-	//1) cuanto "de más" o "de menos" llego a conducir la ultima secuencia de flanco positivo. Dado que el periodo estaba precargado antes de
-	//	 llegar a sensar ZCD y saber el periodo
-
-	//2) Corrimientos en ZCD dado "ruido" (pwm-etc).
-
-	gv.time_t_error = ((gv.time_from_zcd_to_zcd_avg>>1) - gv.motor_comm_seq_period_us);
-
-	gv.time_t_error = gv.time_t_error + (gv.time_from_comm_to_zcd_avg - gv.time_zcd_expected);
-
-	gv.motor_comm_seq_period_us = gv.time_from_zcd_to_zcd_avg>>1;
-
-	bemf_commutation_set_within_us(gv.motor_comm_seq_period_us+gv.time_t_error);
-
-	gv.motor_electrical_period_us_avg = (gv.motor_comm_seq_period_us<<2)+(gv.motor_comm_seq_period_us<<1);
-}
-
 
 
 /*******************************************************************************
@@ -1418,7 +1335,6 @@ void motor_watchdog_callback(void)
 		//Si estoy en CORRECT_TIMMING es que estoy en funcionamiento normal y algo paso
 		motor_3phase_abort_motor(MOTOR_STOP_METHOD_FREEWHEEL,MOTOR_STATE_FAIL);
 	}
-	
 }
 
 

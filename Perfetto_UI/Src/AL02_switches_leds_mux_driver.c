@@ -75,13 +75,14 @@
 										 GPIO_PullResistorConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, GPIO_PR_DISABLE);\
 										 GPIO_PullResistorConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, GPIO_PR_DISABLE);\
 										 GPIO_PullResistorConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, GPIO_PR_DISABLE);\
-										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DISABLE);\
+										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DISABLE);}
+										 /*
 										 GPIO_InputConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_2_HT_PORT, UI_IO_2_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, DISABLE);\
 										 GPIO_InputConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, DISABLE);\
-										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, DISABLE);}
+										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, DISABLE);}*/
 
 //Esta macro configura los pines centrales como ENTRADAS - Se deberia llamar en cada cambio de estado de la maquina
 #define ui_io_intput_state()			{GPIO_DirectionConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, GPIO_DIR_IN);\
@@ -95,13 +96,14 @@
 										 GPIO_PullResistorConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DOWN);\
+										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DOWN);}
+										 /*
 										 GPIO_InputConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_2_HT_PORT, UI_IO_2_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, ENABLE);\
 										 GPIO_InputConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, ENABLE);\
-										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, ENABLE);}
+										 GPIO_InputConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, ENABLE);}*/
 
 //Configuro los pines bajos de los leds como SALIDAS - Se deberia llamar 1 sola vez
 #define ui_leds_output_state()			{AFIO_GPxConfig(UI_LED_ENABLE1a_PORT, UI_LED_ENABLE1a_PIN, AFIO_MODE_1);\
@@ -207,6 +209,13 @@
 										 __hardware_gpio_config_set_as_pushpull_output_pin(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN);\
 										 __hardware_gpio_config_set_as_pushpull_output_pin(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN);}
 
+#define ui_mux_io_bus_set_as_input()	{__hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_3_PORT,BOARD_UI_IO_3_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_4_PORT,BOARD_UI_IO_4_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN);\
+										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN);}
+
 //#define ui_mux_io_bus_set_as_output()	{AFIO_GPxConfig(GPIO_PC, BOARD_UI_IO_1_PIN, 0);\
 										 AFIO_GPxConfig(GPIO_PC, BOARD_UI_IO_2_PIN, 0);\
 										 AFIO_GPxConfig(GPIO_PA, BOARD_UI_IO_3_PIN, 0);\
@@ -243,21 +252,6 @@
 										 GPIO_InputConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, ENABLE);\
 										 GPIO_InputConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, ENABLE);}
 
-#define ui_mux_io_bus_set_as_input()	{__hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_3_PORT,BOARD_UI_IO_3_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_4_PORT,BOARD_UI_IO_4_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_5_PORT,BOARD_UI_IO_5_PIN);\
-										 __hardware_gpio_config_set_as_hiz_pin(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN);\
-										 GPIO_InputConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, ENABLE);\
-										 GPIO_InputConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, ENABLE);\
-										 GPIO_InputConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, ENABLE);\
-										 GPIO_InputConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, ENABLE);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);\
-										 GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);}
-
 #define config_gpio_switch_pulldown()	{GPIO_PullResistorConfig(BOARD_UI_IO_1_PORT, BOARD_UI_IO_1_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(BOARD_UI_IO_2_PORT, BOARD_UI_IO_2_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(BOARD_UI_IO_3_PORT, BOARD_UI_IO_3_PIN, GPIO_PR_DOWN);\
@@ -278,8 +272,10 @@
 											 GPIO_PullResistorConfig(BOARD_UI_IO_4_PORT, BOARD_UI_IO_4_PIN, GPIO_PR_DISABLE);\
 											 GPIO_PullResistorConfig(BOARD_UI_IO_5_PORT, BOARD_UI_IO_5_PIN, GPIO_PR_DISABLE);\
 											 GPIO_PullResistorConfig(BOARD_UI_IO_6_PORT, BOARD_UI_IO_6_PIN, GPIO_PR_DISABLE);}
-*/
 
+
+// Fin Codigo Viejo ---------------------------------------------------------------------------------------------------
+*/
 
 #define ui_led_max_fan_set_on()			__hardware_gpio_output_set	(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN)
 #define ui_led_max_fan_set_off()		__hardware_gpio_output_reset(BOARD_UI_IO_6_PORT,BOARD_UI_IO_6_PIN)
@@ -309,23 +305,27 @@
 #define ui_switch_inc_heat_get_state()	__hardware_gpio_input_read_state(BOARD_UI_IO_2_PORT,BOARD_UI_IO_2_PIN)						
 #define ui_switch_dec_heat_get_state()	__hardware_gpio_input_read_state(BOARD_UI_IO_1_PORT,BOARD_UI_IO_1_PIN)		
 
-#define ui_timer_set_irq_within_us(time_us)	board_tim_sctm_init_timer_with_timeout_irq_us(BOARD_TIM_SCTM_UI,time_us)
-
-#define MUX_TIME_LEDS_uS			4500
-#define MUX_TIME_SWITCHES_us	 	500
-
-#define UI_STATE_RESET				0
-#define UI_STATE_LEDS				1
-#define UI_STATE_SWITCHES			2
-
-#define COUNT_DEBOUNCE				20				//Contador antirebote - Es la cantidad de veces que debo pasar por los switches en el mismo estado para que se considere presionado el mismo
 
 
+volatile static uint8_t switches_state=0, leds_state=0x00;
+uint8_t actual_state=UI_STATE_RESET;
 
 
-volatile static uint8_t switches_state=0,leds_state=0x00;
+/*
+ * Esta funcion lee el estado de la variable global actual_state
+ */
+uint8_t ui_get_actual_state (void)
+{
+	return actual_state;
+}
 
-static bool switches_change_flag = FALSE;					//Flag de que los switches tienen un nuevo valor para revisar
+/*
+ * Esta funcion escribe el estado de la variable global actual_state
+ */
+void ui_set_actual_state (uint8_t new_state)
+{
+	actual_state = new_state;
+}
 
 /*
  * Esta funcion retorna el ultimo sensado de los switches
@@ -383,7 +383,6 @@ void	ui_mux_leds_state_update (void)
 	else
 		ui_led_max_heat_set_off();
 
-
 	if(leds_state&(1<<UI_LED_MIN_FAN_SHIFT_MASK))
 		ui_led_min_fan_set_on();
 	else
@@ -407,9 +406,7 @@ void	ui_mux_leds_state_update (void)
  */
 void ui_mux_driver_routine (void)
 {
-	static uint8_t actual_state=UI_STATE_RESET;
 	static uint8_t state_count = 0;
-	uint8_t switches=0, switches_prev=0;
 	
 	switch(actual_state)
 	{
@@ -417,63 +414,24 @@ void ui_mux_driver_routine (void)
 			ui_io_pin_gpio_config();		//Configuro los pines medios como GPIO
 			ui_leds_output_state();			//Configurlo los pines bajos de los leds como GPIO y salidas
 			ui_sw_output_state();			//Configuro el pin alto de los SW como GPIO y salida
-
-
 		
 		case UI_STATE_SWITCHES:
-			//En este estado leo los switches y luego dejo los LEDS listos
-			ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);		//Cargo el tiempo que quiero que este el estado de LEDS
-			
-			//Leo el estado de los switches
-			switches_state = 	(ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK)  |
-								(ui_switch_lock_get_state()		<<	UI_SWITCH_LOCK_SHIFT_MASK)		|
-								(ui_switch_inc_fan_get_state()	<<	UI_SWITCH_INC_FAN_SHIFT_MASK)	|
-								(ui_switch_dec_fan_get_state()	<<	UI_SWITCH_DEC_FAN_SHIFT_MASK)	|
-								(ui_switch_inc_heat_get_state()	<<	UI_SWITCH_INC_HEAT_SHIFT_MASK)  |
-								(ui_switch_dec_heat_get_state()	<<	UI_SWITCH_DEC_HEAT_SHIFT_MASK);
-			
-			//Dejo todo listo para los LEDS
-			ui_sw_reset_state();				//Pongo el pin alto del SW en reset para evitar que si se presiona se enciendan los LEDS
-			ui_leds_reset_state();				//Pongo los pines bajos de los LEDS en reset para poder encenderlos
-			ui_io_output_state();				//Configuro los pines medios como SALIDAS
-
-			
-			actual_state = UI_STATE_LEDS;		
+			//Indico que los switches estan listos para ser leidos
+			ui_set_actual_state(UI_STATE_SWITCHES);
+				
 			break;	
 		
 		case UI_STATE_LEDS:
-			//En este estado leo los LEDs y luego dejo los SWs listos (hay una descarga de RC que tarda aprox 500us)
-			ui_timer_set_irq_within_us(MUX_TIME_SWITCHES_us);	//Cargo el tiempo que quiero leer los SW
+			//Indico que los switches estan listos para ser leidos
+			ui_set_actual_state(UI_STATE_LEDS);
 			
-			ui_sw_set_state();					//Pongo el pin alto del SW en set para leer el estado alto cuando se pulsa un pulsador
-			ui_leds_set_state();				//Pongo los pines bajos de los LEDS en set para evitar que se enciendan cuando se pulsa un pulsador
-			ui_io_intput_state();				//Configuro los pines medios como entradas.
 
-			actual_state = UI_STATE_SWITCHES;
 			break;			
 	}
 }
 
 
 /* ----------- Codigo Jose ----------- */
-uint8_t switches_state_changed (void)
-{
-	//Funcion que devuelve TRUE si se registro un cambio en el estado de los switches
-	if (switches_change_flag == TRUE)
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-
-void reset_switches_state_changed (void)
-{
-	switches_change_flag = FALSE;
-}
-
 uint8_t switches_status (void)
 {
 	//Funcion que analiza el resultado de los switches e informa si hubo cambios respecto al estado anterior
@@ -521,4 +479,34 @@ uint8_t switches_status (void)
 	{
 		return NO_CHANGE_SW;			//No hay cambio respecto al estado anterior de los switches
 	}
+}
+
+
+void change_state_to_switches (void)
+{
+	ui_sw_set_state();					//Pongo el pin alto del SW en set para leer el estado alto cuando se pulsa un pulsador
+	ui_leds_set_state();				//Pongo los pines bajos de los LEDS en set para evitar que se enciendan cuando se pulsa un pulsador
+	ui_io_intput_state();				//Configuro los pines medios como entradas.
+	
+	actual_state = UI_STATE_SWITCHES;
+}
+
+void change_state_to_leds (void)
+{
+	//Dejo todo listo para los LEDS
+	ui_sw_reset_state();				//Pongo el pin alto del SW en reset para evitar que si se presiona se enciendan los LEDS
+	ui_leds_reset_state();				//Pongo los pines bajos de los LEDS en reset para poder encenderlos
+	ui_io_output_state();				//Configuro los pines medios como SALIDAS
+	
+	actual_state = UI_STATE_LEDS;	
+}
+
+void read_switches_state (void)
+{
+	switches_state =	(ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK)  |
+						(ui_switch_lock_get_state()		<<	UI_SWITCH_LOCK_SHIFT_MASK)		|
+						(ui_switch_inc_fan_get_state()	<<	UI_SWITCH_INC_FAN_SHIFT_MASK)	|
+						(ui_switch_dec_fan_get_state()	<<	UI_SWITCH_DEC_FAN_SHIFT_MASK)	|
+						(ui_switch_inc_heat_get_state()	<<	UI_SWITCH_INC_HEAT_SHIFT_MASK)  |
+						(ui_switch_dec_heat_get_state()	<<	UI_SWITCH_DEC_HEAT_SHIFT_MASK);
 }

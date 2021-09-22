@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"Holtek CMSIS-DAP" -U010000AF -O206 -S0 -C0 -P00000000 -N00("ARM CoreSight SW-DP") -D00(0BC11477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN2 -FF0HT32F.FLM -FS00 -FL0100000 -FP0($$Device:HT32F52241_48LQFP$ARM\Flash\HT32F.FLM) -FF1HT32F_OPT.FLM -FS11FF00000 -FL11000 -FP1($$Device:HT32F52241_48LQFP$ARM\Flash\HT32F_OPT.FLM)</Name>
+          <Name>-X"Holtek CMSIS-DAP" -U0300029E -O206 -S0 -C0 -P00000000 -N00("ARM CoreSight SW-DP") -D00(0BC11477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN2 -FF0HT32F.FLM -FS00 -FL0100000 -FP0($$Device:HT32F52241_48LQFP$ARM\Flash\HT32F.FLM) -FF1HT32F_OPT.FLM -FS11FF00000 -FL11000 -FP1($$Device:HT32F52241_48LQFP$ARM\Flash\HT32F_OPT.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -153,27 +153,17 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>sw_command</ItemText>
+          <ItemText>gv</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>switches_state</ItemText>
+          <ItemText>aux</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>modif</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>gv.pwm_duty_set_point</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>actual_pwm_set</ItemText>
+          <ItemText>seq</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

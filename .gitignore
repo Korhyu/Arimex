@@ -20,3 +20,15 @@ Documentacion/~$timizacion.docx
 
 ##Directories
 Obj/*
+
+*.map
+
+*.lst
+
+*.axf
+
+*.lnp
+
+*.hex
+
+*.dep

@@ -548,6 +548,8 @@ void MCTM0_IRQHandler (void)
 		(*func_ptr_callback_pwm_break)();	
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_BRK0);
 		TM_ClearFlag(HT_MCTM0,TM_FLAG_CH2CC);
+
+		__hardware_gpio_output_toggle(GPIOB, 11);					//GPIO aux para monitoreo en OSC
 	}
 	
 	//if(TM_GetFlagStatus(HT_MCTM0,TM_FLAG_CH2CC) && !TM_GetFlagStatus(HT_MCTM0,TM_FLAG_UEV))

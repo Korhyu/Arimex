@@ -11,9 +11,9 @@
 *    Parametros que gobiernan el arranque del motor      *
 **********************************************************/
 /*Tiempo de carga de bootstrap (ojo que tambien es frenado electrico del motor)*/
-#define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						5			//200
+#define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						10			//200
 /*Tiempo de alineacion del rotor a posicion conocida*/
-#define MOTOR_ALIGNMENT_TIME_mS 							15
+#define MOTOR_ALIGNMENT_TIME_mS 							20
 #define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ3
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
@@ -21,16 +21,16 @@
 #define PWM_IN_CYCLE_BY_CYCLE_TOFF    						100
 
 /*Cantidad de secuencias que se va a excitar al motor sensando ZCD en modo SAMPLE AT END TOFF*/
-#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				12
+#define STARTING_FIRST_STEPS_FROM_STAND_COUNT				18
 
 /*Configuracion de PWM que se va a usar desde la primer conmutacion */
 #define PWM_STARTING_PERIOD_uS 								100
-#define PWM_STARTING_TON_uS 	  						 	30
+#define PWM_STARTING_TON_uS 	  						 	40
 
 /* Configuracion de PWM que se va a usar previo a la rampa de aceleracion */
 #define PWM_OPERATING_PERIOD_uS								100
 #define PWM_OPERATING_TON_uS								30
-#define PWM_OPERATING_DUTY									85
+#define PWM_OPERATING_DUTY									75
 
 /*Este tiempo sirve para determinar cuanto blanking aplicar al primer paso que se da*/
 #define START_FIRST_STEP_DURATION_INIT_us				  	7000				//7000
@@ -55,9 +55,9 @@
 #define ZCD_CHANGE_DUTY_COUNT							30		//Cantidad de zcd que va a esperar antes de recalcular el periodo y el duty
 
 
-#define TIME_TO_GET_RUNNING_TIMEOUT_mS					200
+#define TIME_TO_GET_RUNNING_TIMEOUT_mS					500
 
-#define	PID_P_CONSTANT									1		//Valor P delPID del error
+#define	PID_P_CONSTANT									1		//Valor P del PID del error
 
 #define TIME_UPDATE_AVAIABLE							0		//Estan disponibles los datos para actualizar los tiempos de seq
 #define TIME_UPDATE_READY								1		//Los tiempos de seq estan actualizados
@@ -72,9 +72,9 @@
 /*Calculo por default que usa para situar ZCD en la conmutacion (modificar esto modifica el avance)*/
 #define __default_zcd_expected_calc(time) ((time>>2)+(time>>4))
 
-#define DEEP_FREEWHEEL_SHIFTER							6		//Voy a dejar el freewheel por aproximadamente 64 secuencias para luego retomar el sincronismo
+#define DEEP_FREEWHEEL_SHIFTER							4		//Voy a dejar el freewheel por aproximadamente 64 secuencias para luego retomar el sincronismo
 #define ZCD_LOST_MAX_COUNT								6		//Cantidad de ZCD LOST maxima que puedo tener antes de ir a un deep freewheel
-#define ZCD_HIT_COUNT_RESET								6		//Cantidad de ZCD HIT que tengo que tener antes de restar un ZCD LOST
+#define ZCD_HIT_COUNT_RESET								12		//Cantidad de ZCD HIT que tengo que tener antes de restar un ZCD LOST
 
 /*********************************************************
 **********************************************************/

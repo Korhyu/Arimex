@@ -30,6 +30,19 @@
 #define HEAT_UP_SW						7
 #define HEAT_DOWN_SW					8
 
+//Estados de la maquina de estados
+#define UI_STATE_RESET				0
+#define UI_STATE_LEDS				1
+#define UI_STATE_SWITCHES			2
+#define UI_WAITING_TIMER			3
+
+
+#define ui_timer_set_irq_within_us(time_us)	board_tim_sctm_init_timer_with_timeout_irq_us(BOARD_TIM_SCTM_UI,time_us)
+
+
+#define MUX_TIME_LEDS_uS			23000
+#define MUX_TIME_SWITCHES_us	 	2000
+
 
 uint8_t     ui_mux_get_switches_state   (void);
 void 		ui_mux_set_leds_state		(uint8_t led_state);
@@ -38,11 +51,17 @@ void 		ui_mux_driver_routine 		(void);
 void		ui_mux_leds_state_update 	(void);
 void 		ui_mux_init 				(void);
 
-uint8_t     switches_state_changed          (void);
-void        reset_switches_state_changed    (void);
-uint8_t     switches_status                 (void);                //Devuelve si se opero alguna accion con la UI
-void        config_gpio_switch_pulldown     (void);
-void        config_gpio_switch_pullup       (void);
-void        config_gpio_switch_pull_disable (void);
+uint8_t     switches_state_changed      (void);
+void        reset_switches_state_changed (void);
+uint8_t     switches_status             (void);                //Devuelve si se opero alguna accion con la UI
+void        config_gpio_switch_pulldown (void);
+void        config_gpio_switch_pullup   (void);
+void        config_gpio_switch_pull_disable   (void);
+
+void        read_switches_state         (void);
+void        change_state_to_leds        (void);
+void        change_state_to_switches    (void);
+uint8_t     ui_get_actual_state         (void);
+void        ui_set_actual_state         (uint8_t);
 
 #endif /* AL02_SWITCHES_LEDS_MUX_DRIVER_H */
