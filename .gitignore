@@ -7,7 +7,7 @@
 *.fgalli
 *.uvguix
 *.o
-*.s
+##*.s
 *.d
 *.bin
 *.bak
@@ -15,20 +15,15 @@
 *.dwl
 *.dwl2
 *.log
+*.map
+*.lst
+*.axf
+*.lnp
+*.hex
+*.dep
 Documentacion/~$timizacion.docx
 
 
 ##Directories
 Obj/*
 
-*.map
-
-*.lst
-
-*.axf
-
-*.lnp
-
-*.hex
-
-*.dep
