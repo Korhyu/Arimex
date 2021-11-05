@@ -1,0 +1,2 @@
+Este proyecto esta basado en el "110krpm" pero se le agrega un lazo de realimentacion para que modifique el duty
+en funcion de la velocidad y no depender de tocar el duty para encontrar la velocidad de 105krpm.
