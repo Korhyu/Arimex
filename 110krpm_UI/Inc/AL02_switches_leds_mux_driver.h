@@ -196,6 +196,13 @@
 										 GPIO_PullResistorConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, GPIO_PR_DOWN);\
 										 GPIO_PullResistorConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, GPIO_PR_DOWN);}
 
+#define ui_io_gpio_fun()				{AFIO_GPxConfig(UI_IO_1_HT_PORT, UI_IO_1_HT_PIN, AFIO_FUN_GPIO);\
+										 AFIO_GPxConfig(UI_IO_2_HT_PORT, UI_IO_2_HT_PIN, AFIO_FUN_GPIO);\
+										 AFIO_GPxConfig(UI_IO_3_HT_PORT, UI_IO_3_HT_PIN, AFIO_FUN_GPIO);\
+										 AFIO_GPxConfig(UI_IO_4_HT_PORT, UI_IO_4_HT_PIN, AFIO_FUN_GPIO);\
+										 AFIO_GPxConfig(UI_IO_5_HT_PORT, UI_IO_5_HT_PIN, AFIO_FUN_GPIO);\
+										 AFIO_GPxConfig(UI_IO_6_HT_PORT, UI_IO_6_HT_PIN, AFIO_FUN_GPIO);}
+
 //Configuro en bajo y alto los pines centrales
 #define ui_io_reset_state()				{__hardware_gpio_output_reset(UI_IO_1_PORT, UI_IO_1_PIN);\
 										 __hardware_gpio_output_reset(UI_IO_2_PORT, UI_IO_2_PIN);\
@@ -240,5 +247,6 @@ void        config_gpio_switch_pulldown (void);
 void        config_gpio_switch_pullup   (void);
 void        config_gpio_switch_pull_disable   (void);
 uint8_t		read_switches_state			(void);
+void		ui_led_change				(int8_t control, int8_t modificador);
 
 #endif /* AL02_SWITCHES_LEDS_MUX_DRIVER_H */

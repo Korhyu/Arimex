@@ -73,12 +73,21 @@ uint8_t read_switches_state (void)
 {
 	uint8_t switches_state;
 
+	
 	switches_state =	(ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK)  |
 						(ui_switch_lock_get_state()		<<	UI_SWITCH_LOCK_SHIFT_MASK)		|
 						(ui_switch_inc_fan_get_state()	<<	UI_SWITCH_INC_FAN_SHIFT_MASK)	|
 						(ui_switch_dec_fan_get_state()	<<	UI_SWITCH_DEC_FAN_SHIFT_MASK)	|
 						(ui_switch_inc_heat_get_state()	<<	UI_SWITCH_INC_HEAT_SHIFT_MASK)  |
 						(ui_switch_dec_heat_get_state()	<<	UI_SWITCH_DEC_HEAT_SHIFT_MASK);
+	/*
+	switches_state = 				  (ui_switch_coldshot_get_state()	<<	UI_SWITCH_COLDSHOT_SHIFT_MASK);
+	switches_state = switches_state | (ui_switch_lock_get_state()		<<	UI_SWITCH_LOCK_SHIFT_MASK);
+	switches_state = switches_state | (ui_switch_inc_fan_get_state()	<<	UI_SWITCH_INC_FAN_SHIFT_MASK);
+	switches_state = switches_state | (ui_switch_dec_fan_get_state()	<<	UI_SWITCH_DEC_FAN_SHIFT_MASK);
+	switches_state = switches_state | (ui_switch_inc_heat_get_state()	<<	UI_SWITCH_INC_HEAT_SHIFT_MASK);
+	switches_state = switches_state | (ui_switch_dec_heat_get_state()	<<	UI_SWITCH_DEC_HEAT_SHIFT_MASK);
+	*/
 
 	return switches_state;
 }
@@ -131,7 +140,7 @@ void ui_led_change (int8_t control, int8_t modificador)
 
 	if (control == UI_FAN)
 	{
-		led_aux = leds_state & FAN_BIT_MASK;
+		led_aux = leds_state & FAN_BIT_MASK;	
 		if ( modificador ==  UI_UP)
 		{
 			//Reviso si no estoy al maximo ya
@@ -139,6 +148,9 @@ void ui_led_change (int8_t control, int8_t modificador)
 			{
 				//Desplazo para arriba y agrego un 1 nuevo al principio
 				led_aux = (led_aux << 1) | 0b00001000;
+
+				//Agrego los "1" nuevos
+				led_aux = leds_state | led_aux;
 			}
 		}
 		else
@@ -148,41 +160,50 @@ void ui_led_change (int8_t control, int8_t modificador)
 			{
 				//Desplazo para abajo y elimino los 1 restantes
 				led_aux = (led_aux >> 1) & 0b00111000;
+				
+				//Eliminino los "1" de mas
+				led_aux = led_aux | (leds_state & 0b00000111);;
+			}
+			else
+			{
+				led_aux = leds_state;
 			}
 		}
-
-		//Defino el estado final
-		led_aux = leds_state & (led_aux | 0b00000111);
 	}
 	else if ( control == UI_HEATER )
 	{
 		led_aux = leds_state & HEATER_BIT_MASK;
 		if ( modificador ==  UI_UP)
 		{
-			//Reviso si no estoy al maximo ya
-			if (led_aux != 0b00000111)
+			//Reviso si no estoy al minimo
+			if (led_aux == 0b00000000)
+			{
+				led_aux = 0b00000001;
+			}
+			else if (led_aux != 0b00000111)
 			{
 				//Desplazo para arriba y agrego un 1 nuevo al principio
 				led_aux = (led_aux << 1) | 0b00000001;
 			}
+			//Agrego los "1" nuevos
+			led_aux = leds_state | led_aux;
 		}
 		else
 		{
 			//Reviso si no estoy al minimo ya
-			if (led_aux != 0b00000001)
+			if (led_aux == 0b00000001 || led_aux == 0b00000000)
 			{
-				//Desplazo para abajo y elimino los 1 restantes
-				led_aux = (led_aux >> 1) & 0b00111000;
+				led_aux = leds_state & FAN_BIT_MASK;
 			}
 			else
 			{
-				//Puede estar totalmente apagado el calefactor
-				led_aux = 0b00000000;
+				//Desplazo para abajo y elimino los 1 restantes
+				led_aux = (led_aux >> 1) & 0b00000111;
+
+				//Eliminino los "1" de mas
+				led_aux = led_aux | (leds_state & 0b00111000);
 			}
 		}
-
-		//Defino el estado final
-		led_aux = leds_state & (led_aux | 0b00111000);
 	}
 	
 	ui_mux_set_leds_state(led_aux);

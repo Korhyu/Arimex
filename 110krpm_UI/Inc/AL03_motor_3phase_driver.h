@@ -24,8 +24,8 @@
 
 //Set del PWM para las diferentes velocidades
 #define MOTOR_MAX_SPEED_PWM		68					//La velocidad deberia ser 110000 rpm de la especificacion de GAMA
-#define MOTOR_MID_SPEED_PWM		55					//La velocidad deberia ser  90000 rpm de la especificacion de GAMA
-#define MOTOR_MIN_SPEED_PWM		40					//La velocidad deberia ser  70000 rpm de la especificacion de GAMA
+#define MOTOR_MID_SPEED_PWM		60					//La velocidad deberia ser  90000 rpm de la especificacion de GAMA
+#define MOTOR_MIN_SPEED_PWM		50					//La velocidad deberia ser  70000 rpm de la especificacion de GAMA
 
 //Periodos umbrales para cambiar la sincronizacion del periodo del PWM
 //TODO: Estos valores hay que actualizarlos cuando se hagan las mediciones de las velocidades

@@ -5,26 +5,25 @@ void board_hardware_configuration (void)
 {
 	//Configuraciones de GPIO
 	//GPIOAx como Salida Push Pull
-	board_hardware_gpio_config_output_pp_pins_load_config  		(GPIOA, GPIO_PIN_0|GPIO_PIN_3|GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_11|GPIO_PIN_15);
+	board_hardware_gpio_config_output_pp_pins_load_config  		(GPIOA, GPIO_PIN_0|GPIO_PIN_3|GPIO_PIN_11|GPIO_PIN_15);
 	//GPIOAx Como "Open Drain" / HiZ
 	board_hardware_gpio_config_hiz_pins_load_config		   		(GPIOA, 0);
 	//GPIOAx Como deteccion(irq) en flancos
 	board_hardware_gpio_config_edge_events_pins_load_config		(GPIOA, 0);
 	//GPIOAx Como entradas logicas
-	board_hardware_gpio_config_inputs_pins_load_config	   		(GPIOA, 0);
+	board_hardware_gpio_config_inputs_pins_load_config	   		(GPIOA, GPIO_PIN_6|GPIO_PIN_8);
 	
 	//Idem para GPIOBx
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB, GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_6|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_14);
-	board_hardware_gpio_config_hiz_pins_load_config				(GPIOB, GPIOB_PIN_13_HIZ);
-	//board_hardware_gpio_config_edge_events_pins_load_config	(GPIOB,0);
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOB, GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_6|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_13|GPIO_PIN_14);
+	board_hardware_gpio_config_hiz_pins_load_config				(GPIOB, 0);
 	board_hardware_gpio_config_edge_events_pins_load_config		(GPIOB, GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_5);
-	board_hardware_gpio_config_inputs_pins_load_config			(GPIOB, 0);
+	board_hardware_gpio_config_inputs_pins_load_config			(GPIOB, GPIO_PIN_12);
 
 	//Idem para GPIOCx
-	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC, GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_6|GPIO_PIN_7);
+	board_hardware_gpio_config_output_pp_pins_load_config		(GPIOC, GPIO_PIN_2);
 	board_hardware_gpio_config_hiz_pins_load_config				(GPIOC, GPIOC_PIN_0_HIZ);
 	board_hardware_gpio_config_edge_events_pins_load_config		(GPIOC, 0);
-	board_hardware_gpio_config_inputs_pins_load_config			(GPIOC, 0);
+	board_hardware_gpio_config_inputs_pins_load_config			(GPIOC, GPIO_PIN_3|GPIO_PIN_6|GPIO_PIN_7);
 	
 	
 	micro_config();		

@@ -6,18 +6,37 @@ uint8_t switches_state;
 int32_t ui_actual_state = UI_CONFIG_STATE;
 int32_t ui_previous_state;
 
+
 void ui_task (void)
 {
+	static uint32_t ui_timer = 0;
 	switch (ui_actual_state)
 	{
 		case UI_WAITING_TIMER_STATE:
+
+			if (board_scheduler_is_time_expired(ui_timer))
+			{
+				if (ui_previous_state == UI_LEDS_STATE)
+				{
+					ui_actual_state = UI_SWITCHES_STATE;
+				}
+				else if (ui_previous_state == UI_SWITCHES_STATE)
+				{
+					ui_actual_state = UI_LEDS_STATE;
+				}
+			}
+			
+
 			break;
 		
 		case UI_CONFIG_STATE:
 
 			ui_mux_outputs_state_init();
+			//ui_io_gpio_fun();
 			ui_actual_state = UI_LEDS_STATE;
-			board_timer_link_callback(ui_mux_callback,BOARD_TIM_UI_SEL_CALLBACK);
+			ui_mux_set_leds_state(0b00111000);
+			//board_timer_link_callback(ui_mux_callback,BOARD_TIM_UI_SEL_CALLBACK);
+			ui_timer = board_scheduler_load_timer(200);
 
 			break;
 
@@ -32,7 +51,8 @@ void ui_task (void)
 			ui_previous_state = UI_LEDS_STATE;
 			ui_actual_state = UI_WAITING_TIMER_STATE;
 
-			ui_timer_set_irq_within_us(MUX_TIME_SWITCHES_us);
+			//ui_timer_set_irq_within_us(MUX_TIME_SWITCHES_us);
+			ui_timer = board_scheduler_load_timer(2);
 
 			break;
 
@@ -43,6 +63,16 @@ void ui_task (void)
 			if ( get_switches_state() == UI_ACTION_REQUIRED )
 			{
 				//Analizo que SW se pulso y realizo la accion
+				ui_update();
+
+				//Si se pulso algun boton, puedo esperar un tiempo
+				//ui_timer_set_irq_within_us(60000);				//Antirebote?
+				ui_timer = board_scheduler_load_timer(198);
+			}
+			else
+			{
+				//ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);	//Tiempo normal
+				ui_timer = board_scheduler_load_timer(8);
 			}
 
 			//Pono los pines en el estado para manejar los LEDS
@@ -52,8 +82,6 @@ void ui_task (void)
 			//ui_set_actual_state(UI_WAITING_TIMER_LEDS);
 			ui_previous_state = UI_SWITCHES_STATE;
 			ui_actual_state = UI_WAITING_TIMER_STATE;
-
-			ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);
 
 			break;
 
@@ -124,45 +152,38 @@ void ui_update (void)
     static int8_t	sw_command = 0;
     static int32_t 	timer_ui = 0;		//Auxiliar para conteo de tiempo en UI
 
-    sw_command = ui_mux_get_switches_state();
+    sw_command = switches_state;
 
-    if (sw_command & (1<<UI_SWITCH_COLDSHOT_SHIFT_MASK))
+    if (switches_state & (1<<UI_SWITCH_COLDSHOT_SHIFT_MASK))
     {
 
     }
-    if (sw_command & (1<<UI_SWITCH_LOCK_SHIFT_MASK))
+    if (switches_state & (1<<UI_SWITCH_LOCK_SHIFT_MASK))
     {
         
     }
-    if ( (sw_command & (1<<UI_SWITCH_INC_FAN_SHIFT_MASK)) != 0)
+    if ( (switches_state & (1<<UI_SWITCH_INC_FAN_SHIFT_MASK)) != 0)
     {
         //__hardware_gpio_output_set(GPIOB, 11);				//GPIO aux para monitoreo en OSC
         motor_3phase_speed_change(MORE_SPEED);
+		ui_led_change(UI_FAN, UI_UP);
     }
-    if ( (sw_command & (1<<UI_SWITCH_DEC_FAN_SHIFT_MASK)) != 0)
+    if ( (switches_state & (1<<UI_SWITCH_DEC_FAN_SHIFT_MASK)) != 0)
     {
         //__hardware_gpio_output_reset(GPIOB, 11);				//GPIO aux para monitoreo en OSC
         motor_3phase_speed_change(LESS_SPEED);
+		ui_led_change(UI_FAN, UI_DOWN);
     }
-    if ( (sw_command & (1<<UI_SWITCH_INC_HEAT_SHIFT_MASK)) != 0)
+    if ( (switches_state & (1<<UI_SWITCH_INC_HEAT_SHIFT_MASK)) != 0)
     {
         //__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
         motor_3phase_phase_lead_change(MORE_LEAD);
+		ui_led_change(UI_HEATER, UI_UP);
     }
-    if ( (sw_command & (1<<UI_SWITCH_DEC_HEAT_SHIFT_MASK)) != 0)
+    if ( (switches_state & (1<<UI_SWITCH_DEC_HEAT_SHIFT_MASK)) != 0)
     {
         //__hardware_gpio_output_reset(GPIOA, 3);				//GPIO aux para monitoreo en OSC
         motor_3phase_phase_lead_change(LESS_LEAD);
+		ui_led_change(UI_HEATER, UI_DOWN);
     }
-    
-    /*
-    if(timer_ui==0 || board_scheduler_is_time_expired(timer_ui))
-    {
-        timer_ui = board_scheduler_load_timer(TIME_UI_mS);   
-        if(var>=0x40)
-            var=1;
-        else
-            var<<=1;
-    }
-    */
 }

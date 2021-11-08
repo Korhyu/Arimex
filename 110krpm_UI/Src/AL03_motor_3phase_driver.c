@@ -188,8 +188,7 @@ int32_t motor_3phase_get_pwm_duty_actual (void)
  *	JOSE - Esta funcion retorna el valor actual del duty del pwm:
  *	
 ********************************************************************************/
-int32_t motor_3phase_get_pwm_duty
- (void)
+int32_t motor_3phase_get_pwm_duty (void)
 {
 	return gv.pwm_duty_actual;
 }
@@ -1380,7 +1379,7 @@ void motor_3phase_speed_change (int32_t modif)
 	//Paso al siguiente set del PWM
 	int32_t actual_pwm_set = 0;
 
-	actual_pwm_set = motor_3phase_get_pwm_ton_us_set_point();
+	actual_pwm_set = motor_3phase_get_pwm_duty();
 
 	if(modif == MORE_SPEED)
 		if(actual_pwm_set < MOTOR_MAX_SPEED_PWM)

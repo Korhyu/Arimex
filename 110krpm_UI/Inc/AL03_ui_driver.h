@@ -14,7 +14,8 @@
 
 
 void ui_task (void);
-int32_t get_switches_state (void);
+void ui_update (void);
 void change_state_to_leds (void);
 void change_state_to_switches (void);
 void ui_mux_callback(void);
+int32_t get_switches_state (void);
