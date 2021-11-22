@@ -1,5 +1,6 @@
-#include "AL03_ui_driver.h"
+#include "AL04_ui_driver.h"
 #include "AL03_motor_3phase_driver.h"
+#include "AL03_heater_driver.h"
 
 
 uint8_t switches_state;
@@ -10,6 +11,7 @@ int32_t ui_previous_state;
 void ui_task (void)
 {
 	static uint32_t ui_timer = 0;
+	static uint32_t ui_timer_debounce = 0;
 	switch (ui_actual_state)
 	{
 		case UI_WAITING_TIMER_STATE:
@@ -60,21 +62,19 @@ void ui_task (void)
 			//Leo el estado de los switches y cambio al estado de LEDS
 
 			//Leo el estado de los switches
-			if ( get_switches_state() == UI_ACTION_REQUIRED )
+			if (board_scheduler_is_time_expired(ui_timer_debounce))
 			{
-				//Analizo que SW se pulso y realizo la accion
-				ui_update();
+				if ( get_switches_state() == UI_ACTION_REQUIRED )
+				{
+					//Analizo que SW se pulso y realizo la accion
+					ui_update();
 
-				//Si se pulso algun boton, puedo esperar un tiempo
-				//ui_timer_set_irq_within_us(60000);				//Antirebote?
-				ui_timer = board_scheduler_load_timer(198);
-			}
-			else
-			{
-				//ui_timer_set_irq_within_us(MUX_TIME_LEDS_uS);	//Tiempo normal
-				ui_timer = board_scheduler_load_timer(8);
+					//Si se pulso algun boton, puedo esperar un tiempo, antirebote
+					ui_timer_debounce = board_scheduler_load_timer(198);
+				}
 			}
 
+			ui_timer = board_scheduler_load_timer(8);
 			//Pono los pines en el estado para manejar los LEDS
 			change_state_to_leds();
 
@@ -151,11 +151,28 @@ void ui_update (void)
 {
     static int8_t	sw_command = 0;
     static int32_t 	timer_ui = 0;		//Auxiliar para conteo de tiempo en UI
+	static int32_t 	timer_turbo = 0;	//Auxiliar para conteo de tiempo de turbo
+
 
     sw_command = switches_state;
 
     if (switches_state & (1<<UI_SWITCH_COLDSHOT_SHIFT_MASK))
     {
+		static int aux=0;
+		if(aux==0)
+		{
+			aux=1;
+			ui_led_change(UI_HEATER, UI_UP);
+			ui_led_change(UI_HEATER, UI_UP);
+			ui_led_change(UI_HEATER, UI_UP);
+		}
+		else
+		{
+			aux=0;
+			ui_led_change(UI_HEATER, UI_DOWN);
+			ui_led_change(UI_HEATER, UI_DOWN);
+			ui_led_change(UI_HEATER, UI_DOWN);
+		}
 
     }
     if (switches_state & (1<<UI_SWITCH_LOCK_SHIFT_MASK))
@@ -186,6 +203,8 @@ void ui_update (void)
         motor_3phase_phase_lead_change(LESS_LEAD);
 		ui_led_change(UI_HEATER, UI_DOWN);
     }
+
+
 	ui_led_refresh();
 }
 

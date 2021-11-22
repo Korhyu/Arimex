@@ -1,13 +1,13 @@
 #include "AL03_vbus_control.h"
-#include "AL03_ui_driver.h"
+#include "AL04_ui_driver.h"
 #include "AL03_motor_3phase_driver.h"
-
 
 
 int8_t vbus_level;
 int8_t vbus_actual_state = VBUS_CONFIG_STATE;
 
-
+//Variable para el control de la velocidad
+int8_t speed_control = VBUS_SPEED_CONTROL;
 
 void check_VBus_task (void)
 {
@@ -42,37 +42,50 @@ void check_VBus_task (void)
 
 				if (sample_count > SAMPLE_WINDOW_SIZE )
 				{
-					if ( vbus_min < VBUS_LOW_MIN_TH && vbus_level != VBUS_VERY_LOW_LEVEL)
+					if ( vbus_min < VBUS_VERY_LOW_MIN_TH)
 					{
-						//Paso a velocidad minima
-						vbus_level = VBUS_LOW_LEVEL;
+						//Guardo las variables
+						vbus_level = VBUS_VERY_LOW_LEVEL;
 
-						motor_3phase_speed_change(LESS_SPEED);
-						ui_led_change(UI_FAN, UI_DOWN);
-						motor_3phase_speed_change(LESS_SPEED);
-						ui_led_change(UI_FAN, UI_DOWN);
-
-						if ( vbus_min < VBUS_VERY_LOW_LEVEL)
-						{
-							//Guardo las variables
-							vbus_level = VBUS_VERY_LOW_LEVEL;
-						}
-
-						//Si hay cambios, puedo esperar un buen tiempo antes de volver a tomar muestras
-						vbus_timer = board_scheduler_load_timer(500);
+						ui_led_change(UI_HEATER, UI_UP);
+						ui_led_change(UI_HEATER, UI_UP);
+						ui_led_change(UI_HEATER, UI_UP);
 					}
-					else if ( vbus_min > VBUS_HIGH_MIN_TH && vbus_level != VBUS_HIGH_LEVEL)
+					else if (vbus_level == VBUS_VERY_LOW_LEVEL)
 					{
-						//Paso a velocidad Maxima
-						vbus_level = VBUS_HIGH_LEVEL;
+						//Estaba en tension baja pero recupero
+						//considerar este espacio para un re-arranque
+					}
 
-						motor_3phase_speed_change(MORE_SPEED);
-						ui_led_change(UI_FAN, UI_UP);
-						motor_3phase_speed_change(MORE_SPEED);
-						ui_led_change(UI_FAN, UI_UP);
+					//Control de velocidad usando la tension de linea
+					if(speed_control == VBUS_SPEED_CONTROL && vbus_level != VBUS_VERY_LOW_LEVEL)
+					{
+						if ( vbus_min < VBUS_LOW_MIN_TH && vbus_level != VBUS_LOW_LEVEL)
+						{
+							//Paso a velocidad minima
+							vbus_level = VBUS_LOW_LEVEL;
 
-						//Si hay cambios, puedo esperar un buen tiempo antes de volver a tomar muestras
-						vbus_timer = board_scheduler_load_timer(500);
+							motor_3phase_speed_change(LESS_SPEED);
+							ui_led_change(UI_FAN, UI_DOWN);
+							motor_3phase_speed_change(LESS_SPEED);
+							ui_led_change(UI_FAN, UI_DOWN);
+
+							//Si hay cambios, puedo esperar un buen tiempo antes de volver a tomar muestras
+							vbus_timer = board_scheduler_load_timer(500);
+						}
+						else if ( vbus_min > VBUS_HIGH_MIN_TH && vbus_level != VBUS_HIGH_LEVEL)
+						{
+							//Paso a velocidad Maxima
+							vbus_level = VBUS_HIGH_LEVEL;
+
+							motor_3phase_speed_change(MORE_SPEED);
+							ui_led_change(UI_FAN, UI_UP);
+							motor_3phase_speed_change(MORE_SPEED);
+							ui_led_change(UI_FAN, UI_UP);
+
+							//Si hay cambios, puedo esperar un buen tiempo antes de volver a tomar muestras
+							vbus_timer = board_scheduler_load_timer(500);
+						}
 					}
 
 					//Reseteo las variables

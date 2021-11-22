@@ -4,15 +4,15 @@
 
 #include "AL01_board_iq_aed_rev20191011.h"
 
-#define INVERTER_COMM_FREWHEEL		(1<<0)/*Todos los transistores abiertos*/
+#define INVERTER_COMM_FREWHEEL			(1<<0)/*Todos los transistores abiertos*/
 #define INVERTER_COMM_SEQ1				(1<<1)
 #define INVERTER_COMM_SEQ2				(1<<2)
 #define INVERTER_COMM_SEQ3				(1<<3)
 #define INVERTER_COMM_SEQ4				(1<<4)
 #define INVERTER_COMM_SEQ5				(1<<5)
 #define INVERTER_COMM_SEQ6				(1<<6)
-#define INVERTER_COMM_BREAK_LOW		(1<<7)/*Todos los transistores de arriba abiertos y todos los de abajo conduciendo*/
-#define	INVERTER_COMM_BREAK_HIGH	(1<<8)/*Todos los transistores de arriba conduciendo y todos los de abajo abiertos*/
+#define INVERTER_COMM_BREAK_LOW			(1<<7)/*Todos los transistores de arriba abiertos y todos los de abajo conduciendo*/
+#define	INVERTER_COMM_BREAK_HIGH		(1<<8)/*Todos los transistores de arriba conduciendo y todos los de abajo abiertos*/
 #define INVERTER_COMM_COUNT				(1<<9)
 
 #define INVERTER_STATE_OVERWRITE		0

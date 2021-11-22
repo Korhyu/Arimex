@@ -43,11 +43,11 @@
 
 
 //Defines para manejo de velocidad y adelanto
-#define	MORE_LEAD	0
-#define	LESS_LEAD	1
+#define	MORE_LEAD	-1
+#define	LESS_LEAD	-2
 
-#define	MORE_SPEED	0
-#define	LESS_SPEED	1
+#define	MORE_SPEED	-1
+#define	LESS_SPEED	-2
 
 
 int32_t  motor_3phase_init 						(void);

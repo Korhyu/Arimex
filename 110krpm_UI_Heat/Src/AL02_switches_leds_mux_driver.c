@@ -189,6 +189,10 @@ void ui_led_change (int8_t control, int8_t modificador)
 				//Desplazo para arriba y agrego un 1 nuevo al principio
 				led_aux = (led_aux << 1) | 0b00000001;
 			}
+			else
+			{
+				//estoy al maximo
+			}
 			//Agrego los "1" nuevos
 			led_aux = leds_state | led_aux;
 		}

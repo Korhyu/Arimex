@@ -4,7 +4,8 @@
 #include "AL02_inverter_3phase.h"
 #include "AL02_switches_leds_mux_driver.h"
 #include "AL03_motor_3phase_driver.h"
-#include "AL03_ui_driver.h"
+#include "AL03_heater_driver.h"
+#include "AL04_ui_driver.h"
 
 /* Global functions ----------------------------------------------------------------------------------------*/
 /* Settings ------------------------------------------------------------------------------------------------*/
@@ -30,16 +31,16 @@ int main(void)
 	
 	TM_IntConfig(HT_MCTM0,TM_INT_BRKEV, ENABLE);
 
-	
-	
 	//printf("Hola, soy Icu, tu asistente virtual\n");
 
 	while(1)
 	{
-		motor_3phase_task();		//Tarea de control del motor
+		//motor_3phase_task();		//Tarea de control del motor
 
 		ui_task();					//Tarea de control de la UI
 
 		check_VBus_task();			//Tarea de monitoreo del VBus
+
+		heater_task();
 	}
 }

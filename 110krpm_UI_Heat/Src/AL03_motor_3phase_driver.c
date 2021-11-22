@@ -1,8 +1,8 @@
 /*
  * AL03_motor_3phase_driver.c
  *
- *  Created on: 31 jul. 2019
- *      Author: fgalli
+ *  Created on: 31 jul. 2021
+ *      Author: fgalli - jtantera
  */
 
 #include "AL03_motor_3phase_driver.h"
@@ -14,7 +14,7 @@
 #define MOTOR_CHARGE_BOOTSTRAP_TIME_mS						20
 /*Tiempo de alineacion del rotor a posicion conocida*/
 #define MOTOR_ALIGNMENT_TIME_mS 							15
-#define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ3
+#define MOTOR_ALIGNMENT_SEQ									INVERTER_COMM_SEQ1
 
 /*Configuracion de PWM para aplicar la alineacion del rotor - Modo Current Limit Cycle by Cycle*/
 #define PWM_IN_CYCLE_BY_CYCLE_PERIOD						6000
@@ -151,9 +151,10 @@ void exti5_callback(void);
 
 //Variables globales privadas del archivo
 //******************************************
-int32_t (*calculate_zcd_expected)(int32_t);	//Puntero a la funcion que calcula ZCD expected
+int32_t (*calculate_zcd_expected)(int32_t);				//Puntero a la funcion que calcula ZCD expected
 
-static volatile struct motor_3phase_drive gv; //Variables globales de este archivo
+static volatile struct motor_3phase_drive gv; 			//Variables globales de este archivo
+static volatile int32_t starting_fail_count = 0;		//Contador de intentos fallidos de arranque
 
 
 /*******************************************************************************
@@ -530,6 +531,7 @@ void motor_3phase_starting_state_machine(void)
 {
 	static int32_t timer_bootstrap, timer_alineacion, timer_to_running;
 	static int32_t alignment_count;
+	static int32_t start_shifter;
 	static int32_t zcd_count = 0;
 	
 
@@ -573,7 +575,17 @@ void motor_3phase_starting_state_machine(void)
 										inverter_3phase_pwm_set_toff_us(PWM_IN_CYCLE_BY_CYCLE_TOFF);
 
 										timer_alineacion = board_scheduler_load_timer(MOTOR_ALIGNMENT_TIME_mS);
-										inverter_3phase_comm_set_seq(MOTOR_ALIGNMENT_SEQ, INVERTER_STATE_OVERWRITE);
+										
+										//Reviso en que intento de arranque estoy y utilizo una secuencia diferente para cada intento
+										start_shifter = starting_fail_count%3;
+										if ((MOTOR_ALIGNMENT_SEQ<<(2*start_shifter)) < INVERTER_COMM_BREAK_LOW)
+										{
+											inverter_3phase_comm_set_seq(MOTOR_ALIGNMENT_SEQ<<(2*start_shifter), INVERTER_STATE_OVERWRITE);
+										}
+										else
+										{
+											inverter_3phase_comm_set_seq(MOTOR_ALIGNMENT_SEQ, INVERTER_STATE_OVERWRITE);
+										}						
 										
 										alignment_count = FIRST_ALIGMENT;
 									}
@@ -1338,7 +1350,6 @@ void motor_watchdog_callback(void)
 	//Garantizar arranque
 	if (gv.starting_state != STARTING_STATE_STEPS_CORRECT_TIMMING)
 	{
-		static int8_t starting_fail_count = 0;			//Contador de intentos fallidos de arranque
 		starting_fail_count++;
 
 		//Si no estoy en CORRECT_TIMMING es que estoy en arranque
@@ -1372,8 +1383,6 @@ void motor_watchdog_callback(void)
 
 
 /*******************************************************************************
-*	Funciones de modificacion de Velocidad de Jose
-*	
 *	Por como se plantea el funcionamiento hoy (lazo abierto) se modifica el PWM
 *	Entre 3 posibles valores para obtener las diferentes velocidades
  *******************************************************************************/
@@ -1381,6 +1390,8 @@ void motor_3phase_speed_change (int32_t modif)
 {
 	//Paso al siguiente set del PWM
 	int32_t actual_pwm_set = 0;
+	int32_t before_pwm_set = 0;
+
 
 	actual_pwm_set = motor_3phase_get_pwm_duty();
 
@@ -1427,9 +1438,22 @@ void motor_3phase_speed_change (int32_t modif)
 }
 
 
+
 /*******************************************************************************
-*	Funciones de modificacion de adelanto de Jose
-*	
+*	Controla que el set point de duty indicado como parametro no este por fuera
+*	de los limites establecidos y si esta dentro lo carga como sp
+ *******************************************************************************/
+void motor_3phase_duty_set_point_set (int32_t dst)
+{
+	//Cargo el duty pasado por parametro
+	if (dst<=SET_POINT_MAX_PWM_DUTY && dst>=SET_POINT_MIN_PWM_DUTY)
+	{
+		gv.pwm_duty_set_point = dst;
+	}
+}
+
+
+/*******************************************************************************
 *	Esta funcion modifica el valor de la variable gv.phase_zcd_fraction_advance
 *	para poder modificar en forma dinamica el avance utilizado en el motor
  *******************************************************************************/
