@@ -35,12 +35,12 @@ int main(void)
 
 	while(1)
 	{
-		//motor_3phase_task();		//Tarea de control del motor
+		motor_3phase_task();		//Tarea de control del motor
 
 		ui_task();					//Tarea de control de la UI
 
 		check_VBus_task();			//Tarea de monitoreo del VBus
 
-		heater_task();
+		//heater_task();
 	}
 }

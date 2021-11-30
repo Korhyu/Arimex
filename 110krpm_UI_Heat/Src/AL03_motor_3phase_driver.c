@@ -374,8 +374,8 @@ int32_t motor_3phase_init(void)
 {
 	inverter_3phase_init_config();
 
-	//motor_3phase_set_motor_direction(MOTOR_DIRECTION_FOWARD);
-	motor_3phase_set_motor_direction(MOTOR_DIRECTION_REVERSE);
+	motor_3phase_set_motor_direction(MOTOR_DIRECTION_FOWARD);
+	//motor_3phase_set_motor_direction(MOTOR_DIRECTION_REVERSE);
 
 	bemf_blanking_timer_expired_callback_link(blanking_timer_expired_callback);
 

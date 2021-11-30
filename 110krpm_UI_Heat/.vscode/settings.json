@@ -5,6 +5,7 @@
         "al02_switches_leds_mux_driver.h": "c",
         "al03_ui_driver.h": "c",
         "al03_heater_driver.h": "c",
-        "al03_vbus_control.h": "c"
+        "al03_vbus_control.h": "c",
+        "al03_motor_3phase_driver.h": "c"
     }
 }

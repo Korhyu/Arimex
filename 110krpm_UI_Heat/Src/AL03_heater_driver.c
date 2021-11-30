@@ -4,12 +4,14 @@
 int32_t heater_actual_state = HEATER_CONFIG_STATE;
 int32_t heater_previous_state;
 
+int8_t heater_actual_pot;							//Variable que guarda la potencia actual usada 0-1-2-3
+
 void heater_task (void)
 {
 	static uint32_t heater_timer;
 	static uint8_t heater_tick = 0;
-	static uint8_t b1_seq[HEATER_DEFAULT_PERIOD] = {0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1};		//Condicion base de rama 1
-	static uint8_t b2_seq[HEATER_DEFAULT_PERIOD] = {1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0};		//Condicion base de rama 2
+	static uint8_t b1_seq[HEATER_DEFAULT_PERIOD];		//Condicion base de rama 1
+	static uint8_t b2_seq[HEATER_DEFAULT_PERIOD];		//Condicion base de rama 2
 	static uint8_t aux_b1;
 	static uint8_t aux_b2;
 		
@@ -99,6 +101,9 @@ void heater_task (void)
 	}	
 }
 
+
+
+
 void load_seq( uint8_t* seq, uint8_t duty, uint8_t br_numb )
 {
 	//Funcion que calcula y carga los valores del vector con el duty especificado
@@ -128,6 +133,7 @@ void load_seq( uint8_t* seq, uint8_t duty, uint8_t br_numb )
 	
 	
 }
+
 
 
 /*

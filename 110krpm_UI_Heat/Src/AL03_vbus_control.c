@@ -55,6 +55,7 @@ void check_VBus_task (void)
 					{
 						//Estaba en tension baja pero recupero
 						//considerar este espacio para un re-arranque
+						inverter_3phase_comm_set_seq(INVERTER_COMM_FREWHEEL, INVERTER_STATE_OVERWRITE);
 					}
 
 					//Control de velocidad usando la tension de linea

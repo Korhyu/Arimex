@@ -194,13 +194,13 @@ void ui_update (void)
     if ( (switches_state & (1<<UI_SWITCH_INC_HEAT_SHIFT_MASK)) != 0)
     {
         //__hardware_gpio_output_set(GPIOA, 3);					//GPIO aux para monitoreo en OSC
-        motor_3phase_phase_lead_change(MORE_LEAD);
+        //motor_3phase_phase_lead_change(MORE_LEAD);
 		ui_led_change(UI_HEATER, UI_UP);
     }
     if ( (switches_state & (1<<UI_SWITCH_DEC_HEAT_SHIFT_MASK)) != 0)
     {
         //__hardware_gpio_output_reset(GPIOA, 3);				//GPIO aux para monitoreo en OSC
-        motor_3phase_phase_lead_change(LESS_LEAD);
+        //motor_3phase_phase_lead_change(LESS_LEAD);
 		ui_led_change(UI_HEATER, UI_DOWN);
     }
 
