@@ -23,6 +23,11 @@
 
 
 //Set del PWM para las diferentes velocidades
+#define MOTOR_MAX_SPEED_HZ		1750				//La velocidad deberia ser 110000 rpm de la especificacion de GAMA
+#define MOTOR_MID_SPEED_HZ		1500				//La velocidad deberia ser  90000 rpm de la especificacion de GAMA
+#define MOTOR_MIN_SPEED_HZ		1170				//La velocidad deberia ser  70000 rpm de la especificacion de GAMA
+
+//Set del PWM para las diferentes velocidades
 #define MOTOR_MAX_SPEED_PWM		68					//La velocidad deberia ser 110000 rpm de la especificacion de GAMA
 #define MOTOR_MID_SPEED_PWM		58					//La velocidad deberia ser  90000 rpm de la especificacion de GAMA
 #define MOTOR_MIN_SPEED_PWM		45					//La velocidad deberia ser  70000 rpm de la especificacion de GAMA
@@ -70,10 +75,9 @@ int32_t motor_3phase_set_pwm_ton_us_set_point(int32_t pwm_ton_set_point);
 int32_t motor_3phase_get_pwm_ton_us_max_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_min_set_point(void);
 int32_t motor_3phase_get_pwm_ton_us_set_point(void);
-
+int32_t motor_3phase_get_pwm_duty_set(void);
 
 int32_t motor_3phase_set_pwm_duty_set_point(int32_t pwm_duty_set_point);
-
 
 void motor_3phase_speed_change (int32_t modif);
 void motor_3phase_phase_lead_change (int32_t modif);

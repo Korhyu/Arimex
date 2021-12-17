@@ -47,9 +47,9 @@ void check_VBus_task (void)
 						//Guardo las variables
 						vbus_level = VBUS_VERY_LOW_LEVEL;
 
-						ui_led_change(UI_HEATER, UI_UP);
-						ui_led_change(UI_HEATER, UI_UP);
-						ui_led_change(UI_HEATER, UI_UP);
+						ui_led_slide(UI_HEATER, UI_UP);
+						ui_led_slide(UI_HEATER, UI_UP);
+						ui_led_slide(UI_HEATER, UI_UP);
 					}
 					else if (vbus_level == VBUS_VERY_LOW_LEVEL)
 					{
@@ -67,9 +67,9 @@ void check_VBus_task (void)
 							vbus_level = VBUS_LOW_LEVEL;
 
 							motor_3phase_speed_change(LESS_SPEED);
-							ui_led_change(UI_FAN, UI_DOWN);
+							ui_led_slide(UI_FAN, UI_DOWN);
 							motor_3phase_speed_change(LESS_SPEED);
-							ui_led_change(UI_FAN, UI_DOWN);
+							ui_led_slide(UI_FAN, UI_DOWN);
 
 							//Si hay cambios, puedo esperar un buen tiempo antes de volver a tomar muestras
 							vbus_timer = board_scheduler_load_timer(500);
@@ -80,9 +80,9 @@ void check_VBus_task (void)
 							vbus_level = VBUS_HIGH_LEVEL;
 
 							motor_3phase_speed_change(MORE_SPEED);
-							ui_led_change(UI_FAN, UI_UP);
+							ui_led_slide(UI_FAN, UI_UP);
 							motor_3phase_speed_change(MORE_SPEED);
-							ui_led_change(UI_FAN, UI_UP);
+							ui_led_slide(UI_FAN, UI_UP);
 
 							//Si hay cambios, puedo esperar un buen tiempo antes de volver a tomar muestras
 							vbus_timer = board_scheduler_load_timer(500);

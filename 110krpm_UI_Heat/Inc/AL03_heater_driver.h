@@ -2,9 +2,9 @@
 
 
 #define HEATER_SWITCHING_STATE			1
-#define HEATER_OFF_STATE				2
-#define HEATER_TIME_MACHINE_STATE		3
-#define HEATER_LOAD_STATE				4
+#define HEATER_WAITING_STATE			2
+#define HEATER_CONTROL_STATE			3
+#define HEATER_OFF_STATE				4
 
 #define HEATER_CONFIG_STATE				10
 
@@ -14,9 +14,14 @@
 #define BRANCH_ON						1
 
 
+#define HEATER_LEVEL_0					0
+#define HEATER_LEVEL_1					1
+#define HEATER_LEVEL_2					2
+#define HEATER_LEVEL_3					3
+
 //Estos defines corresponden al pulso de exitacion. NO AL TIEMPO DE LOS CALEFAS, SOLO A LA EXITACION DE LOS TRIACS
-#define HEATER_PULSE_TOFF				8		//Tiempo de TOFF del pulso de exitacion de los TRIACS
-#define HEATER_PULSE_TON				19		//Tiempo de TON del pulso de exitacion de los TRIACS
+#define HEATER_PULSE_TON				14							//Tiempo de TON del pulso de exitacion de los TRIACS
+#define HEATER_PULSE_TOFF				(20-HEATER_PULSE_TON)		//Tiempo de TOFF del pulso de exitacion de los TRIACS
 
 #define heater_outputs_set()			{__hardware_gpio_output_set(BOARD_HEATER_GATE1_PORT,BOARD_HEATER_GATE1_PIN);\
 										 __hardware_gpio_output_set(BOARD_HEATER_GATE2_PORT,BOARD_HEATER_GATE2_PIN);}
@@ -37,12 +42,12 @@
 
 
 void 	heater_task		(void);
+void	select_seq		(uint32_t, uint32_t);
+void	load_seq		(uint8_t);
 
-int8_t	heater_get_pot	(void);			//Devuelve que sequencia se esta usando para las ramas de calefactores
-void 	heater_set_pot	(int8_t);		//Configura la sequencia para las ramas segun la temperatura enviada como parametro
 
 
-static uint8_t b1_table[50][10] = {
+static uint8_t b1_table[10][HEATER_DEFAULT_PERIOD] = {
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},	//Calor 0
 	{1,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0},	//Velocidad 1 - Calor 1
 	{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,0,1,0,1,0,0},	//Velocidad 1 - Calor 2
@@ -52,10 +57,10 @@ static uint8_t b1_table[50][10] = {
 	{1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0},	//Velocidad 2 - Calor 3
 	{1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0},	//Velocidad 3 - Calor 1
 	{1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0},	//Velocidad 3 - Calor 2
-	{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0},	//Velocidad 3 - Calor 3
+	{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0}	//Velocidad 3 - Calor 3
 	};	
 
-static uint8_t b2_table[50][10] = {
+static uint8_t b2_table[10][HEATER_DEFAULT_PERIOD] = {
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},	//Calor 0
 	{0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1},	//Velocidad 1 - Calor 1
 	{0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1,0,1},	//Velocidad 1 - Calor 2
@@ -65,7 +70,7 @@ static uint8_t b2_table[50][10] = {
 	{0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1},	//Velocidad 2 - Calor 3
 	{0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},	//Velocidad 3 - Calor 1
 	{0,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1},	//Velocidad 3 - Calor 2
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},	//Velocidad 3 - Calor 3
+	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}	//Velocidad 3 - Calor 3
 	};
 
 
