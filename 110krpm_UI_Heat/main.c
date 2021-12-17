@@ -6,7 +6,8 @@
 #include "AL03_motor_3phase_driver.h"
 #include "AL03_heater_driver.h"
 #include "AL03_vbus_control.h"
-#include "AL04_ui_driver.h"
+#include "AL03_ui_driver.h"
+#include "AL04_supervisor.h"
 
 /* Global functions ----------------------------------------------------------------------------------------*/
 /* Settings ------------------------------------------------------------------------------------------------*/
@@ -36,6 +37,8 @@ int main(void)
 
 	while(1)
 	{
+		//supervisor_task();		//Encargado de la comunicacion entre todas las tareas
+		
 		motor_3phase_task();		//Tarea de control del motor
 
 		ui_task();					//Tarea de control de la UI
@@ -43,5 +46,7 @@ int main(void)
 		check_VBus_task();			//Tarea de monitoreo del VBus
 
 		//heater_task();
+
+		//speed_control_task();		//Tarea que monitorea la velocidad
 	}
 }

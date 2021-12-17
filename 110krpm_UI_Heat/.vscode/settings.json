@@ -7,6 +7,8 @@
         "al03_heater_driver.h": "c",
         "al03_vbus_control.h": "c",
         "al03_motor_3phase_driver.h": "c",
-        "al04_ui_driver.h": "c"
+        "al04_ui_driver.h": "c",
+        "al04_supervisor.h": "c",
+        "al03_speed_control.h": "c"
     }
 }
