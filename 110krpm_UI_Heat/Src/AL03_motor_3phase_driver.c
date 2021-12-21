@@ -168,13 +168,14 @@ int32_t motor_3phase_get_pwm_duty_set (void)
 
 
 /*******************************************************************************
- *	JOSE - Esta funcion escribe el valor del set point del duty del pwm:
+ *	JOSE - Esta funcion retorna el valor de la velocidad actual:
  *	
 ********************************************************************************/
-void motor_3phase_set_pwm_duty_set (int32_t pwm_duty_set_point)
+int32_t motor_3phase_get_electrical_period (void)
 {
-	gv.pwm_duty_set_point = pwm_duty_set_point;
+	return gv.motor_electrical_period_us_avg;
 }
+
 
 /*******************************************************************************
  *	JOSE - Esta funcion retorna el valor actual del duty del pwm:
@@ -185,16 +186,6 @@ int32_t motor_3phase_get_pwm_duty_actual (void)
 	return gv.pwm_duty_actual;
 }
 
-
-
-/*******************************************************************************
- *	JOSE - Esta funcion retorna el valor actual del duty del pwm:
- *	
-********************************************************************************/
-int32_t motor_3phase_get_pwm_duty (void)
-{
-	return gv.pwm_duty_actual;
-}
 
 /*********************************************************************
  * Devuevel el maximo set point que se puede poner
@@ -1393,7 +1384,7 @@ void motor_3phase_speed_change (int32_t modif)
 	int32_t before_pwm_set = 0;
 
 
-	actual_pwm_set = motor_3phase_get_pwm_duty();
+	actual_pwm_set = motor_3phase_get_pwm_duty_actual();
 
 	if(modif == MORE_SPEED)
 		if(actual_pwm_set < MOTOR_MAX_SPEED_PWM)

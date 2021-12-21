@@ -7,6 +7,7 @@
 #include "AL03_heater_driver.h"
 #include "AL03_vbus_control.h"
 #include "AL03_ui_driver.h"
+#include "AL03_ui_driver.h"
 #include "AL04_supervisor.h"
 
 /* Global functions ----------------------------------------------------------------------------------------*/
@@ -47,6 +48,6 @@ int main(void)
 
 		//heater_task();
 
-		//speed_control_task();		//Tarea que monitorea la velocidad
+		//sc_task();				//Tarea que monitorea la velocidad
 	}
 }
