@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "al02_inverter_3phase.h": "c",
+        "al01_board_iq_aed_rev20191011.h": "c",
+        "al02_switches_leds_mux_driver.h": "c",
+        "al03_ui_driver.h": "c",
+        "al03_heater_driver.h": "c",
+        "al03_vbus_control.h": "c",
+        "al03_motor_3phase_driver.h": "c",
+        "al04_ui_driver.h": "c",
+        "al04_supervisor.h": "c",
+        "al03_speed_control.h": "c"
+    }
+}
